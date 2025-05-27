@@ -54,7 +54,17 @@ export async function POST(request: Request) {
   }
 }
 
-function calculateAIValuation(propertyData: any) {
+// Types pour les données de propriété
+interface PropertyData {
+  type: 'office' | 'retail' | 'industrial' | 'mixed';
+  sqft: number;
+  location: string;
+  yearBuilt?: number;
+  condition?: 'excellent' | 'good' | 'fair' | 'poor';
+  features?: string[];
+}
+
+function calculateAIValuation(propertyData: PropertyData) {
   const { type, sqft, location, yearBuilt, condition, features } = propertyData
 
   // Base price per sq ft by property type and location
@@ -63,11 +73,13 @@ function calculateAIValuation(propertyData: any) {
     retail: { "San Francisco": 520, "Los Angeles": 420, Phoenix: 180, default: 320 },
     industrial: { "San Francisco": 280, "Los Angeles": 240, Phoenix: 120, default: 180 },
     mixed: { "San Francisco": 400, "Los Angeles": 340, Phoenix: 200, default: 260 },
-  }
+  } as const
 
-  const basePrice =
-    basePrices[type as keyof typeof basePrices]?.[location] ||
-    basePrices[type as keyof typeof basePrices]?.default ||
+  // Correction du typage pour l'accès à l'objet basePrices
+  const typeBasePrices = basePrices[type]
+  const basePrice = 
+    (typeBasePrices as Record<string, number>)[location] || 
+    typeBasePrices.default || 
     250
 
   // Age adjustment
@@ -117,7 +129,7 @@ function calculateAIValuation(propertyData: any) {
   }
 }
 
-function generateComparables(propertyData: any, pricePerSqft: number) {
+function generateComparables(propertyData: PropertyData, pricePerSqft: number) {
   // Generate mock comparable properties
   return [
     {
@@ -147,7 +159,34 @@ function generateComparables(propertyData: any, pricePerSqft: number) {
   ]
 }
 
-function generateValuationReport(propertyData: any, valuation: any, marketAnalysis: string) {
+// Interface pour les données de valorisation
+interface ValuationData {
+  totalValue: number;
+  pricePerSqft: number;
+  confidence: number;
+  breakdown?: {
+    basePrice: number;
+    ageAdjustment: number;
+    conditionAdjustment: number;
+    featureBonus: number;
+  };
+  comparables?: Array<{
+    address: string;
+    sqft: number;
+    salePrice: number;
+    pricePerSqft: number;
+    saleDate: string;
+    distance: string;
+  }>;
+  marketTrends?: {
+    appreciation: string;
+    marketCondition: string;
+    demandLevel: string;
+  };
+  note?: string;
+}
+
+function generateValuationReport(propertyData: PropertyData, valuation: ValuationData, marketAnalysis?: string) {
   return `**AI-Powered Property Valuation Report**
 
 **Property Overview:**
@@ -174,25 +213,25 @@ ${marketAnalysis || "Current market conditions show stable demand with moderate 
 
 **Comparable Properties:**
 ${valuation.comparables
-  .map(
-    (comp: any, index: number) =>
-      `${index + 1}. ${comp.address} - $${comp.salePrice.toLocaleString()} (${comp.pricePerSqft}/sq ft) - ${comp.distance}`,
+  ?.map(
+    (comp, index: number) =>
+      `${index + 1}. ${comp.address} - $${comp.salePrice.toLocaleString()} ($${comp.pricePerSqft}/sq ft) - ${comp.distance}`,
   )
-  .join("\n")}
+  .join("\n") || "No comparable properties available"}
 
 **Investment Considerations:**
-• Market appreciation: ${valuation.marketTrends.appreciation}
-• Market condition: ${valuation.marketTrends.marketCondition}
-• Demand level: ${valuation.marketTrends.demandLevel}
+• Market appreciation: ${valuation.marketTrends?.appreciation || "N/A"}
+• Market condition: ${valuation.marketTrends?.marketCondition || "N/A"}
+• Demand level: ${valuation.marketTrends?.demandLevel || "N/A"}
 
 **Disclaimer:**
 This valuation is generated using AI algorithms and market data. For official appraisal purposes, please consult a licensed appraiser.`
 }
 
-function calculateFallbackValuation(propertyData: any) {
+function calculateFallbackValuation(propertyData: PropertyData): ValuationData {
   // Simple fallback calculation
   const avgPricePerSqft = 250 // Default average
-  const totalValue = avgPricePerSqft * (propertyData.sqft || 10000)
+  const totalValue = avgPricePerSqft * propertyData.sqft
 
   return {
     totalValue: totalValue,
