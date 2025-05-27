@@ -164,12 +164,11 @@ const PropertySchema = new Schema<IProperty>(
   },
 )
 
-// Indexes for performance
+// Indexes for performance (SANS slug car unique: true le crée déjà)
 PropertySchema.index({ city: 1, propertyType: 1, transactionType: 1 })
 PropertySchema.index({ price: 1 })
 PropertySchema.index({ status: 1, publishedAt: -1 })
 PropertySchema.index({ owner: 1 })
-PropertySchema.index({ slug: 1 })
 PropertySchema.index({ coordinates: "2dsphere" })
 
 // Virtual for price per square meter

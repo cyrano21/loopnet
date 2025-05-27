@@ -19,7 +19,7 @@ interface SearchFilters {
   maxPrice: string
 }
 
-export default function SearchBar({ onSearch, className = "" }: SearchBarProps) {
+export function SearchBar({ onSearch, className = "" }: SearchBarProps) {
   const [filters, setFilters] = useState<SearchFilters>({
     query: "",
     location: "",

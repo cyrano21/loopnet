@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 
 export default withAuth(
   function middleware(req) {
-    // Vérifier si l'utilisateur essaie d'accéder aux routes protégées
+    // Vérifier l'authentification pour les routes protégées
     if (req.nextUrl.pathname.startsWith("/dashboard") && !req.nextauth.token) {
       return NextResponse.redirect(new URL("/auth/signin", req.url))
     }

@@ -3,11 +3,11 @@ import connectDB from "@/lib/mongodb"
 import Property from "@/models/Property"
 import mongoose from "mongoose"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectDB()
 
-    const { id } = params
+    const { id } = await params
 
     // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -34,11 +34,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectDB()
 
-    const { id } = params
+    const { id } = await params
     const body = await request.json()
 
     // Validate ObjectId
@@ -70,11 +70,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectDB()
 
-    const { id } = params
+    const { id } = await params
 
     // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(id)) {

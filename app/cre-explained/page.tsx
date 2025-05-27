@@ -1,6 +1,6 @@
 "use client"
 
-import { Building2, BookOpen, TrendingUp, Calculator, FileText } from "lucide-react"
+import { BookOpen, TrendingUp, Calculator, FileText } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -92,38 +92,6 @@ export default function CREExplainedPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <Link href="/" className="flex items-center space-x-2">
-                <Building2 className="h-8 w-8 text-blue-600" />
-                <span className="text-2xl font-bold text-blue-600">LoopNet</span>
-              </Link>
-              <nav className="hidden md:flex space-x-6">
-                <Link href="/properties" className="text-gray-700 hover:text-blue-600">
-                  Properties
-                </Link>
-                <Link href="/market-data" className="text-gray-700 hover:text-blue-600">
-                  Market Data
-                </Link>
-                <Link href="/cre-explained" className="text-blue-600 font-medium">
-                  CRE Explained
-                </Link>
-                <Link href="/professionals" className="text-gray-700 hover:text-blue-600">
-                  Professionals
-                </Link>
-              </nav>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost">Sign In</Button>
-              <Button>List Property</Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
         <div className="container mx-auto px-4 text-center">

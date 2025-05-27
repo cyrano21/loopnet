@@ -1,105 +1,200 @@
 "use client"
 
 import { useState } from "react"
+import { Plus, Search, MoreVertical, Eye, Edit, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useUserProperties } from "@/hooks/use-user-properties"
+import Image from "next/image"
+import Link from "next/link"
 
-const MyPropertiesPage = () => {
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [currentPage, setCurrentPage] = useState(1)
+export default function MyPropertiesPage() {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filterStatus, setFilterStatus] = useState("all")
+  const { properties, loading, error } = useUserProperties()
 
-  // TODO: Récupérer l'ID utilisateur depuis l'authentification
-  const userId = "507f1f77bcf86cd799439011" // Mock pour le moment
+  const filteredProperties = properties.filter((property) => {
+    const matchesSearch = property.title.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesFilter = filterStatus === "all" || property.status === filterStatus
+    return matchesSearch && matchesFilter
+  })
 
-  const { properties, stats, loading, error, pagination, refetch } = useUserProperties(
-    userId,
-    statusFilter,
-    currentPage,
-  )
+  const getStatusBadge = (status: string) => {
+    const variants = {
+      active: "default",
+      pending: "secondary",
+      sold: "destructive",
+      rented: "outline",
+    }
+    return variants[status as keyof typeof variants] || "default"
+  }
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "EUR",
+      minimumFractionDigits: 0,
+    }).format(price)
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-red-600 text-center p-4">Erreur lors du chargement: {error}</div>
+      </div>
+    )
+  }
 
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4">Mes propriétés</h1>
-
-      {stats && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
-            <div className="text-sm text-gray-600">Total</div>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-green-600">{stats.active}</div>
-            <div className="text-sm text-gray-600">Actives</div>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
-            <div className="text-sm text-gray-600">En attente</div>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow">
-            <div className="text-2xl font-bold text-purple-600">{stats.totalViews}</div>
-            <div className="text-sm text-gray-600">Vues totales</div>
-          </div>
+    <div className="container mx-auto px-4 py-8">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold">Mes Propriétés</h1>
+          <p className="text-gray-600 mt-2">Gérez vos annonces immobilières</p>
         </div>
-      )}
-
-      {/* Filters and Sorting (To be implemented) */}
-      <div className="mb-4">
-        {/* Filter by Status */}
-        <select
-          value={statusFilter}
-          onChange={(e) => {
-            setStatusFilter(e.target.value)
-            setCurrentPage(1) // Reset page on filter change
-          }}
-          className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-        >
-          <option value="all">Tous les status</option>
-          <option value="active">Actif</option>
-          <option value="pending">En attente</option>
-          <option value="draft">Brouillon</option>
-          <option value="rejected">Rejeté</option>
-        </select>
+        <Link href="/list-property">
+          <Button>
+            <Plus className="w-4 h-4 mr-2" />
+            Nouvelle Annonce
+          </Button>
+        </Link>
       </div>
 
-      {loading && <p>Chargement...</p>}
-      {error && <p>Erreur: {error.message}</p>}
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Input
+            placeholder="Rechercher une propriété..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant={filterStatus === "all" ? "default" : "outline"}
+            onClick={() => setFilterStatus("all")}
+            size="sm"
+          >
+            Toutes
+          </Button>
+          <Button
+            variant={filterStatus === "active" ? "default" : "outline"}
+            onClick={() => setFilterStatus("active")}
+            size="sm"
+          >
+            Actives
+          </Button>
+          <Button
+            variant={filterStatus === "pending" ? "default" : "outline"}
+            onClick={() => setFilterStatus("pending")}
+            size="sm"
+          >
+            En attente
+          </Button>
+        </div>
+      </div>
 
-      {properties && properties.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {properties.map((property) => (
-            <div key={property._id} className="bg-white rounded-lg shadow-md p-4">
-              <h2 className="text-lg font-semibold">{property.title}</h2>
-              <p className="text-gray-600">{property.address}</p>
-              {/* Add more property details here */}
-            </div>
-          ))}
+      {/* Properties Grid */}
+      {filteredProperties.length === 0 ? (
+        <div className="text-center py-12">
+          <h3 className="text-xl font-semibold mb-2">Aucune propriété trouvée</h3>
+          <p className="text-gray-600 mb-6">
+            {searchTerm || filterStatus !== "all"
+              ? "Essayez de modifier vos critères de recherche"
+              : "Commencez par ajouter votre première propriété"}
+          </p>
+          <Link href="/list-property">
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+              Ajouter une propriété
+            </Button>
+          </Link>
         </div>
       ) : (
-        <p>Aucune propriété trouvée.</p>
-      )}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredProperties.map((property) => (
+            <Card key={property._id} className="overflow-hidden hover:shadow-lg transition-shadow">
+              <div className="relative h-48">
+                <Image
+                  src={property.images[0]?.url || "/placeholder.svg?height=200&width=300"}
+                  alt={property.title}
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute top-2 left-2">
+                  <Badge variant={getStatusBadge(property.status)}>
+                    {property.status === "active" && "Actif"}
+                    {property.status === "pending" && "En attente"}
+                    {property.status === "sold" && "Vendu"}
+                    {property.status === "rented" && "Loué"}
+                  </Badge>
+                </div>
+                <div className="absolute top-2 right-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="secondary" size="sm" className="h-8 w-8 p-0">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem asChild>
+                        <Link href={`/property/${property._id}`}>
+                          <Eye className="w-4 h-4 mr-2" />
+                          Voir
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href={`/list-property?edit=${property._id}`}>
+                          <Edit className="w-4 h-4 mr-2" />
+                          Modifier
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-600">
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Supprimer
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
 
-      {pagination && (
-        <div className="flex justify-center mt-6">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md mr-2 disabled:opacity-50"
-          >
-            Précédent
-          </button>
-          <span>
-            Page {currentPage} sur {pagination.totalPages}
-          </span>
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, pagination.totalPages))}
-            disabled={currentPage === pagination.totalPages}
-            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md ml-2 disabled:opacity-50"
-          >
-            Suivant
-          </button>
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-lg mb-2 line-clamp-2">{property.title}</h3>
+                <p className="text-gray-600 text-sm mb-3 line-clamp-2">{property.description}</p>
+
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-2xl font-bold text-blue-600">{formatPrice(property.price)}</div>
+                  <div className="text-sm text-gray-500">{property.surface} m²</div>
+                </div>
+
+                <div className="flex items-center justify-between text-sm text-gray-500">
+                  <div className="flex items-center gap-4">
+                    <span>{property.views || 0} vues</span>
+                    <span>{property.favorites || 0} favoris</span>
+                  </div>
+                  <span>{new Date(property.createdAt).toLocaleDateString()}</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       )}
     </div>
   )
 }
-
-export default MyPropertiesPage

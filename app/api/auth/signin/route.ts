@@ -1,5 +1,15 @@
 import { NextResponse } from "next/server"
 import { sign } from "jsonwebtoken"
+import { redirect } from "next/navigation"
+
+// Gérer les redirections lors des erreurs d'authentification
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const error = searchParams.get("error");
+  
+  // Rediriger vers la page de connexion avec le paramètre d'erreur
+  return redirect(`/auth/signin?error=${error || "unknown"}`);
+}
 
 export async function POST(request: Request) {
   const body = await request.json()

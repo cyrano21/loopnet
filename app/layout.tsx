@@ -1,10 +1,13 @@
 import type React from "react"
 import type { Metadata } from "next"
 import "./globals.css"
-import { AuthProvider } from "@/components/auth-provider"
-import { ThemeProvider } from "@/components/theme-provider"
 import { Inter } from "next/font/google"
+import { ThemeProvider } from "@/components/theme-provider"
+import { AuthProvider } from "@/components/auth-provider"
+import { Toaster } from "@/components/ui/toaster"
 import { NotificationProvider } from "@/components/notification-provider"
+import { ComparisonProvider } from "@/components/comparison-provider"
+import Navigation from "@/components/navigation"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,8 +26,14 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <NotificationProvider>{children}</NotificationProvider>
+          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+            <NotificationProvider>
+              <ComparisonProvider>
+                <Navigation />
+                {children}
+                <Toaster />
+              </ComparisonProvider>
+            </NotificationProvider>
           </ThemeProvider>
         </AuthProvider>
       </body>
