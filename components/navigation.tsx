@@ -3,6 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useSession, signOut } from "next-auth/react"
+import { motion } from "framer-motion"
+import { AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -12,7 +14,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Menu, X, User, LogOut, Heart, Building, Sparkles } from "lucide-react"
+import { Menu as MenuIcon } from "lucide-react"
+import { X } from "lucide-react"
+import { User } from "lucide-react"
+import { LogOut } from "lucide-react"
+import { Heart } from "lucide-react"
+import { Building } from "lucide-react"
+import { Sparkles } from "lucide-react"
+import { Zap } from "lucide-react"
+import { Star } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 function Navigation() {
@@ -22,16 +32,109 @@ function Navigation() {
   const isLoading = status === "loading"
 
   return (
-    <nav className="bg-background/95 backdrop-blur-md shadow-lg border-b border-border/50 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <motion.nav 
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="bg-background/95 backdrop-blur-md shadow-lg border-b border-border/50 sticky top-0 z-50 relative overflow-hidden"
+    >
+      {/* Animated background elements */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-blue-500/5"
+        animate={{
+          backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear"
+        }}
+      />
+      <motion.div
+        className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-blue-500 to-transparent"
+        animate={{
+          x: ['-100%', '100%'],
+          opacity: [0, 1, 0]
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 flex items-center group transition-all duration-300 hover:scale-105">
-              <div className="relative">
-                <Building className="h-8 w-8 text-blue-600 transition-all duration-300 group-hover:text-blue-500" />
-                <Sparkles className="h-3 w-3 text-blue-400 absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-              <span className="ml-3 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:to-purple-500 transition-all duration-300">LoopNet</span>
+            <Link href="/" className="flex-shrink-0 flex items-center group">
+              <motion.div 
+                className="relative"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <motion.div
+                  animate={{ 
+                    rotate: [0, 360],
+                    scale: [1, 1.1, 1]
+                  }}
+                  transition={{
+                    rotate: { duration: 20, repeat: Infinity, ease: "linear" },
+                    scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                  }}
+                >
+                  <Building className="h-8 w-8 text-blue-600 transition-all duration-300 group-hover:text-blue-500" />
+                </motion.div>
+                <motion.div
+                  className="absolute -top-1 -right-1"
+                  animate={{
+                    scale: [0, 1, 0],
+                    rotate: [0, 180, 360],
+                    opacity: [0, 1, 0]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                >
+                  <Sparkles className="h-3 w-3 text-blue-400" />
+                </motion.div>
+                <motion.div
+                  className="absolute -bottom-1 -left-1"
+                  animate={{
+                    scale: [0, 1, 0],
+                    rotate: [360, 180, 0],
+                    opacity: [0, 0.7, 0]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1
+                  }}
+                >
+                  <Star className="h-2 w-2 text-purple-400" />
+                </motion.div>
+              </motion.div>
+              <motion.span 
+                className="ml-3 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:from-blue-500 group-hover:to-purple-500 transition-all duration-300"
+                whileHover={{ 
+                  scale: 1.05,
+                  textShadow: "0px 0px 8px rgba(59, 130, 246, 0.5)"
+                }}
+                animate={{
+                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%']
+                }}
+                transition={{
+                  backgroundPosition: {
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }
+                }}
+              >
+                LoopNet
+              </motion.span>
             </Link>
           </div>
 
@@ -208,7 +311,7 @@ function Navigation() {
             >
               {isOpen ? 
                 <X className="h-6 w-6 transition-transform duration-300 rotate-90" /> : 
-                <Menu className="h-6 w-6 transition-transform duration-300" />
+                <MenuIcon className="h-6 w-6 transition-transform duration-300" />
               }
             </button>
           </div>
@@ -292,7 +395,7 @@ function Navigation() {
           </div>
         </div>
       )}
-    </nav>
+    </motion.nav>
   )
 }
 
