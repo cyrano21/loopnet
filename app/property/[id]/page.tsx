@@ -31,12 +31,13 @@ interface Property {
   surface: number
   propertyType: string
   transactionType: string
-  location: {
-    address: string
-    city: string
-    state: string
-    zipCode: string
-    coordinates: [number, number]
+  address: string
+  city: string
+  postalCode: string
+  country: string
+  coordinates?: {
+    lat: number
+    lng: number
   }
   images: Array<{
     url: string
@@ -165,7 +166,7 @@ export default function PropertyDetailPage () {
   }
 
   const primaryImage =
-    property.images.find(img => img.isPrimary) || property.images[0]
+    property.images?.find(img => img.isPrimary) || property.images?.[0]
 
   return (
     <PageLayout showBackButton={true}>
@@ -179,7 +180,7 @@ export default function PropertyDetailPage () {
             <div className='flex items-center text-gray-600'>
               <MapPin className='w-4 h-4 mr-1' />
               <span>
-                {property.location.address}, {property.location.city}
+                {property.address}, {property.city}
               </span>
             </div>
           </div>
@@ -207,19 +208,19 @@ export default function PropertyDetailPage () {
               <div className='aspect-video rounded-lg overflow-hidden'>
                 <Image
                   src={
-                    property.images[currentImageIndex]?.url ||
+                    property.images?.[currentImageIndex]?.url ||
                     '/placeholder.svg'
                   }
                   alt={
-                    property.images[currentImageIndex]?.alt || property.title
+                    property.images?.[currentImageIndex]?.alt || property.title
                   }
                   fill
                   className='object-cover'
                 />
               </div>
-              {property.images.length > 1 && (
+              {property.images && property.images.length > 1 && (
                 <div className='flex gap-2 mt-4 overflow-x-auto'>
-                  {property.images.map((image, index) => (
+                  {property.images?.map((image, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentImageIndex(index)}
@@ -299,14 +300,14 @@ export default function PropertyDetailPage () {
             </Card>
 
             {/* Équipements */}
-            {property.amenities.length > 0 && (
+            {property.amenities && property.amenities.length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle>Équipements</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className='flex flex-wrap gap-2'>
-                    {property.amenities.map((amenity, index) => (
+                    {property.amenities?.map((amenity, index) => (
                       <Badge key={index} variant='outline'>
                         {amenity}
                       </Badge>
@@ -363,19 +364,19 @@ export default function PropertyDetailPage () {
               </CardHeader>
               <CardContent>
                 <div className='flex items-center gap-3 mb-4'>
-                  {property.agent.image && (
+                  {property.agent?.image && (
                     <Image
-                      src={property.agent.image || '/placeholder.svg'}
-                      alt={property.agent.name}
+                      src={property.agent?.image || '/placeholder.svg'}
+                      alt={property.agent?.name || 'Agent'}
                       width={48}
                       height={48}
                       className='rounded-full'
                     />
                   )}
                   <div>
-                    <div className='font-semibold'>{property.agent.name}</div>
+                    <div className='font-semibold'>{property.agent?.name}</div>
                     <div className='text-sm text-gray-600'>
-                      {property.agent.company}
+                      {property.agent?.company}
                     </div>
                   </div>
                 </div>

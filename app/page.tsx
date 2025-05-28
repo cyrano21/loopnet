@@ -615,8 +615,9 @@ export default function HomePage() {
           </Button>
         </div>
 
-        {/* Hero Section */}
-        <section className="relative text-white py-20 md:py-28 lg:py-32 overflow-hidden isolate">
+        {/* Hero Section - Enhanced with Premium Design */}
+        <section className="relative text-white py-20 md:py-28 lg:py-36 overflow-hidden isolate">
+          {/* Enhanced Background with Multiple Layers */}
           <div className="absolute inset-0 z-[-1]">
             <Image
               src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&h=600&fit=crop&crop=center"
@@ -626,20 +627,197 @@ export default function HomePage() {
               priority
               quality={75}
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-700/80 via-blue-600/70 to-sky-500/60"></div>
+            {/* Enhanced gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 via-blue-700/80 to-purple-600/70"></div>
+            
+            {/* Animated particles background */}
+            <div className="absolute inset-0 overflow-hidden">
+              {[...Array(20)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-2 h-2 bg-white/20 rounded-full"
+                  initial={{
+                    x: typeof window !== 'undefined' ? Math.random() * window.innerWidth : Math.random() * 1200,
+                    y: typeof window !== 'undefined' ? Math.random() * window.innerHeight : Math.random() * 800,
+                    opacity: 0,
+                  }}
+                  animate={{
+                    y: [null, -100],
+                    opacity: [0, 1, 0],
+                  }}
+                  transition={{
+                    duration: Math.random() * 3 + 2,
+                    repeat: Infinity,
+                    delay: Math.random() * 2,
+                  }}
+                />
+              ))}
+            </div>
+            
+            {/* Geometric shapes overlay */}
+            <div className="absolute inset-0 opacity-10">
+              <motion.div
+                className="absolute top-20 left-10 w-32 h-32 border border-white/30 rounded-full"
+                animate={{
+                  rotate: 360,
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 20,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+              <motion.div
+                className="absolute bottom-20 right-20 w-24 h-24 border border-white/20 rotate-45"
+                animate={{
+                  rotate: [45, 405],
+                  opacity: [0.2, 0.5, 0.2],
+                }}
+                transition={{
+                  duration: 15,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+            </div>
           </div>
 
           <div className="relative z-10 container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-shadow-lg animate-fade-in-down">
-                The World's #1 Commercial Real Estate Marketplace
-              </h1>
-              <p className="text-lg md:text-xl mb-10 text-slate-100 animate-fade-in-up animation-delay-200">
-                Find, Lease, or Buy Your Next Commercial Property With Us.
-                Explore Thousands of Listings.
-              </p>
+            <div className="max-w-4xl mx-auto text-center">
+              {/* Enhanced Hero Title with Premium Animations */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="relative mb-6"
+              >
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight relative">
+                  <motion.span
+                    className="block relative"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                  >
+                    The World's #1
+                  </motion.span>
+                  <motion.span 
+                    className="block relative overflow-hidden mt-2"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.8, delay: 0.4 }}
+                  >
+                    <span className="relative inline-block">
+                      <span className="bg-gradient-to-r from-yellow-300 via-yellow-200 to-amber-300 bg-clip-text text-transparent font-black">
+                        Commercial Real Estate
+                      </span>
+                      {/* Animated underline */}
+                      <motion.div
+                        className="absolute bottom-0 left-0 h-1.5 bg-gradient-to-r from-yellow-400 to-amber-400 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: 1.2, delay: 1 }}
+                      />
+                    </span>
+                  </motion.span>
+                  <motion.span
+                    className="block mt-2 text-white"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                  >
+                    Marketplace
+                  </motion.span>
+                  
+                  {/* Floating accent elements */}
+                  <motion.div
+                    className="absolute -top-6 -right-6 w-12 h-12 bg-yellow-400/20 rounded-full blur-md"
+                    animate={{
+                      y: [-15, 15, -15],
+                      opacity: [0.2, 0.6, 0.2],
+                      scale: [1, 1.2, 1],
+                    }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                  <motion.div
+                    className="absolute -bottom-4 -left-4 w-8 h-8 bg-blue-400/30 rounded-full blur-sm"
+                    animate={{
+                      x: [-10, 10, -10],
+                      opacity: [0.3, 0.8, 0.3],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                      delay: 1,
+                    }}
+                  />
+                </h1>
+              </motion.div>
+              
+              {/* Enhanced Description */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="mb-10"
+              >
+                <p className="text-lg md:text-xl lg:text-2xl text-slate-100 leading-relaxed font-light max-w-3xl mx-auto">
+                  Find, Lease, or Buy Your Next Commercial Property With Us.
+                  <span className="block mt-2 text-yellow-200/90 font-medium">
+                    Explore Thousands of Premium Listings
+                  </span>
+                </p>
+                <motion.div
+                  className="mt-4 text-sm md:text-base text-blue-200/80"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 1.4 }}
+                >
+                  ✨ Trusted by over 12 million professionals worldwide
+                </motion.div>
+              </motion.div>
 
-              <Card className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-md text-slate-900 dark:text-slate-100 p-5 md:p-8 shadow-2xl rounded-xl transform transition-all hover:scale-[1.01] duration-300 animate-fade-in-up animation-delay-400">
+              {/* Enhanced Search Card with Premium Design */}
+              <motion.div
+                initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 1, delay: 1.2, ease: "easeOut" }}
+                className="relative"
+              >
+                {/* Glowing border effect */}
+                <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400/50 via-blue-500/50 to-purple-600/50 rounded-2xl blur-sm opacity-75"></div>
+                
+                <Card className="relative bg-white/98 dark:bg-slate-800/98 backdrop-blur-xl text-slate-900 dark:text-slate-100 p-5 md:p-8 shadow-2xl rounded-xl border border-white/20 overflow-hidden">
+                  {/* Subtle animated background pattern */}
+                  <div className="absolute inset-0 opacity-5 pointer-events-none">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-600/10 pointer-events-none"></div>
+                    {[...Array(3)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-32 h-32 bg-gradient-to-r from-yellow-400/20 to-blue-500/20 rounded-full blur-xl pointer-events-none"
+                        style={{
+                          left: `${20 + i * 30}%`,
+                          top: `${10 + i * 20}%`,
+                        }}
+                        animate={{
+                          x: [0, 20, 0],
+                          y: [0, -10, 0],
+                          opacity: [0.1, 0.3, 0.1],
+                        }}
+                        transition={{
+                          duration: 8 + i * 2,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: i * 2,
+                        }}
+                      />
+                    ))}
+                  </div>
                 <CardContent className="p-0">
                   <div className="flex flex-wrap justify-center mb-6 border-b border-slate-200 dark:border-slate-700">
                     {[
@@ -768,7 +946,8 @@ export default function HomePage() {
                     </Button>
                   </div>
                 </CardContent>
-              </Card>
+                </Card>
+              </motion.div>
             </div>
           </div>
         </section>

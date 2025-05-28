@@ -18,6 +18,7 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
   const [filters, setFilters] = useState({
     transactionType: 'all',
     propertyType: 'all',
+    source: 'all',
     city: '',
     minPrice: '',
     maxPrice: '',
@@ -38,6 +39,7 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
     const clearedFilters = {
       transactionType: 'all',
       propertyType: 'all',
+      source: 'all',
       city: '',
       minPrice: '',
       maxPrice: '',
@@ -154,6 +156,38 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
                 <SelectItem value="land">Terrain</SelectItem>
                 <SelectItem value="hotel">Hôtel</SelectItem>
                 <SelectItem value="restaurant">Restaurant</SelectItem>
+              </SelectContent>
+            </Select>
+          </motion.div>
+        </motion.div>
+
+        {/* Source des données */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.45 }}
+          className="space-y-2"
+        >
+          <Label htmlFor="source" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <motion.div
+              className="w-2 h-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500"
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.75 }}
+            />
+            Source des données
+          </Label>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Select
+              value={filters.source}
+              onValueChange={(value) => handleFilterChange('source', value)}
+            >
+              <SelectTrigger className="border-2 border-gray-200 hover:border-cyan-300 transition-colors duration-200 bg-white/80 backdrop-blur-sm">
+                <SelectValue placeholder="Toutes" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes les sources</SelectItem>
+                <SelectItem value="scraped">Propriétés scrapées</SelectItem>
+                <SelectItem value="manual">Saisie manuelle</SelectItem>
               </SelectContent>
             </Select>
           </motion.div>

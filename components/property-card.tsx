@@ -343,6 +343,16 @@ export function PropertyCard ({
               )}
               {/* Badges positionnés avec design premium */}
               <div className='absolute top-2 sm:top-4 left-2 sm:left-4 z-20 flex flex-col gap-1 sm:gap-2'>
+                {property.contactInfo?.email === 'scraped@system.com' && (
+                  <Badge
+                    variant='outline'
+                    className='bg-gradient-to-r from-blue-500 to-cyan-600 text-white border-0 shadow-lg backdrop-blur-sm text-xs px-2 sm:px-3 py-1 sm:py-1.5 font-bold rounded-full transform hover:scale-105 transition-transform duration-300'
+                  >
+                    <Building2 className='w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 mr-1 sm:mr-1.5 fill-current' />
+                    <span className='hidden sm:inline'>Scrapé</span>
+                    <span className='sm:hidden'>S</span>
+                  </Badge>
+                )}
                 {property.isPremium === true && (
                   <Badge
                     variant='default'

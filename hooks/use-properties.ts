@@ -8,6 +8,7 @@ interface UsePropertiesOptions {
   limit?: number
   transactionType?: string
   propertyType?: string
+  source?: string
   city?: string
   minPrice?: number
   maxPrice?: number

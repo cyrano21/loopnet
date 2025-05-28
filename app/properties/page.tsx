@@ -15,6 +15,7 @@ export default function PropertiesPage () {
   const [filters, setFilters] = useState({
     transactionType: '',
     propertyType: '',
+    source: '',
     city: '',
     minPrice: undefined as number | undefined,
     maxPrice: undefined as number | undefined,

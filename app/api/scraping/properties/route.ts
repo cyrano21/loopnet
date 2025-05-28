@@ -42,21 +42,30 @@ export async function POST(request: Request) {
             price: scrapedProp.price,
             surface: scrapedProp.surface || 50,
             rooms: scrapedProp.rooms || 2,
-            features: ["Scraped Data"],
+            bedrooms: Math.max(1, (scrapedProp.rooms || 2) - 1),
+            bathrooms: Math.ceil((scrapedProp.rooms || 2) / 3),
+            features: [
+              "Données scrapées",
+              scrapedProp.surface ? `Surface: ${scrapedProp.surface}m²` : "Surface à confirmer",
+              scrapedProp.rooms ? `${scrapedProp.rooms} pièces` : "Nombre de pièces à confirmer",
+              "Informations à vérifier auprès du propriétaire"
+            ],
             images: scrapedProp.images.map((url, index) => ({
               url,
-              publicId: `scraped_${Date.now()}_${index}`,
-              alt: `Photo ${index + 1}`,
+              publicId: `scraped_${scrapedProp.source}_${Date.now()}_${index}`,
+              alt: `${scrapedProp.title} - Photo ${index + 1}`,
               isPrimary: index === 0,
             })),
             owner: "507f1f77bcf86cd799439011", // ID système pour propriétés scrapées
             ownerType: "agency",
             contactInfo: {
-              name: `Source: ${scrapedProp.source}`,
+              name: `Source: ${scrapedProp.source} - ${new Date().toLocaleDateString('fr-FR')}`,
               email: "scraped@system.com",
               phone: "0000000000",
+              website: scrapedProp.url,
             },
-            status: "pending", // En attente de validation
+            status: "active", // Actif mais marqué comme scrapé
+            tags: ["scrapé", scrapedProp.source, "données-externes"],
             views: 0,
             favorites: 0,
             inquiries: 0,

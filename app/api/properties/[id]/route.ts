@@ -82,7 +82,7 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: property,
+      property: property,
     });
   } catch (error) {
     console.error("Property Detail API Error:", error);
