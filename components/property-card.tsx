@@ -287,18 +287,14 @@ export function PropertyCard ({
         {' '}        <CardHeader className='p-0 relative z-10'>
           <Link
             href={`/property/${property.slug || property._id}`}
-            passHref
-            legacyBehavior
-          >
-            <a
-              className='block aspect-[4/3] sm:aspect-[16/10] relative overflow-hidden rounded-t-xl sm:rounded-t-2xl group/image'
-              onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+            className='block aspect-[4/3] sm:aspect-[16/10] relative overflow-hidden rounded-t-xl sm:rounded-t-2xl group/image'
+            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                 if (!canActuallyViewDetails) {
                   e.preventDefault()
                   handleViewDetailsClick()
                 }
               }}
-            >
+          >
               <Image
                 src={imageUrl}
                 alt={imageAlt}
@@ -409,7 +405,6 @@ export function PropertyCard ({
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            </a>
           </Link>
         </CardHeader>{' '}
         <CardContent className='p-3 sm:p-4 md:p-5 lg:p-6 flex-grow flex flex-col relative z-10'>

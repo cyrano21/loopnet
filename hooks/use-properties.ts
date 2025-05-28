@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Property } from "@/types/property"
 
 interface UsePropertiesOptions {
@@ -74,8 +74,39 @@ export function useProperties(options: UsePropertiesOptions = {}): UseProperties
     }
   }
 
+  const debounceRef = useRef<NodeJS.Timeout | null>(null)
+
   useEffect(() => {
-    fetchProperties()
+    // Check if the change is from a text input (city or search query)
+    const isTextInput = (options.city !== undefined && options.city !== '') || 
+                       (options.q !== undefined && options.q !== '')
+    
+    if (isTextInput) {
+      // Clear existing timeout
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current)
+      }
+      
+      // Set new timeout for debounced fetch
+      debounceRef.current = setTimeout(() => {
+        fetchProperties()
+      }, 500)
+    } else {
+      // For non-text inputs (dropdowns, numbers), fetch immediately
+      // Clear any pending debounced calls
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current)
+        debounceRef.current = null
+      }
+      fetchProperties()
+    }
+
+    // Cleanup timeout on unmount or dependency change
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current)
+      }
+    }
   }, [JSON.stringify(options)])
 
   return {

@@ -1,25 +1,30 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import User from '@/models/User';
+import Property from '@/models/Property';
+import { connectToDatabase } from '@/lib/mongodb';
 
 export async function GET() {
   try {
+    // Connexion à la base de données
+    await connectToDatabase();
+
     // Récupérer les statistiques des utilisateurs
-    const users = await prisma.user.findMany();
+    const users = await User.find({});
     const userStats = {
       total: users.length,
-      admin: users.filter(user => user.role === 'ADMIN').length,
-      agent: users.filter(user => user.role === 'AGENT').length,
-      premium: users.filter(user => user.plan === 'PREMIUM').length,
-      simple: users.filter(user => user.plan === 'BASIC').length,
-      guest: users.filter(user => !user.role).length,
+      admin: users.filter(user => user.role === 'admin').length,
+      agent: users.filter(user => user.role === 'agent').length,
+      premium: users.filter(user => user.subscription?.plan === 'premium').length,
+      basic: users.filter(user => user.subscription?.plan === 'basic').length,
+      free: users.filter(user => user.subscription?.plan === 'free' || !user.subscription?.plan).length,
     };
 
     // Récupérer les statistiques des propriétés
-    const properties = await prisma.property.findMany();
+    const properties = await Property.find({});
     const propertyStats = {
       total: properties.length,
-      active: properties.filter(prop => prop.status === 'ACTIVE').length,
-      pending: properties.filter(prop => prop.status === 'PENDING').length,
+      active: properties.filter(prop => prop.status === 'active').length,
+      pending: properties.filter(prop => prop.status === 'pending').length,
     };
 
     // Statistiques de revenus (simulées pour l'exemple)
@@ -32,19 +37,15 @@ export async function GET() {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const newUsersThisMonth = await prisma.user.count({
-      where: {
-        createdAt: {
-          gte: thirtyDaysAgo
-        }
+    const newUsersThisMonth = await User.countDocuments({
+      createdAt: {
+        $gte: thirtyDaysAgo
       }
     });
 
-    const propertiesAddedThisMonth = await prisma.property.count({
-      where: {
-        createdAt: {
-          gte: thirtyDaysAgo
-        }
+    const propertiesAddedThisMonth = await Property.countDocuments({
+      createdAt: {
+        $gte: thirtyDaysAgo
       }
     });
 

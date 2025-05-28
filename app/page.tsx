@@ -24,6 +24,7 @@ import {
   Shield,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { motion } from "framer-motion";
@@ -60,25 +61,36 @@ function useOnScreen(
   const [isIntersecting, setIntersecting] = useState(false);
   useEffect(() => {
     const currentRef = ref.current;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIntersecting(true);
-          // Optional: stop observing once visible for performance
-          // if (currentRef) {
-          //   observer.unobserve(currentRef);
-          // }
-        } else {
-          // Optional: reset to false if you want animation to replay
-          // setIntersecting(false);
-        }
-      },
-      { rootMargin, threshold },
-    );
-    if (currentRef) observer.observe(currentRef);
-    return () => {
-      if (currentRef) observer.unobserve(currentRef);
-    };
+    if (!currentRef || typeof IntersectionObserver === 'undefined') {
+      return () => {};
+    }
+
+    // Utiliser try/catch pour éviter les erreurs d'instanciation
+    try {
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setIntersecting(true);
+            // Optional: stop observing once visible for performance
+            // if (currentRef) {
+            //   observer.unobserve(currentRef);
+            // }
+          } else {
+            // Optional: reset to false if you want animation to replay
+            // setIntersecting(false);
+          }
+        },
+        { rootMargin, threshold },
+      );
+
+      observer.observe(currentRef);
+      return () => {
+        observer.unobserve(currentRef);
+      };
+    } catch (error) {
+      console.error('Error with IntersectionObserver:', error);
+      return () => {};
+    }
   }, [ref, rootMargin, threshold]);
   return isIntersecting;
 }
@@ -108,7 +120,7 @@ export default function HomePage() {
 
   const router = useRouter();
   const { properties, loading, error } = useProperties({ page: 1, limit: 8 }); // VOTRE HOOK
-  const comparison = useComparison(); // Hook pour la fonctionnalité de comparaison
+  const comparison = useComparison && typeof useComparison === 'function' ? useComparison() : {}; // Hook pour la fonctionnalité de comparaison avec vérification
 
   // Refs pour les animations
   const trustSectionRef = useRef<HTMLDivElement | null>(null);
@@ -121,15 +133,16 @@ export default function HomePage() {
   const marketingSectionRef = useRef<HTMLDivElement | null>(null);
   const faqSectionRef = useRef<HTMLDivElement | null>(null);
 
-  const isTrustSectionOnScreen = useOnScreen(trustSectionRef, "-100px");
-  const isCompanyLogosOnScreen = useOnScreen(companyLogosRef, "-100px");
-  const isTrendingSectionOnScreen = useOnScreen(trendingSectionRef, "-100px");
-  const isFeaturedSectionOnScreen = useOnScreen(featuredSectionRef, "-100px");
-  const isAuctionSectionOnScreen = useOnScreen(auctionSectionRef, "-100px");
-  const isCitiesSectionOnScreen = useOnScreen(citiesSectionRef, "-100px");
-  const isArticlesSectionOnScreen = useOnScreen(articlesSectionRef, "-100px");
-  const isMarketingSectionOnScreen = useOnScreen(marketingSectionRef, "-100px");
-  const isFaqSectionOnScreen = useOnScreen(faqSectionRef, "-100px");
+  // Sécuriser les appels à useOnScreen pour éviter les erreurs avec React 19
+  const isTrustSectionOnScreen = useOnScreen ? useOnScreen(trustSectionRef, "-100px") : false;
+  const isCompanyLogosOnScreen = useOnScreen ? useOnScreen(companyLogosRef, "-100px") : false;
+  const isTrendingSectionOnScreen = useOnScreen ? useOnScreen(trendingSectionRef, "-100px") : false;
+  const isFeaturedSectionOnScreen = useOnScreen ? useOnScreen(featuredSectionRef, "-100px") : false;
+  const isAuctionSectionOnScreen = useOnScreen ? useOnScreen(auctionSectionRef, "-100px") : false;
+  const isCitiesSectionOnScreen = useOnScreen ? useOnScreen(citiesSectionRef, "-100px") : false;
+  const isArticlesSectionOnScreen = useOnScreen ? useOnScreen(articlesSectionRef, "-100px") : false;
+  const isMarketingSectionOnScreen = useOnScreen ? useOnScreen(marketingSectionRef, "-100px") : false;
+  const isFaqSectionOnScreen = useOnScreen ? useOnScreen(faqSectionRef, "-100px") : false;
 
   // VOTRE useEffect pour le timer
   useEffect(() => {
@@ -977,9 +990,8 @@ export default function HomePage() {
                           <CardHeader className="p-0 relative">
                             <Link
                               href={`/mock-property/${property.id}`}
-                              legacyBehavior
+                              className="block aspect-[4/3] relative overflow-hidden rounded-t-xl"
                             >
-                              <a className="block aspect-[4/3] relative overflow-hidden rounded-t-xl">
                                 <Image
                                   src={property.image}
                                   alt={property.type}
@@ -1009,15 +1021,13 @@ export default function HomePage() {
                                     </button>
                                   </Button>
                                 </div>
-                              </a>
                             </Link>
                           </CardHeader>
                           <CardContent className="p-4">
                             <Link
                               href={`/mock-property/${property.id}`}
-                              legacyBehavior
+                              className="block"
                             >
-                              <a className="block">
                                 <h3 className="font-semibold text-blue-700 dark:text-blue-400 text-md mb-1 hover:underline leading-tight">
                                   {property.price}
                                 </h3>
@@ -1030,7 +1040,6 @@ export default function HomePage() {
                                 <p className="text-xs text-slate-500 dark:text-slate-400">
                                   {property.size}
                                 </p>
-                              </a>
                             </Link>
                           </CardContent>
                         </Card>
@@ -1061,11 +1070,11 @@ export default function HomePage() {
                   Discover our best investment opportunities
                 </p>
               </div>
-              <Link href="/properties" passHref legacyBehavior>
+              <Link href="/properties" className="mt-4 sm:mt-0">
                 <Button
                   variant="outline"
                   size="lg"
-                  className="mt-4 sm:mt-0 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
+                  className="dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
                 >
                   View All Properties{" "}
                   <ChevronDown className="w-5 h-5 ml-2 transform rotate-[-90deg] group-hover:translate-x-1 transition-transform" />
@@ -1311,8 +1320,7 @@ export default function HomePage() {
                       : "opacity-0 translate-y-8",
                   )}
                 >
-                  <Link href={`/news/mock-article-${index}`} legacyBehavior>
-                    <a className="h-full flex flex-col">
+                  <Link href={`/news/mock-article-${index}`} className="h-full flex flex-col">
                       <div className="aspect-[16/9] overflow-hidden relative rounded-t-xl">
                         <img
                           src={article.image}
@@ -1332,7 +1340,6 @@ export default function HomePage() {
                           <ChevronDown className="w-4 h-4 ml-1 transform rotate-[-90deg] transition-transform" />
                         </span>
                       </CardContent>
-                    </a>
                   </Link>
                 </Card>
               ))}
@@ -1565,85 +1572,8 @@ export default function HomePage() {
             </div>
           </div>
         </footer>
-        
-        {/* Section Points d'intérêt */}
-        <section 
-          ref={faqSectionRef}
-          className={cn(
-            "py-16 bg-white transition-all duration-1000 ease-out",
-            isFaqSectionOnScreen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          )}
-        >
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Points d'intérêt à proximité
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Découvrez les lieux emblématiques et les commodités à proximité des biens immobiliers
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                { 
-                  icon: <Landmark className="w-8 h-8 text-blue-600" />, 
-                  title: 'Monuments', 
-                  count: '24',
-                  description: 'Sites historiques et culturels à visiter'
-                },
-                { 
-                  icon: <Store className="w-8 h-8 text-blue-600" />, 
-                  title: 'Commerces', 
-                  count: '156',
-                  description: 'Boutiques et services de proximité'
-                },
-                { 
-                  icon: <Briefcase className="w-8 h-8 text-blue-600" />, 
-                  title: 'Entreprises', 
-                  count: '89',
-                  description: 'Zones d\'activités et bureaux'
-                },
-                { 
-                  icon: <Zap className="w-8 h-8 text-blue-600" />, 
-                  title: 'Transports', 
-                  count: '12',
-                  description: 'Accès aux transports en commun et axes routiers'
-                },
-              ].map((item, index) => (
-                <motion.div 
-                  key={index} 
-                  className="bg-gray-50 p-6 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                >
-                  <div className="flex items-start space-x-4">
-                    <div className="p-3 bg-blue-50 rounded-xl shadow-sm">
-                      {item.icon}
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">{item.title}</h3>
-                      <p className="text-gray-600 font-medium text-2xl mb-1">{item.count}</p>
-                      <p className="text-sm text-gray-500">{item.description}</p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-            
-            <div className="mt-12 text-center">
-              <Button 
-                variant="outline" 
-                className="px-8 py-6 text-base font-medium"
-                onClick={() => router.push('/explore')}
-              >
-                Explorer tous les points d'intérêt
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </section>
+
+
       </div>
     </div>
   );
