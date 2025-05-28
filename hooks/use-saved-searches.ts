@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { usePermissions } from './use-permissions'
 
 interface SavedSearch {
@@ -21,15 +21,7 @@ export function useSavedSearches() {
 
   const maxSavedSearches = limit('maxSavedSearches')
 
-  useEffect(() => {
-    if (can('canSaveSearches')) {
-      fetchSavedSearches()
-    } else {
-      setLoading(false)
-    }
-  }, [can])
-
-  const fetchSavedSearches = async () => {
+  const fetchSavedSearches = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch('/api/saved-searches')
@@ -41,7 +33,15 @@ export function useSavedSearches() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (can('canSaveSearches')) {
+      fetchSavedSearches()
+    } else {
+      setLoading(false)
+    }
+  }, [can, fetchSavedSearches])
 
   const saveSearch = async (name: string, filters: Record<string, any>, alertEnabled = false) => {
     if (!can('canSaveSearches')) {

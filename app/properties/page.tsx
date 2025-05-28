@@ -2,16 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { SearchBar } from '@/components/ui/SearchBar'
-import { Pagination } from '@/components/ui/pagination'
+import { CustomPagination } from '@/components/custom-pagination'
 import { PropertyCard } from '@/components/property-card'
 import { useProperties } from '@/hooks/use-properties'
 import { usePermissions } from '@/hooks/use-permissions'
-import { Sidebar } from '@/components/ui/sidebar'
+import { PropertyFilters } from '@/components/property-filters'
 import { useComparison } from '@/components/comparison-provider'
 import { UsageLimit } from '@/components/usage-limit'
 import { AccessRestriction } from '@/components/access-restriction'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Info } from 'lucide-react'
 
 export default function PropertiesPage () {
   const [filters, setFilters] = useState({
@@ -111,13 +109,17 @@ export default function PropertiesPage () {
 
       {/* Alerte pour les utilisateurs non connectés */}
       {userRole === 'guest' && (
-        <Alert className='mb-6'>
-          <Info className='h-4 w-4' />
-          <AlertDescription>
-            Créez un compte gratuit pour voir plus de propriétés et accéder à
-            plus de fonctionnalités.
-          </AlertDescription>
-        </Alert>
+        <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+          <div className="flex items-center">
+            <svg className="h-4 w-4 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-sm text-blue-800">
+              Créez un compte gratuit pour voir plus de propriétés et accéder à
+              plus de fonctionnalités.
+            </p>
+          </div>
+        </div>
       )}
 
       <div className='flex flex-col lg:flex-row gap-6'>
@@ -131,7 +133,7 @@ export default function PropertiesPage () {
               </div>
             }
           >
-            <Sidebar onFilterChange={handleFilterChange} />
+            <PropertyFilters onFilterChange={handleFilterChange} />
           </AccessRestriction>
         </div>
 
@@ -191,7 +193,7 @@ export default function PropertiesPage () {
               {/* Pagination */}
               {pagination && pagination.totalPages > 1 && !isAtViewLimit && (
                 <div className='flex justify-center'>
-                  <Pagination
+                  <CustomPagination
                     currentPage={filters.page}
                     totalPages={pagination.totalPages}
                     onPageChange={handlePageChange}

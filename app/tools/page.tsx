@@ -186,6 +186,7 @@ function isValidUserPermissionKey (key: string): key is keyof UserPermissions {
       'canExportData',
       'canGenerateReports',
       'canUseCRM',
+      'canManageTasks',
       'canUseAI',
       'canAccessAPI',
       'hasCustomerSupport'

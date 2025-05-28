@@ -1,0 +1,15 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "Deerfield",
+    "Raton",
+    "Amwell",
+    "Hillsborough",
+    "Boynton"
+  ],
+  "ignorePaths": [
+    "node_modules/**",
+    ".git/**"
+  ]
+}

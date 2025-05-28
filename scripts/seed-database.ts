@@ -1,3 +1,9 @@
+import dotenv from 'dotenv'
+import path from 'path'
+
+// Charger les variables d'environnement depuis .env.local
+dotenv.config({ path: path.join(process.cwd(), '.env.local') })
+
 import { connectToDatabase } from "../lib/mongodb"
 import User from "../models/User"
 import Property from "../models/Property"
@@ -446,23 +452,41 @@ export async function seedDatabase() {
     const createdUsers = await User.insertMany(sampleUsers)
     console.log(`✅ ${createdUsers.length} utilisateurs créés`)
 
-    // Associer les propriétés aux utilisateurs
-    const propertiesWithOwners = sampleProperties.map((property, index) => ({
-      ...property,
-      owner: createdUsers[index % createdUsers.length]._id,
-      ownerType: createdUsers[index % createdUsers.length].role === "agent" ? "agent" : "individual",
-    }))
+    // Associer les propriétés aux utilisateurs et générer les slugs
+    const propertiesWithOwners = sampleProperties.map((property, index) => {
+      const slug = property.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "") + "-" + Date.now() + "-" + index
+      
+      return {
+        ...property,
+        slug,
+        owner: createdUsers[index % createdUsers.length]._id,
+        ownerType: createdUsers[index % createdUsers.length].role === "agent" ? "agent" : "individual",
+      }
+    })
 
     // Créer les propriétés
     console.log("🏢 Création des propriétés...")
     const createdProperties = await Property.insertMany(propertiesWithOwners)
     console.log(`✅ ${createdProperties.length} propriétés créées`)
 
-    // Associer les demandes aux propriétés
+    // Associer les demandes aux propriétés et corriger la structure
     const inquiriesWithProperties = sampleInquiries.map((inquiry, index) => ({
-      ...inquiry,
       property: createdProperties[index % createdProperties.length]._id,
-      propertyOwner: createdProperties[index % createdProperties.length].owner,
+      owner: createdProperties[index % createdProperties.length].owner,
+      inquirer: createdUsers[0]._id, // Utiliser le premier utilisateur comme inquirer
+      message: inquiry.message,
+      contactMethod: "email",
+      inquirerInfo: {
+        name: inquiry.inquirerName,
+        email: inquiry.inquirerEmail,
+        phone: inquiry.inquirerPhone
+      },
+      status: inquiry.status === "responded" ? "replied" : inquiry.status,
+      visitRequested: inquiry.inquiryType === "visit",
+      preferredVisitDate: inquiry.inquiryType === "visit" ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) : undefined
     }))
 
     // Créer les demandes

@@ -42,6 +42,9 @@ export interface UserPermissions {
   // CRM Features
   canUseCRM: boolean
 
+  // Task Management
+  canManageTasks: boolean
+
   // Premium Features
   canUseAI: boolean
   canAccessAPI: boolean
@@ -83,6 +86,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, UserPermissions> = {
 
     canUseCRM: false,
 
+    canManageTasks: false,
+
     canUseAI: false,
     canAccessAPI: false,
     hasCustomerSupport: "none",
@@ -121,6 +126,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, UserPermissions> = {
     canGenerateReports: false,
 
     canUseCRM: false,
+
+    canManageTasks: false,
 
     canUseAI: false,
     canAccessAPI: false,
@@ -161,6 +168,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, UserPermissions> = {
 
     canUseCRM: false,
 
+    canManageTasks: true,
+
     canUseAI: true,
     canAccessAPI: false,
     hasCustomerSupport: "priority",
@@ -200,6 +209,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, UserPermissions> = {
 
     canUseCRM: true,
 
+    canManageTasks: true,
+
     canUseAI: true,
     canAccessAPI: true,
     hasCustomerSupport: "dedicated",
@@ -238,6 +249,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, UserPermissions> = {
     canGenerateReports: true,
 
     canUseCRM: true,
+
+    canManageTasks: true,
 
     canUseAI: true,
     canAccessAPI: true,

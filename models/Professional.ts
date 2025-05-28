@@ -10,8 +10,8 @@ const ProfessionalSchema = new mongoose.Schema(
     location: {
       address: String,
       city: { type: String, required: true },
-      state: { type: String, required: true },
-      zipCode: String,
+      postalCode: String,
+      country: { type: String, default: "France" },
     },
     specialties: [{ type: String, required: true }],
     certifications: [String],
@@ -35,7 +35,7 @@ const ProfessionalSchema = new mongoose.Schema(
   },
 )
 
-ProfessionalSchema.index({ location: "2dsphere" })
+ProfessionalSchema.index({ "location.city": 1 })
 ProfessionalSchema.index({ specialties: 1 })
 ProfessionalSchema.index({ rating: -1 })
 

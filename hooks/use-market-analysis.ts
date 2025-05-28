@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { usePermissions } from './use-permissions'
 
 interface MarketTrends {
@@ -42,44 +42,42 @@ export function useMarketAnalysis(propertyId: string, propertyType: string, loca
   const [error, setError] = useState<string | null>(null)
   const { can } = usePermissions()
 
-  useEffect(() => {
-    const fetchMarketAnalysis = async () => {
-      // Vérifier si l'utilisateur a les permissions nécessaires
-      if (!can('canViewMarketAnalytics')) {
-        setLoading(false)
-        return
-      }
-
-      try {
-        setLoading(true)
-        // Construire les paramètres de requête
-        const params = new URLSearchParams({
-          propertyType,
-          city: location.city,
-          state: location.state
-        })
-        if (location.zip) {
-          params.append('zip', location.zip)
-        }
-
-        // Appeler l'API d'analyse de marché
-        const response = await fetch(`/api/market-analysis/${propertyId}?${params.toString()}`)
-        if (!response.ok) {
-          throw new Error('Erreur lors du chargement des données d\'analyse de marché')
-        }
-
-        const data = await response.json()
-        setMarketData(data)
-      } catch (err) {
-        console.error('Erreur d\'analyse de marché:', err)
-        setError(err instanceof Error ? err.message : 'Une erreur s\'est produite')
-      } finally {
-        setLoading(false)
-      }
+  const fetchMarketAnalysis = useCallback(async () => {
+    // Vérifier si l'utilisateur a les permissions nécessaires
+    if (!can('canViewMarketAnalytics')) {
+      setLoading(false)
+      return
     }
 
+    try {
+      setLoading(true)
+      // Construire les paramètres de requête
+      const params = new URLSearchParams({
+        propertyType,
+        city: location.city,
+        state: location.state
+      })
+      if (location.zip) {
+        params.append('zip', location.zip)
+      }      // Appeler l'API d'analyse de marché
+      const response = await fetch(`/api/market-analysis/${propertyId}?${params.toString()}`)
+      if (!response.ok) {
+        throw new Error('Erreur lors du chargement des données d\'analyse de marché')
+      }
+      
+      const data = await response.json()
+      setMarketData(data)
+    } catch (err) {
+      console.error('Erreur d\'analyse de marché:', err)
+      setError(err instanceof Error ? err.message : 'Une erreur s\'est produite')
+    } finally {
+      setLoading(false)
+    }
+  }, [propertyId, propertyType, location.city, location.state, location.zip, can])
+
+  useEffect(() => {
     fetchMarketAnalysis()
-  }, [propertyId, propertyType, location, can])
+  }, [fetchMarketAnalysis])
 
   return {
     marketData,

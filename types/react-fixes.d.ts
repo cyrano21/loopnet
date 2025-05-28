@@ -2,7 +2,7 @@
 // Ce fichier fournit les définitions de types manquantes pour React 19
 
 declare module "react" {
-  import * as CSS from 'csstype';
+  import * as CSS from "csstype";
 
   // Types de base
   type ReactText = string | number;
@@ -10,7 +10,13 @@ declare module "react" {
 
   interface ReactNodeArray extends Array<ReactNode> {}
   type ReactFragment = {} | ReactNodeArray;
-  type ReactNode = ReactChild | ReactFragment | boolean | null | undefined;
+  type ReactNode =
+    | ReactChild
+    | ReactFragment
+    | ReactPortal
+    | boolean
+    | null
+    | undefined;
 
   type Key = string | number;
 
@@ -55,7 +61,7 @@ declare module "react" {
     style?: CSSProperties | undefined;
     tabIndex?: number | undefined;
     title?: string | undefined;
-    translate?: 'yes' | 'no' | undefined;
+    translate?: "yes" | "no" | undefined;
     radioGroup?: string | undefined;
     role?: AriaRole | undefined;
     about?: string | undefined;
@@ -76,141 +82,194 @@ declare module "react" {
     itemType?: string | undefined;
     itemID?: string | undefined;
     security?: string | undefined;
-    unselectable?: 'on' | 'off' | undefined;
-    inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search' | undefined;
+    unselectable?: "on" | "off" | undefined;
+    inputMode?:
+      | "none"
+      | "text"
+      | "tel"
+      | "url"
+      | "email"
+      | "numeric"
+      | "decimal"
+      | "search"
+      | undefined;
     is?: string | undefined;
   }
 
   // Props ARIA
   interface AriaAttributes {
-    'aria-activedescendant'?: string | undefined;
-    'aria-atomic'?: Booleanish | undefined;
-    'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both' | undefined;
-    'aria-busy'?: Booleanish | undefined;
-    'aria-checked'?: boolean | 'false' | 'mixed' | 'true' | undefined;
-    'aria-colcount'?: number | undefined;
-    'aria-colindex'?: number | undefined;
-    'aria-colspan'?: number | undefined;
-    'aria-controls'?: string | undefined;
-    'aria-current'?: boolean | 'false' | 'true' | 'page' | 'step' | 'location' | 'date' | 'time' | undefined;
-    'aria-describedby'?: string | undefined;
-    'aria-details'?: string | undefined;
-    'aria-disabled'?: Booleanish | undefined;
-    'aria-dropeffect'?: 'none' | 'copy' | 'execute' | 'link' | 'move' | 'popup' | undefined;
-    'aria-errormessage'?: string | undefined;
-    'aria-expanded'?: Booleanish | undefined;
-    'aria-flowto'?: string | undefined;
-    'aria-grabbed'?: Booleanish | undefined;
-    'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | undefined;
-    'aria-hidden'?: Booleanish | undefined;
-    'aria-invalid'?: boolean | 'false' | 'true' | 'grammar' | 'spelling' | undefined;
-    'aria-keyshortcuts'?: string | undefined;
-    'aria-label'?: string | undefined;
-    'aria-labelledby'?: string | undefined;
-    'aria-level'?: number | undefined;
-    'aria-live'?: 'off' | 'assertive' | 'polite' | undefined;
-    'aria-modal'?: Booleanish | undefined;
-    'aria-multiline'?: Booleanish | undefined;
-    'aria-multiselectable'?: Booleanish | undefined;
-    'aria-orientation'?: 'horizontal' | 'vertical' | undefined;
-    'aria-owns'?: string | undefined;
-    'aria-placeholder'?: string | undefined;
-    'aria-posinset'?: number | undefined;
-    'aria-pressed'?: boolean | 'false' | 'mixed' | 'true' | undefined;
-    'aria-readonly'?: Booleanish | undefined;
-    'aria-relevant'?: 'additions' | 'additions removals' | 'additions text' | 'all' | 'removals' | 'removals additions' | 'removals text' | 'text' | 'text additions' | 'text removals' | undefined;
-    'aria-required'?: Booleanish | undefined;
-    'aria-roledescription'?: string | undefined;
-    'aria-rowcount'?: number | undefined;
-    'aria-rowindex'?: number | undefined;
-    'aria-rowspan'?: number | undefined;
-    'aria-selected'?: Booleanish | undefined;
-    'aria-setsize'?: number | undefined;
-    'aria-sort'?: 'none' | 'ascending' | 'descending' | 'other' | undefined;
-    'aria-valuemax'?: number | undefined;
-    'aria-valuemin'?: number | undefined;
-    'aria-valuenow'?: number | undefined;
-    'aria-valuetext'?: string | undefined;
+    "aria-activedescendant"?: string | undefined;
+    "aria-atomic"?: Booleanish | undefined;
+    "aria-autocomplete"?: "none" | "inline" | "list" | "both" | undefined;
+    "aria-busy"?: Booleanish | undefined;
+    "aria-checked"?: boolean | "false" | "mixed" | "true" | undefined;
+    "aria-colcount"?: number | undefined;
+    "aria-colindex"?: number | undefined;
+    "aria-colspan"?: number | undefined;
+    "aria-controls"?: string | undefined;
+    "aria-current"?:
+      | boolean
+      | "false"
+      | "true"
+      | "page"
+      | "step"
+      | "location"
+      | "date"
+      | "time"
+      | undefined;
+    "aria-describedby"?: string | undefined;
+    "aria-details"?: string | undefined;
+    "aria-disabled"?: Booleanish | undefined;
+    "aria-dropeffect"?:
+      | "none"
+      | "copy"
+      | "execute"
+      | "link"
+      | "move"
+      | "popup"
+      | undefined;
+    "aria-errormessage"?: string | undefined;
+    "aria-expanded"?: Booleanish | undefined;
+    "aria-flowto"?: string | undefined;
+    "aria-grabbed"?: Booleanish | undefined;
+    "aria-haspopup"?:
+      | boolean
+      | "false"
+      | "true"
+      | "menu"
+      | "listbox"
+      | "tree"
+      | "grid"
+      | "dialog"
+      | undefined;
+    "aria-hidden"?: Booleanish | undefined;
+    "aria-invalid"?:
+      | boolean
+      | "false"
+      | "true"
+      | "grammar"
+      | "spelling"
+      | undefined;
+    "aria-keyshortcuts"?: string | undefined;
+    "aria-label"?: string | undefined;
+    "aria-labelledby"?: string | undefined;
+    "aria-level"?: number | undefined;
+    "aria-live"?: "off" | "assertive" | "polite" | undefined;
+    "aria-modal"?: Booleanish | undefined;
+    "aria-multiline"?: Booleanish | undefined;
+    "aria-multiselectable"?: Booleanish | undefined;
+    "aria-orientation"?: "horizontal" | "vertical" | undefined;
+    "aria-owns"?: string | undefined;
+    "aria-placeholder"?: string | undefined;
+    "aria-posinset"?: number | undefined;
+    "aria-pressed"?: boolean | "false" | "mixed" | "true" | undefined;
+    "aria-readonly"?: Booleanish | undefined;
+    "aria-relevant"?:
+      | "additions"
+      | "additions removals"
+      | "additions text"
+      | "all"
+      | "removals"
+      | "removals additions"
+      | "removals text"
+      | "text"
+      | "text additions"
+      | "text removals"
+      | undefined;
+    "aria-required"?: Booleanish | undefined;
+    "aria-roledescription"?: string | undefined;
+    "aria-rowcount"?: number | undefined;
+    "aria-rowindex"?: number | undefined;
+    "aria-rowspan"?: number | undefined;
+    "aria-selected"?: Booleanish | undefined;
+    "aria-setsize"?: number | undefined;
+    "aria-sort"?: "none" | "ascending" | "descending" | "other" | undefined;
+    "aria-valuemax"?: number | undefined;
+    "aria-valuemin"?: number | undefined;
+    "aria-valuenow"?: number | undefined;
+    "aria-valuetext"?: string | undefined;
   }
 
   type AriaRole =
-    | 'alert'
-    | 'alertdialog'
-    | 'application'
-    | 'article'
-    | 'banner'
-    | 'button'
-    | 'cell'
-    | 'checkbox'
-    | 'columnheader'
-    | 'combobox'
-    | 'complementary'
-    | 'contentinfo'
-    | 'definition'
-    | 'dialog'
-    | 'directory'
-    | 'document'
-    | 'feed'
-    | 'figure'
-    | 'form'
-    | 'grid'
-    | 'gridcell'
-    | 'group'
-    | 'heading'
-    | 'img'
-    | 'link'
-    | 'list'
-    | 'listbox'
-    | 'listitem'
-    | 'log'
-    | 'main'
-    | 'marquee'
-    | 'math'
-    | 'menu'
-    | 'menubar'
-    | 'menuitem'
-    | 'menuitemcheckbox'
-    | 'menuitemradio'
-    | 'navigation'
-    | 'none'
-    | 'note'
-    | 'option'
-    | 'presentation'
-    | 'progressbar'
-    | 'radio'
-    | 'radiogroup'
-    | 'region'
-    | 'row'
-    | 'rowgroup'
-    | 'rowheader'
-    | 'scrollbar'
-    | 'search'
-    | 'searchbox'
-    | 'separator'
-    | 'slider'
-    | 'spinbutton'
-    | 'status'
-    | 'switch'
-    | 'tab'
-    | 'table'
-    | 'tablist'
-    | 'tabpanel'
-    | 'term'
-    | 'textbox'
-    | 'timer'
-    | 'toolbar'
-    | 'tooltip'
-    | 'tree'
-    | 'treegrid'
-    | 'treeitem'
+    | "alert"
+    | "alertdialog"
+    | "application"
+    | "article"
+    | "banner"
+    | "button"
+    | "cell"
+    | "checkbox"
+    | "columnheader"
+    | "combobox"
+    | "complementary"
+    | "contentinfo"
+    | "definition"
+    | "dialog"
+    | "directory"
+    | "document"
+    | "feed"
+    | "figure"
+    | "form"
+    | "grid"
+    | "gridcell"
+    | "group"
+    | "heading"
+    | "img"
+    | "link"
+    | "list"
+    | "listbox"
+    | "listitem"
+    | "log"
+    | "main"
+    | "marquee"
+    | "math"
+    | "menu"
+    | "menubar"
+    | "menuitem"
+    | "menuitemcheckbox"
+    | "menuitemradio"
+    | "navigation"
+    | "none"
+    | "note"
+    | "option"
+    | "presentation"
+    | "progressbar"
+    | "radio"
+    | "radiogroup"
+    | "region"
+    | "row"
+    | "rowgroup"
+    | "rowheader"
+    | "scrollbar"
+    | "search"
+    | "searchbox"
+    | "separator"
+    | "slider"
+    | "spinbutton"
+    | "status"
+    | "switch"
+    | "tab"
+    | "table"
+    | "tablist"
+    | "tabpanel"
+    | "term"
+    | "textbox"
+    | "timer"
+    | "toolbar"
+    | "tooltip"
+    | "tree"
+    | "treegrid"
+    | "treeitem"
     | (string & {});
 
   // Types de DOM
   interface DOMAttributes<T> {
     children?: ReactNode | undefined;
-    dangerouslySetInnerHTML?: {
-      __html: string;
-    } | undefined;
+    dangerouslySetInnerHTML?:
+      | {
+          __html: string;
+        }
+      | undefined;
 
     // Clipboard Events
     onCopy?: ClipboardEventHandler<T> | undefined;
@@ -405,10 +464,12 @@ declare module "react" {
 
   type CSSProperties = CSS.Properties<string | number>;
 
-  type Booleanish = boolean | 'true' | 'false';
+  type Booleanish = boolean | "true" | "false";
 
   // Event handlers
-  type EventHandler<E extends SyntheticEvent<any>> = { bivarianceHack(event: E): void }['bivarianceHack'];
+  type EventHandler<E extends SyntheticEvent<any>> = {
+    bivarianceHack(event: E): void;
+  }["bivarianceHack"];
 
   type ReactEventHandler<T = Element> = EventHandler<SyntheticEvent<T>>;
   type ClipboardEventHandler<T = Element> = EventHandler<ClipboardEvent<T>>;
@@ -445,13 +506,16 @@ declare module "react" {
     type: string;
   }
 
-  interface SyntheticEvent<T = Element, E = Event> extends BaseSyntheticEvent<E, EventTarget & T, EventTarget> {}
+  interface SyntheticEvent<T = Element, E = Event>
+    extends BaseSyntheticEvent<E, EventTarget & T, EventTarget> {}
 
-  interface ClipboardEvent<T = Element> extends SyntheticEvent<T, NativeClipboardEvent> {
+  interface ClipboardEvent<T = Element>
+    extends SyntheticEvent<T, NativeClipboardEvent> {
     clipboardData: DataTransfer;
   }
 
-  interface CompositionEvent<T = Element> extends SyntheticEvent<T, NativeCompositionEvent> {
+  interface CompositionEvent<T = Element>
+    extends SyntheticEvent<T, NativeCompositionEvent> {
     data: string;
   }
 
@@ -459,7 +523,8 @@ declare module "react" {
     dataTransfer: DataTransfer;
   }
 
-  interface PointerEvent<T = Element> extends MouseEvent<T, NativePointerEvent> {
+  interface PointerEvent<T = Element>
+    extends MouseEvent<T, NativePointerEvent> {
     pointerId: number;
     pressure: number;
     tangentialPressure: number;
@@ -468,11 +533,12 @@ declare module "react" {
     twist: number;
     width: number;
     height: number;
-    pointerType: 'mouse' | 'pen' | 'touch';
+    pointerType: "mouse" | "pen" | "touch";
     isPrimary: boolean;
   }
 
-  interface FocusEvent<Target = Element, RelatedTarget = Element> extends SyntheticEvent<Target, NativeFocusEvent> {
+  interface FocusEvent<Target = Element, RelatedTarget = Element>
+    extends SyntheticEvent<Target, NativeFocusEvent> {
     relatedTarget: (EventTarget & RelatedTarget) | null;
     target: EventTarget & Target;
   }
@@ -499,7 +565,8 @@ declare module "react" {
     which: number;
   }
 
-  interface MouseEvent<T = Element, E = NativeMouseEvent> extends UIEvent<T, E> {
+  interface MouseEvent<T = Element, E = NativeMouseEvent>
+    extends UIEvent<T, E> {
     altKey: boolean;
     button: number;
     buttons: number;
@@ -529,7 +596,8 @@ declare module "react" {
     touches: TouchList;
   }
 
-  interface UIEvent<T = Element, E = NativeUIEvent> extends SyntheticEvent<T, E> {
+  interface UIEvent<T = Element, E = NativeUIEvent>
+    extends SyntheticEvent<T, E> {
     detail: number;
     view: AbstractView;
   }
@@ -541,13 +609,15 @@ declare module "react" {
     deltaZ: number;
   }
 
-  interface AnimationEvent<T = Element> extends SyntheticEvent<T, NativeAnimationEvent> {
+  interface AnimationEvent<T = Element>
+    extends SyntheticEvent<T, NativeAnimationEvent> {
     animationName: string;
     elapsedTime: number;
     pseudoElement: string;
   }
 
-  interface TransitionEvent<T = Element> extends SyntheticEvent<T, NativeTransitionEvent> {
+  interface TransitionEvent<T = Element>
+    extends SyntheticEvent<T, NativeTransitionEvent> {
     elapsedTime: number;
     propertyName: string;
     pseudoElement: string;
@@ -576,7 +646,8 @@ declare module "react" {
     displayName?: string | undefined;
   }
 
-  interface ComponentClass<P = {}, S = ComponentState> extends StaticLifecycle<P, S> {
+  interface ComponentClass<P = {}, S = ComponentState>
+    extends StaticLifecycle<P, S> {
     new (props: P, context?: any): Component<P, S>;
     propTypes?: WeakValidationMap<P> | undefined;
     contextType?: Context<any> | undefined;
@@ -594,7 +665,12 @@ declare module "react" {
     | ((props: P) => ReactElement<any, any> | null)
     | (new (props: P) => Component<any, any>);
 
-  interface ReactElement<P = any, T extends string | JSXElementConstructor<any> = string | JSXElementConstructor<any>> {
+  interface ReactElement<
+    P = any,
+    T extends string | JSXElementConstructor<any> =
+      | string
+      | JSXElementConstructor<any>
+  > {
     type: T;
     props: P;
     key: Key | null;
@@ -619,21 +695,28 @@ declare module "react" {
   // Component class
   interface ComponentState {}
 
-  interface Component<P = {}, S = {}, SS = any> extends ComponentLifecycle<P, S, SS> {}
+  interface Component<P = {}, S = {}, SS = any>
+    extends ComponentLifecycle<P, S, SS> {}
 
   class Component<P, S> {
     constructor(props: Readonly<P> | P);
     constructor(props: P, context: any);
 
     setState<K extends keyof S>(
-      state: ((prevState: Readonly<S>, props: Readonly<P>) => (Pick<S, K> | S | null)) | (Pick<S, K> | S | null),
+      state:
+        | ((
+            prevState: Readonly<S>,
+            props: Readonly<P>
+          ) => Pick<S, K> | S | null)
+        | (Pick<S, K> | S | null),
       callback?: () => void
     ): void;
 
     forceUpdate(callback?: () => void): void;
     render(): ReactNode;
 
-    readonly props: Readonly<P> & Readonly<{ children?: ReactNode | undefined }>;
+    readonly props: Readonly<P> &
+      Readonly<{ children?: ReactNode | undefined }>;
     state: Readonly<S>;
     context: any;
     refs: {
@@ -641,9 +724,15 @@ declare module "react" {
     };
   }
 
-  interface ComponentLifecycle<P, S, SS = any> extends NewLifecycle<P, S, SS>, DeprecatedLifecycle<P, S> {
+  interface ComponentLifecycle<P, S, SS = any>
+    extends NewLifecycle<P, S, SS>,
+      DeprecatedLifecycle<P, S> {
     componentDidMount?(): void;
-    shouldComponentUpdate?(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): boolean;
+    shouldComponentUpdate?(
+      nextProps: Readonly<P>,
+      nextState: Readonly<S>,
+      nextContext: any
+    ): boolean;
     componentWillUnmount?(): void;
     componentDidCatch?(error: Error, errorInfo: ErrorInfo): void;
   }
@@ -653,22 +742,43 @@ declare module "react" {
     getDerivedStateFromError?: GetDerivedStateFromError<P, S> | undefined;
   }
 
-  type GetDerivedStateFromProps<P, S> = (nextProps: Readonly<P>, prevState: S) => Partial<S> | null;
+  type GetDerivedStateFromProps<P, S> = (
+    nextProps: Readonly<P>,
+    prevState: S
+  ) => Partial<S> | null;
 
   type GetDerivedStateFromError<P, S> = (error: any) => Partial<S> | null;
 
   interface NewLifecycle<P, S, SS> {
-    getSnapshotBeforeUpdate?(prevProps: Readonly<P>, prevState: Readonly<S>): SS | null;
-    componentDidUpdate?(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: SS): void;
+    getSnapshotBeforeUpdate?(
+      prevProps: Readonly<P>,
+      prevState: Readonly<S>
+    ): SS | null;
+    componentDidUpdate?(
+      prevProps: Readonly<P>,
+      prevState: Readonly<S>,
+      snapshot?: SS
+    ): void;
   }
 
   interface DeprecatedLifecycle<P, S> {
     componentWillMount?(): void;
     UNSAFE_componentWillMount?(): void;
     componentWillReceiveProps?(nextProps: Readonly<P>, nextContext: any): void;
-    UNSAFE_componentWillReceiveProps?(nextProps: Readonly<P>, nextContext: any): void;
-    componentWillUpdate?(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): void;
-    UNSAFE_componentWillUpdate?(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): void;
+    UNSAFE_componentWillReceiveProps?(
+      nextProps: Readonly<P>,
+      nextContext: any
+    ): void;
+    componentWillUpdate?(
+      nextProps: Readonly<P>,
+      nextState: Readonly<S>,
+      nextContext: any
+    ): void;
+    UNSAFE_componentWillUpdate?(
+      nextProps: Readonly<P>,
+      nextState: Readonly<S>,
+      nextContext: any
+    ): void;
   }
 
   interface ErrorInfo {
@@ -692,15 +802,24 @@ declare module "react" {
     render: ForwardRefRenderFunction<T, P>
   ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>>;
 
-  type ForwardedRef<T> = ((instance: T | null) => void) | MutableRefObject<T | null> | null;
+  type ForwardedRef<T> =
+    | ((instance: T | null) => void)
+    | MutableRefObject<T | null>
+    | null;
 
   // Props utilities
-  type PropsWithChildren<P = unknown> = P & { children?: ReactNode | undefined };
+  type PropsWithChildren<P = unknown> = P & {
+    children?: ReactNode | undefined;
+  };
 
-  type PropsWithoutRef<P> = P extends any ? ('ref' extends keyof P ? Pick<P, Exclude<keyof P, 'ref'>> : P) : P;
+  type PropsWithoutRef<P> = P extends any
+    ? "ref" extends keyof P
+      ? Pick<P, Exclude<keyof P, "ref">>
+      : P
+    : P;
 
   type PropsWithRef<P> = P extends any
-    ? 'ref' extends keyof P
+    ? "ref" extends keyof P
       ? P extends { ref?: infer R | undefined }
         ? string extends R
           ? PropsWithoutRef<P> & { ref?: Exclude<R, string> | undefined }
@@ -733,7 +852,9 @@ declare module "react" {
     propTypes?: never | undefined;
   }
 
-  type ContextType<C extends Context<any>> = C extends Context<infer T> ? T : never;
+  type ContextType<C extends Context<any>> = C extends Context<infer T>
+    ? T
+    : never;
 
   // Exotic component types
   interface ExoticComponent<P = {}> {
@@ -750,11 +871,16 @@ declare module "react" {
   type SetStateAction<S> = S | ((prevState: S) => S);
 
   // Hooks
-  function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>];
-  function useState<S = undefined>(): [S | undefined, Dispatch<SetStateAction<S | undefined>>];
+  function useState<S>(
+    initialState: S | (() => S)
+  ): [S, Dispatch<SetStateAction<S>>];
+  function useState<S = undefined>(): [
+    S | undefined,
+    Dispatch<SetStateAction<S | undefined>>
+  ];
 
   function useEffect(effect: EffectCallback, deps?: DependencyList): void;
-  type EffectCallback = () => (void | (() => void | undefined));
+  type EffectCallback = () => void | (() => void | undefined);
   type DependencyList = ReadonlyArray<any>;
 
   function useContext<T>(context: Context<T>): T;
@@ -772,10 +898,23 @@ declare module "react" {
   ): [ReducerState<R>, Dispatch<ReducerAction<R>>];
 
   type Reducer<S, A> = (prevState: S, action: A) => S;
-  type ReducerState<R extends Reducer<any, any>> = R extends Reducer<infer S, any> ? S : never;
-  type ReducerAction<R extends Reducer<any, any>> = R extends Reducer<any, infer A> ? A : never;
+  type ReducerState<R extends Reducer<any, any>> = R extends Reducer<
+    infer S,
+    any
+  >
+    ? S
+    : never;
+  type ReducerAction<R extends Reducer<any, any>> = R extends Reducer<
+    any,
+    infer A
+  >
+    ? A
+    : never;
 
-  function useCallback<T extends Function>(callback: T, deps: DependencyList): T;
+  function useCallback<T extends Function>(
+    callback: T,
+    deps: DependencyList
+  ): T;
 
   function useMemo<T>(factory: () => T, deps: DependencyList | undefined): T;
 
@@ -787,7 +926,11 @@ declare module "react" {
     current: T;
   }
 
-  function useImperativeHandle<T, R extends T>(ref: Ref<T> | undefined, init: () => R, deps?: DependencyList): void;
+  function useImperativeHandle<T, R extends T>(
+    ref: Ref<T> | undefined,
+    init: () => R,
+    deps?: DependencyList
+  ): void;
 
   function useLayoutEffect(effect: EffectCallback, deps?: DependencyList): void;
 
@@ -806,11 +949,20 @@ declare module "react" {
     getServerSnapshot?: () => T
   ): T;
 
-  function useInsertionEffect(effect: EffectCallback, deps?: DependencyList): void;
+  function useInsertionEffect(
+    effect: EffectCallback,
+    deps?: DependencyList
+  ): void;
 
   // Validation
   interface Validator<T> {
-    (object: T, key: string, componentName: string, location: string, propFullName: string): Error | null;
+    (
+      object: T,
+      key: string,
+      componentName: string,
+      location: string,
+      propFullName: string
+    ): Error | null;
   }
 
   interface Requireable<T> extends Validator<T> {
@@ -833,65 +985,81 @@ declare module "react" {
   // createElement
   function createElement<P extends HTMLAttributes<T>, T extends HTMLElement>(
     type: keyof ReactHTML,
-    props?: ClassAttributes<T> & P | null,
-    ...children: ReactNode[]): DetailedReactHTMLElement<P, T>;
+    props?: (ClassAttributes<T> & P) | null,
+    ...children: ReactNode[]
+  ): DetailedReactHTMLElement<P, T>;
 
   function createElement<P extends HTMLAttributes<T>, T extends HTMLElement>(
     type: string,
-    props?: ClassAttributes<T> & P | null,
-    ...children: ReactNode[]): ReactElement<P>;
+    props?: (ClassAttributes<T> & P) | null,
+    ...children: ReactNode[]
+  ): ReactElement<P>;
 
   function createElement<P extends SVGAttributes<T>, T extends SVGElement>(
     type: keyof ReactSVG,
-    props?: ClassAttributes<T> & P | null,
-    ...children: ReactNode[]): ReactSVGElement;
+    props?: (ClassAttributes<T> & P) | null,
+    ...children: ReactNode[]
+  ): ReactSVGElement;
 
   function createElement<P extends DOMAttributes<T>, T extends Element>(
     type: string,
-    props?: ClassAttributes<T> & P | null,
-    ...children: ReactNode[]): DOMElement<P, T>;
+    props?: (ClassAttributes<T> & P) | null,
+    ...children: ReactNode[]
+  ): DOMElement<P, T>;
 
   function createElement<P extends {}>(
     type: FunctionComponent<P>,
-    props?: Attributes & P | null,
-    ...children: ReactNode[]): FunctionComponentElement<P>;
+    props?: (Attributes & P) | null,
+    ...children: ReactNode[]
+  ): FunctionComponentElement<P>;
 
   function createElement<P extends {}>(
     type: ComponentClass<P>,
-    props?: ClassAttributes<ComponentClass<P>> & P | null,
-    ...children: ReactNode[]): CElement<P, ComponentClass<P>>;
+    props?: (ClassAttributes<ComponentClass<P>> & P) | null,
+    ...children: ReactNode[]
+  ): CElement<P, ComponentClass<P>>;
 
   function createElement<P extends {}>(
     type: FunctionComponent<P> | ComponentClass<P> | string,
-    props?: Attributes & P | null,
-    ...children: ReactNode[]): ReactElement<P>;
+    props?: (Attributes & P) | null,
+    ...children: ReactNode[]
+  ): ReactElement<P>;
 
   // Detailed element types
-  interface DetailedReactHTMLElement<P extends HTMLAttributes<T>, T extends HTMLElement> extends ReactElement<P, string> {
+  interface DetailedReactHTMLElement<
+    P extends HTMLAttributes<T>,
+    T extends HTMLElement
+  > extends ReactElement<P, string> {
     type: keyof ReactHTML;
     props: P;
     key: Key | null;
   }
 
-  interface ReactSVGElement extends ReactElement<SVGAttributes<SVGElement>, string> {
+  interface ReactSVGElement
+    extends ReactElement<SVGAttributes<SVGElement>, string> {
     type: keyof ReactSVG;
     props: SVGAttributes<SVGElement>;
     key: Key | null;
   }
 
-  interface DOMElement<P extends HTMLAttributes<T> | SVGAttributes<T>, T extends Element> extends ReactElement<P, string> {
+  interface DOMElement<
+    P extends HTMLAttributes<T> | SVGAttributes<T>,
+    T extends Element
+  > extends ReactElement<P, string> {
     type: string;
     props: P;
     key: Key | null;
   }
 
-  interface FunctionComponentElement<P> extends ReactElement<P, FunctionComponent<P>> {
+  interface FunctionComponentElement<P>
+    extends ReactElement<P, FunctionComponent<P>> {
     type: FunctionComponent<P>;
     props: P;
     key: Key | null;
   }
 
-  interface CElement<P, T extends Component<P, ComponentState>> extends ReactElement<P, ComponentClass<P>> {
+  interface CElement<P, T extends Component<P, ComponentState>>
+    extends ReactElement<P, ComponentClass<P>> {
     type: ComponentClass<P>;
     props: P;
     key: Key | null;
@@ -958,7 +1126,7 @@ declare module "react" {
     view: SVGProps<SVGViewElement>;
   }
 
-  interface SVGProps<T> extends SVGAttributes<T>, ClassAttributes<T> { }
+  interface SVGProps<T> extends SVGAttributes<T>, ClassAttributes<T> {}
 
   interface SVGAttributes<T> extends AriaAttributes, DOMAttributes<T> {
     className?: string | undefined;
@@ -982,8 +1150,21 @@ declare module "react" {
     accentHeight?: number | string | undefined;
     accumulate?: "none" | "sum" | undefined;
     additive?: "replace" | "sum" | undefined;
-    alignmentBaseline?: "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" |
-    "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit" | undefined;
+    alignmentBaseline?:
+      | "auto"
+      | "baseline"
+      | "before-edge"
+      | "text-before-edge"
+      | "middle"
+      | "central"
+      | "after-edge"
+      | "text-after-edge"
+      | "ideographic"
+      | "alphabetic"
+      | "hanging"
+      | "mathematical"
+      | "inherit"
+      | undefined;
     allowReorder?: "no" | "yes" | undefined;
     alphabetic?: number | string | undefined;
     amplitude?: number | string | undefined;
@@ -1007,7 +1188,12 @@ declare module "react" {
     clipPathUnits?: number | string | undefined;
     clipRule?: number | string | undefined;
     colorInterpolation?: number | string | undefined;
-    colorInterpolationFilters?: "auto" | "sRGB" | "linearRGB" | "inherit" | undefined;
+    colorInterpolationFilters?:
+      | "auto"
+      | "sRGB"
+      | "linearRGB"
+      | "inherit"
+      | undefined;
     colorProfile?: number | string | undefined;
     colorRendering?: number | string | undefined;
     contentScriptType?: number | string | undefined;
@@ -1227,51 +1413,70 @@ declare module "react" {
   function cloneElement<P extends HTMLAttributes<T>, T extends HTMLElement>(
     element: DetailedReactHTMLElement<P, T>,
     props?: P,
-    ...children: ReactNode[]): DetailedReactHTMLElement<P, T>;
+    ...children: ReactNode[]
+  ): DetailedReactHTMLElement<P, T>;
 
   function cloneElement<P extends HTMLAttributes<T>, T extends HTMLElement>(
     element: ReactHTMLElement<T>,
     props?: P,
-    ...children: ReactNode[]): ReactHTMLElement<T>;
+    ...children: ReactNode[]
+  ): ReactHTMLElement<T>;
 
   function cloneElement<P extends SVGAttributes<T>, T extends SVGElement>(
     element: ReactSVGElement,
     props?: P,
-    ...children: ReactNode[]): ReactSVGElement;
+    ...children: ReactNode[]
+  ): ReactSVGElement;
 
   function cloneElement<P extends DOMAttributes<T>, T extends Element>(
     element: DOMElement<P, T>,
     props?: DOMAttributes<T> & P,
-    ...children: ReactNode[]): DOMElement<P, T>;
+    ...children: ReactNode[]
+  ): DOMElement<P, T>;
 
   function cloneElement<P>(
     element: FunctionComponentElement<P>,
     props?: Partial<P> & Attributes,
-    ...children: ReactNode[]): FunctionComponentElement<P>;
+    ...children: ReactNode[]
+  ): FunctionComponentElement<P>;
 
   function cloneElement<P, T extends Component<P, ComponentState>>(
     element: CElement<P, T>,
     props?: Partial<P> & ClassAttributes<T>,
-    ...children: ReactNode[]): CElement<P, T>;
+    ...children: ReactNode[]
+  ): CElement<P, T>;
 
   function cloneElement<P>(
     element: ReactElement<P>,
     props?: Partial<P> & Attributes,
-    ...children: ReactNode[]): ReactElement<P>;
+    ...children: ReactNode[]
+  ): ReactElement<P>;
 
   // createContext
   function createContext<T>(defaultValue: T): Context<T>;
 
   // isValidElement
-  function isValidElement<P>(object: {} | null | undefined): object is ReactElement<P>;
+  function isValidElement<P>(
+    object: {} | null | undefined
+  ): object is ReactElement<P>;
 
   // Children utilities
   interface ReactChildren {
-    map<T, C>(children: C | ReadonlyArray<C>, fn: (child: C, index: number) => T): C extends null | undefined ? C : Array<Exclude<T, boolean | null | undefined>>;
-    forEach<C>(children: C | ReadonlyArray<C>, fn: (child: C, index: number) => void): void;
+    map<T, C>(
+      children: C | ReadonlyArray<C>,
+      fn: (child: C, index: number) => T
+    ): C extends null | undefined
+      ? C
+      : Array<Exclude<T, boolean | null | undefined>>;
+    forEach<C>(
+      children: C | ReadonlyArray<C>,
+      fn: (child: C, index: number) => void
+    ): void;
     count(children: any): number;
     only<C>(children: C): C extends any[] ? never : C;
-    toArray(children: ReactNode | ReactNode[]): Array<Exclude<ReactNode, boolean | null | undefined>>;
+    toArray(
+      children: ReactNode | ReactNode[]
+    ): Array<Exclude<ReactNode, boolean | null | undefined>>;
   }
 
   const Children: ReactChildren;
@@ -1295,23 +1500,32 @@ declare module "react" {
     factory: () => Promise<{ default: T }>
   ): LazyExoticComponent<T>;
 
-  interface LazyExoticComponent<T extends ComponentType<any>> extends ExoticComponent<ComponentPropsWithRef<T>> {
+  interface LazyExoticComponent<T extends ComponentType<any>>
+    extends ExoticComponent<ComponentPropsWithRef<T>> {
     readonly _result: T;
   }
 
-  type ComponentPropsWithRef<T extends ElementType> = T extends (new (props: infer P) => Component<any, any>)
+  type ComponentPropsWithRef<T extends ElementType> = T extends new (
+    props: infer P
+  ) => Component<any, any>
     ? PropsWithoutRef<P> & RefAttributes<InstanceType<T>>
     : ComponentProps<T>;
 
-  type ComponentProps<T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>> = T extends JSXElementConstructor<infer P>
+  type ComponentProps<
+    T extends keyof JSX.IntrinsicElements | JSXElementConstructor<any>
+  > = T extends JSXElementConstructor<infer P>
     ? P
     : T extends keyof JSX.IntrinsicElements
     ? JSX.IntrinsicElements[T]
     : {};
 
-  type ElementType<P = any> = {
-    [K in keyof JSX.IntrinsicElements]: P extends JSX.IntrinsicElements[K] ? K : never
-  }[keyof JSX.IntrinsicElements] | ComponentType<P>;
+  type ElementType<P = any> =
+    | {
+        [K in keyof JSX.IntrinsicElements]: P extends JSX.IntrinsicElements[K]
+          ? K
+          : never;
+      }[keyof JSX.IntrinsicElements]
+    | ComponentType<P>;
 
   // Memo
   function memo<P extends object>(
@@ -1321,10 +1535,14 @@ declare module "react" {
 
   function memo<T extends ComponentType<any>>(
     Component: T,
-    propsAreEqual?: (prevProps: Readonly<ComponentProps<T>>, nextProps: Readonly<ComponentProps<T>>) => boolean
+    propsAreEqual?: (
+      prevProps: Readonly<ComponentProps<T>>,
+      nextProps: Readonly<ComponentProps<T>>
+    ) => boolean
   ): MemoExoticComponent<T>;
 
-  interface MemoExoticComponent<T extends ComponentType<any>> extends NamedExoticComponent<ComponentPropsWithRef<T>> {
+  interface MemoExoticComponent<T extends ComponentType<any>>
+    extends NamedExoticComponent<ComponentPropsWithRef<T>> {
     readonly type: T;
   }
 
@@ -1364,12 +1582,22 @@ declare module "react" {
     >;
   };
 
-  interface DetailedHTMLFactory<P extends DOMAttributes<T>, T extends HTMLElement> extends DOMFactory<P, T> {
-    (props?: ClassAttributes<T> & P// Types de compatibilité pour React 19
+  interface DetailedHTMLFactory<
+    P extends DOMAttributes<T>,
+    T extends HTMLElement
+  > extends DOMFactory<P, T> {
+    (
+      props?: (ClassAttributes<T> & P) | null,
+      ...children: ReactNode[]
+    ): DOMElement<P, T>;
+  }
+}
+
+// Types de compatibilité pour React 19
 // Ce fichier fournit les définitions de types manquantes pour React 19
 
 declare module "react" {
-  import * as CSS from 'csstype';
+  import * as CSS from "csstype";
 
   // Types de base
   type ReactText = string | number;
@@ -1377,7 +1605,13 @@ declare module "react" {
 
   interface ReactNodeArray extends Array<ReactNode> {}
   type ReactFragment = {} | ReactNodeArray;
-  type ReactNode = ReactChild | ReactFragment | boolean | null | undefined;
+  type ReactNode =
+    | ReactChild
+    | ReactFragment
+    | ReactPortal
+    | boolean
+    | null
+    | undefined;
 
   type Key = string | number;
 
@@ -1422,7 +1656,7 @@ declare module "react" {
     style?: CSSProperties | undefined;
     tabIndex?: number | undefined;
     title?: string | undefined;
-    translate?: 'yes' | 'no' | undefined;
+    translate?: "yes" | "no" | undefined;
     radioGroup?: string | undefined;
     role?: AriaRole | undefined;
     about?: string | undefined;
@@ -1443,141 +1677,194 @@ declare module "react" {
     itemType?: string | undefined;
     itemID?: string | undefined;
     security?: string | undefined;
-    unselectable?: 'on' | 'off' | undefined;
-    inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search' | undefined;
+    unselectable?: "on" | "off" | undefined;
+    inputMode?:
+      | "none"
+      | "text"
+      | "tel"
+      | "url"
+      | "email"
+      | "numeric"
+      | "decimal"
+      | "search"
+      | undefined;
     is?: string | undefined;
   }
 
   // Props ARIA
   interface AriaAttributes {
-    'aria-activedescendant'?: string | undefined;
-    'aria-atomic'?: Booleanish | undefined;
-    'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both' | undefined;
-    'aria-busy'?: Booleanish | undefined;
-    'aria-checked'?: boolean | 'false' | 'mixed' | 'true' | undefined;
-    'aria-colcount'?: number | undefined;
-    'aria-colindex'?: number | undefined;
-    'aria-colspan'?: number | undefined;
-    'aria-controls'?: string | undefined;
-    'aria-current'?: boolean | 'false' | 'true' | 'page' | 'step' | 'location' | 'date' | 'time' | undefined;
-    'aria-describedby'?: string | undefined;
-    'aria-details'?: string | undefined;
-    'aria-disabled'?: Booleanish | undefined;
-    'aria-dropeffect'?: 'none' | 'copy' | 'execute' | 'link' | 'move' | 'popup' | undefined;
-    'aria-errormessage'?: string | undefined;
-    'aria-expanded'?: Booleanish | undefined;
-    'aria-flowto'?: string | undefined;
-    'aria-grabbed'?: Booleanish | undefined;
-    'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog' | undefined;
-    'aria-hidden'?: Booleanish | undefined;
-    'aria-invalid'?: boolean | 'false' | 'true' | 'grammar' | 'spelling' | undefined;
-    'aria-keyshortcuts'?: string | undefined;
-    'aria-label'?: string | undefined;
-    'aria-labelledby'?: string | undefined;
-    'aria-level'?: number | undefined;
-    'aria-live'?: 'off' | 'assertive' | 'polite' | undefined;
-    'aria-modal'?: Booleanish | undefined;
-    'aria-multiline'?: Booleanish | undefined;
-    'aria-multiselectable'?: Booleanish | undefined;
-    'aria-orientation'?: 'horizontal' | 'vertical' | undefined;
-    'aria-owns'?: string | undefined;
-    'aria-placeholder'?: string | undefined;
-    'aria-posinset'?: number | undefined;
-    'aria-pressed'?: boolean | 'false' | 'mixed' | 'true' | undefined;
-    'aria-readonly'?: Booleanish | undefined;
-    'aria-relevant'?: 'additions' | 'additions removals' | 'additions text' | 'all' | 'removals' | 'removals additions' | 'removals text' | 'text' | 'text additions' | 'text removals' | undefined;
-    'aria-required'?: Booleanish | undefined;
-    'aria-roledescription'?: string | undefined;
-    'aria-rowcount'?: number | undefined;
-    'aria-rowindex'?: number | undefined;
-    'aria-rowspan'?: number | undefined;
-    'aria-selected'?: Booleanish | undefined;
-    'aria-setsize'?: number | undefined;
-    'aria-sort'?: 'none' | 'ascending' | 'descending' | 'other' | undefined;
-    'aria-valuemax'?: number | undefined;
-    'aria-valuemin'?: number | undefined;
-    'aria-valuenow'?: number | undefined;
-    'aria-valuetext'?: string | undefined;
+    "aria-activedescendant"?: string | undefined;
+    "aria-atomic"?: Booleanish | undefined;
+    "aria-autocomplete"?: "none" | "inline" | "list" | "both" | undefined;
+    "aria-busy"?: Booleanish | undefined;
+    "aria-checked"?: boolean | "false" | "mixed" | "true" | undefined;
+    "aria-colcount"?: number | undefined;
+    "aria-colindex"?: number | undefined;
+    "aria-colspan"?: number | undefined;
+    "aria-controls"?: string | undefined;
+    "aria-current"?:
+      | boolean
+      | "false"
+      | "true"
+      | "page"
+      | "step"
+      | "location"
+      | "date"
+      | "time"
+      | undefined;
+    "aria-describedby"?: string | undefined;
+    "aria-details"?: string | undefined;
+    "aria-disabled"?: Booleanish | undefined;
+    "aria-dropeffect"?:
+      | "none"
+      | "copy"
+      | "execute"
+      | "link"
+      | "move"
+      | "popup"
+      | undefined;
+    "aria-errormessage"?: string | undefined;
+    "aria-expanded"?: Booleanish | undefined;
+    "aria-flowto"?: string | undefined;
+    "aria-grabbed"?: Booleanish | undefined;
+    "aria-haspopup"?:
+      | boolean
+      | "false"
+      | "true"
+      | "menu"
+      | "listbox"
+      | "tree"
+      | "grid"
+      | "dialog"
+      | undefined;
+    "aria-hidden"?: Booleanish | undefined;
+    "aria-invalid"?:
+      | boolean
+      | "false"
+      | "true"
+      | "grammar"
+      | "spelling"
+      | undefined;
+    "aria-keyshortcuts"?: string | undefined;
+    "aria-label"?: string | undefined;
+    "aria-labelledby"?: string | undefined;
+    "aria-level"?: number | undefined;
+    "aria-live"?: "off" | "assertive" | "polite" | undefined;
+    "aria-modal"?: Booleanish | undefined;
+    "aria-multiline"?: Booleanish | undefined;
+    "aria-multiselectable"?: Booleanish | undefined;
+    "aria-orientation"?: "horizontal" | "vertical" | undefined;
+    "aria-owns"?: string | undefined;
+    "aria-placeholder"?: string | undefined;
+    "aria-posinset"?: number | undefined;
+    "aria-pressed"?: boolean | "false" | "mixed" | "true" | undefined;
+    "aria-readonly"?: Booleanish | undefined;
+    "aria-relevant"?:
+      | "additions"
+      | "additions removals"
+      | "additions text"
+      | "all"
+      | "removals"
+      | "removals additions"
+      | "removals text"
+      | "text"
+      | "text additions"
+      | "text removals"
+      | undefined;
+    "aria-required"?: Booleanish | undefined;
+    "aria-roledescription"?: string | undefined;
+    "aria-rowcount"?: number | undefined;
+    "aria-rowindex"?: number | undefined;
+    "aria-rowspan"?: number | undefined;
+    "aria-selected"?: Booleanish | undefined;
+    "aria-setsize"?: number | undefined;
+    "aria-sort"?: "none" | "ascending" | "descending" | "other" | undefined;
+    "aria-valuemax"?: number | undefined;
+    "aria-valuemin"?: number | undefined;
+    "aria-valuenow"?: number | undefined;
+    "aria-valuetext"?: string | undefined;
   }
 
   type AriaRole =
-    | 'alert'
-    | 'alertdialog'
-    | 'application'
-    | 'article'
-    | 'banner'
-    | 'button'
-    | 'cell'
-    | 'checkbox'
-    | 'columnheader'
-    | 'combobox'
-    | 'complementary'
-    | 'contentinfo'
-    | 'definition'
-    | 'dialog'
-    | 'directory'
-    | 'document'
-    | 'feed'
-    | 'figure'
-    | 'form'
-    | 'grid'
-    | 'gridcell'
-    | 'group'
-    | 'heading'
-    | 'img'
-    | 'link'
-    | 'list'
-    | 'listbox'
-    | 'listitem'
-    | 'log'
-    | 'main'
-    | 'marquee'
-    | 'math'
-    | 'menu'
-    | 'menubar'
-    | 'menuitem'
-    | 'menuitemcheckbox'
-    | 'menuitemradio'
-    | 'navigation'
-    | 'none'
-    | 'note'
-    | 'option'
-    | 'presentation'
-    | 'progressbar'
-    | 'radio'
-    | 'radiogroup'
-    | 'region'
-    | 'row'
-    | 'rowgroup'
-    | 'rowheader'
-    | 'scrollbar'
-    | 'search'
-    | 'searchbox'
-    | 'separator'
-    | 'slider'
-    | 'spinbutton'
-    | 'status'
-    | 'switch'
-    | 'tab'
-    | 'table'
-    | 'tablist'
-    | 'tabpanel'
-    | 'term'
-    | 'textbox'
-    | 'timer'
-    | 'toolbar'
-    | 'tooltip'
-    | 'tree'
-    | 'treegrid'
-    | 'treeitem'
+    | "alert"
+    | "alertdialog"
+    | "application"
+    | "article"
+    | "banner"
+    | "button"
+    | "cell"
+    | "checkbox"
+    | "columnheader"
+    | "combobox"
+    | "complementary"
+    | "contentinfo"
+    | "definition"
+    | "dialog"
+    | "directory"
+    | "document"
+    | "feed"
+    | "figure"
+    | "form"
+    | "grid"
+    | "gridcell"
+    | "group"
+    | "heading"
+    | "img"
+    | "link"
+    | "list"
+    | "listbox"
+    | "listitem"
+    | "log"
+    | "main"
+    | "marquee"
+    | "math"
+    | "menu"
+    | "menubar"
+    | "menuitem"
+    | "menuitemcheckbox"
+    | "menuitemradio"
+    | "navigation"
+    | "none"
+    | "note"
+    | "option"
+    | "presentation"
+    | "progressbar"
+    | "radio"
+    | "radiogroup"
+    | "region"
+    | "row"
+    | "rowgroup"
+    | "rowheader"
+    | "scrollbar"
+    | "search"
+    | "searchbox"
+    | "separator"
+    | "slider"
+    | "spinbutton"
+    | "status"
+    | "switch"
+    | "tab"
+    | "table"
+    | "tablist"
+    | "tabpanel"
+    | "term"
+    | "textbox"
+    | "timer"
+    | "toolbar"
+    | "tooltip"
+    | "tree"
+    | "treegrid"
+    | "treeitem"
     | (string & {});
 
   // Types de DOM
   interface DOMAttributes<T> {
     children?: ReactNode | undefined;
-    dangerouslySetInnerHTML?: {
-      __html: string;
-    } | undefined;
+    dangerouslySetInnerHTML?:
+      | {
+          __html: string;
+        }
+      | undefined;
 
     // Clipboard Events
     onCopy?: ClipboardEventHandler<T> | undefined;
@@ -1772,10 +2059,12 @@ declare module "react" {
 
   type CSSProperties = CSS.Properties<string | number>;
 
-  type Booleanish = boolean | 'true' | 'false';
+  type Booleanish = boolean | "true" | "false";
 
   // Event handlers
-  type EventHandler<E extends SyntheticEvent<any>> = { bivarianceHack(event: E): void }['bivarianceHack'];
+  type EventHandler<E extends SyntheticEvent<any>> = {
+    bivarianceHack(event: E): void;
+  }["bivarianceHack"];
 
   type ReactEventHandler<T = Element> = EventHandler<SyntheticEvent<T>>;
   type ClipboardEventHandler<T = Element> = EventHandler<ClipboardEvent<T>>;
@@ -1812,13 +2101,16 @@ declare module "react" {
     type: string;
   }
 
-  interface SyntheticEvent<T = Element, E = Event> extends BaseSyntheticEvent<E, EventTarget & T, EventTarget> {}
+  interface SyntheticEvent<T = Element, E = Event>
+    extends BaseSyntheticEvent<E, EventTarget & T, EventTarget> {}
 
-  interface ClipboardEvent<T = Element> extends SyntheticEvent<T, NativeClipboardEvent> {
+  interface ClipboardEvent<T = Element>
+    extends SyntheticEvent<T, NativeClipboardEvent> {
     clipboardData: DataTransfer;
   }
 
-  interface CompositionEvent<T = Element> extends SyntheticEvent<T, NativeCompositionEvent> {
+  interface CompositionEvent<T = Element>
+    extends SyntheticEvent<T, NativeCompositionEvent> {
     data: string;
   }
 
@@ -1826,7 +2118,8 @@ declare module "react" {
     dataTransfer: DataTransfer;
   }
 
-  interface PointerEvent<T = Element> extends MouseEvent<T, NativePointerEvent> {
+  interface PointerEvent<T = Element>
+    extends MouseEvent<T, NativePointerEvent> {
     pointerId: number;
     pressure: number;
     tangentialPressure: number;
@@ -1835,11 +2128,12 @@ declare module "react" {
     twist: number;
     width: number;
     height: number;
-    pointerType: 'mouse' | 'pen' | 'touch';
+    pointerType: "mouse" | "pen" | "touch";
     isPrimary: boolean;
   }
 
-  interface FocusEvent<Target = Element, RelatedTarget = Element> extends SyntheticEvent<Target, NativeFocusEvent> {
+  interface FocusEvent<Target = Element, RelatedTarget = Element>
+    extends SyntheticEvent<Target, NativeFocusEvent> {
     relatedTarget: (EventTarget & RelatedTarget) | null;
     target: EventTarget & Target;
   }
@@ -1866,7 +2160,8 @@ declare module "react" {
     which: number;
   }
 
-  interface MouseEvent<T = Element, E = NativeMouseEvent> extends UIEvent<T, E> {
+  interface MouseEvent<T = Element, E = NativeMouseEvent>
+    extends UIEvent<T, E> {
     altKey: boolean;
     button: number;
     buttons: number;
@@ -1896,7 +2191,8 @@ declare module "react" {
     touches: TouchList;
   }
 
-  interface UIEvent<T = Element, E = NativeUIEvent> extends SyntheticEvent<T, E> {
+  interface UIEvent<T = Element, E = NativeUIEvent>
+    extends SyntheticEvent<T, E> {
     detail: number;
     view: AbstractView;
   }
@@ -1908,13 +2204,15 @@ declare module "react" {
     deltaZ: number;
   }
 
-  interface AnimationEvent<T = Element> extends SyntheticEvent<T, NativeAnimationEvent> {
+  interface AnimationEvent<T = Element>
+    extends SyntheticEvent<T, NativeAnimationEvent> {
     animationName: string;
     elapsedTime: number;
     pseudoElement: string;
   }
 
-  interface TransitionEvent<T = Element> extends SyntheticEvent<T, NativeTransitionEvent> {
+  interface TransitionEvent<T = Element>
+    extends SyntheticEvent<T, NativeTransitionEvent> {
     elapsedTime: number;
     propertyName: string;
     pseudoElement: string;
@@ -1943,7 +2241,8 @@ declare module "react" {
     displayName?: string | undefined;
   }
 
-  interface ComponentClass<P = {}, S = ComponentState> extends StaticLifecycle<P, S> {
+  interface ComponentClass<P = {}, S = ComponentState>
+    extends StaticLifecycle<P, S> {
     new (props: P, context?: any): Component<P, S>;
     propTypes?: WeakValidationMap<P> | undefined;
     contextType?: Context<any> | undefined;
@@ -1961,7 +2260,12 @@ declare module "react" {
     | ((props: P) => ReactElement<any, any> | null)
     | (new (props: P) => Component<any, any>);
 
-  interface ReactElement<P = any, T extends string | JSXElementConstructor<any> = string | JSXElementConstructor<any>> {
+  interface ReactElement<
+    P = any,
+    T extends string | JSXElementConstructor<any> =
+      | string
+      | JSXElementConstructor<any>
+  > {
     type: T;
     props: P;
     key: Key | null;
@@ -1986,21 +2290,28 @@ declare module "react" {
   // Component class
   interface ComponentState {}
 
-  interface Component<P = {}, S = {}, SS = any> extends ComponentLifecycle<P, S, SS> {}
+  interface Component<P = {}, S = {}, SS = any>
+    extends ComponentLifecycle<P, S, SS> {}
 
   class Component<P, S> {
     constructor(props: Readonly<P> | P);
     constructor(props: P, context: any);
 
     setState<K extends keyof S>(
-      state: ((prevState: Readonly<S>, props: Readonly<P>) => (Pick<S, K> | S | null)) | (Pick<S, K> | S | null),
+      state:
+        | ((
+            prevState: Readonly<S>,
+            props: Readonly<P>
+          ) => Pick<S, K> | S | null)
+        | (Pick<S, K> | S | null),
       callback?: () => void
     ): void;
 
     forceUpdate(callback?: () => void): void;
     render(): ReactNode;
 
-    readonly props: Readonly<P> & Readonly<{ children?: ReactNode | undefined }>;
+    readonly props: Readonly<P> &
+      Readonly<{ children?: ReactNode | undefined }>;
     state: Readonly<S>;
     context: any;
     refs: {
@@ -2008,9 +2319,15 @@ declare module "react" {
     };
   }
 
-  interface ComponentLifecycle<P, S, SS = any> extends NewLifecycle<P, S, SS>, DeprecatedLifecycle<P, S> {
+  interface ComponentLifecycle<P, S, SS = any>
+    extends NewLifecycle<P, S, SS>,
+      DeprecatedLifecycle<P, S> {
     componentDidMount?(): void;
-    shouldComponentUpdate?(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): boolean;
+    shouldComponentUpdate?(
+      nextProps: Readonly<P>,
+      nextState: Readonly<S>,
+      nextContext: any
+    ): boolean;
     componentWillUnmount?(): void;
     componentDidCatch?(error: Error, errorInfo: ErrorInfo): void;
   }
@@ -2020,22 +2337,43 @@ declare module "react" {
     getDerivedStateFromError?: GetDerivedStateFromError<P, S> | undefined;
   }
 
-  type GetDerivedStateFromProps<P, S> = (nextProps: Readonly<P>, prevState: S) => Partial<S> | null;
+  type GetDerivedStateFromProps<P, S> = (
+    nextProps: Readonly<P>,
+    prevState: S
+  ) => Partial<S> | null;
 
   type GetDerivedStateFromError<P, S> = (error: any) => Partial<S> | null;
 
   interface NewLifecycle<P, S, SS> {
-    getSnapshotBeforeUpdate?(prevProps: Readonly<P>, prevState: Readonly<S>): SS | null;
-    componentDidUpdate?(prevProps: Readonly<P>, prevState: Readonly<S>, snapshot?: SS): void;
+    getSnapshotBeforeUpdate?(
+      prevProps: Readonly<P>,
+      prevState: Readonly<S>
+    ): SS | null;
+    componentDidUpdate?(
+      prevProps: Readonly<P>,
+      prevState: Readonly<S>,
+      snapshot?: SS
+    ): void;
   }
 
   interface DeprecatedLifecycle<P, S> {
     componentWillMount?(): void;
     UNSAFE_componentWillMount?(): void;
     componentWillReceiveProps?(nextProps: Readonly<P>, nextContext: any): void;
-    UNSAFE_componentWillReceiveProps?(nextProps: Readonly<P>, nextContext: any): void;
-    componentWillUpdate?(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): void;
-    UNSAFE_componentWillUpdate?(nextProps: Readonly<P>, nextState: Readonly<S>, nextContext: any): void;
+    UNSAFE_componentWillReceiveProps?(
+      nextProps: Readonly<P>,
+      nextContext: any
+    ): void;
+    componentWillUpdate?(
+      nextProps: Readonly<P>,
+      nextState: Readonly<S>,
+      nextContext: any
+    ): void;
+    UNSAFE_componentWillUpdate?(
+      nextProps: Readonly<P>,
+      nextState: Readonly<S>,
+      nextContext: any
+    ): void;
   }
 
   interface ErrorInfo {
@@ -2059,15 +2397,24 @@ declare module "react" {
     render: ForwardRefRenderFunction<T, P>
   ): ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>>;
 
-  type ForwardedRef<T> = ((instance: T | null) => void) | MutableRefObject<T | null> | null;
+  type ForwardedRef<T> =
+    | ((instance: T | null) => void)
+    | MutableRefObject<T | null>
+    | null;
 
   // Props utilities
-  type PropsWithChildren<P = unknown> = P & { children?: ReactNode | undefined };
+  type PropsWithChildren<P = unknown> = P & {
+    children?: ReactNode | undefined;
+  };
 
-  type PropsWithoutRef<P> = P extends any ? ('ref' extends keyof P ? Pick<P, Exclude<keyof P, 'ref'>> : P) : P;
+  type PropsWithoutRef<P> = P extends any
+    ? "ref" extends keyof P
+      ? Pick<P, Exclude<keyof P, "ref">>
+      : P
+    : P;
 
   type PropsWithRef<P> = P extends any
-    ? 'ref' extends keyof P
+    ? "ref" extends keyof P
       ? P extends { ref?: infer R | undefined }
         ? string extends R
           ? PropsWithoutRef<P> & { ref?: Exclude<R, string> | undefined }
@@ -2100,7 +2447,9 @@ declare module "react" {
     propTypes?: never | undefined;
   }
 
-  type ContextType<C extends Context<any>> = C extends Context<infer T> ? T : never;
+  type ContextType<C extends Context<any>> = C extends Context<infer T>
+    ? T
+    : never;
 
   // Exotic component types
   interface ExoticComponent<P = {}> {
@@ -2117,11 +2466,16 @@ declare module "react" {
   type SetStateAction<S> = S | ((prevState: S) => S);
 
   // Hooks
-  function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>];
-  function useState<S = undefined>(): [S | undefined, Dispatch<SetStateAction<S | undefined>>];
+  function useState<S>(
+    initialState: S | (() => S)
+  ): [S, Dispatch<SetStateAction<S>>];
+  function useState<S = undefined>(): [
+    S | undefined,
+    Dispatch<SetStateAction<S | undefined>>
+  ];
 
   function useEffect(effect: EffectCallback, deps?: DependencyList): void;
-  type EffectCallback = () => (void | (() => void | undefined));
+  type EffectCallback = () => void | (() => void | undefined);
   type DependencyList = ReadonlyArray<any>;
 
   function useContext<T>(context: Context<T>): T;
@@ -2139,10 +2493,23 @@ declare module "react" {
   ): [ReducerState<R>, Dispatch<ReducerAction<R>>];
 
   type Reducer<S, A> = (prevState: S, action: A) => S;
-  type ReducerState<R extends Reducer<any, any>> = R extends Reducer<infer S, any> ? S : never;
-  type ReducerAction<R extends Reducer<any, any>> = R extends Reducer<any, infer A> ? A : never;
+  type ReducerState<R extends Reducer<any, any>> = R extends Reducer<
+    infer S,
+    any
+  >
+    ? S
+    : never;
+  type ReducerAction<R extends Reducer<any, any>> = R extends Reducer<
+    any,
+    infer A
+  >
+    ? A
+    : never;
 
-  function useCallback<T extends Function>(callback: T, deps: DependencyList): T;
+  function useCallback<T extends Function>(
+    callback: T,
+    deps: DependencyList
+  ): T;
 
   function useMemo<T>(factory: () => T, deps: DependencyList | undefined): T;
 
@@ -2154,7 +2521,11 @@ declare module "react" {
     current: T;
   }
 
-  function useImperativeHandle<T, R extends T>(ref: Ref<T> | undefined, init: () => R, deps?: DependencyList): void;
+  function useImperativeHandle<T, R extends T>(
+    ref: Ref<T> | undefined,
+    init: () => R,
+    deps?: DependencyList
+  ): void;
 
   function useLayoutEffect(effect: EffectCallback, deps?: DependencyList): void;
 
@@ -2173,11 +2544,20 @@ declare module "react" {
     getServerSnapshot?: () => T
   ): T;
 
-  function useInsertionEffect(effect: EffectCallback, deps?: DependencyList): void;
+  function useInsertionEffect(
+    effect: EffectCallback,
+    deps?: DependencyList
+  ): void;
 
   // Validation
   interface Validator<T> {
-    (object: T, key: string, componentName: string, location: string, propFullName: string): Error | null;
+    (
+      object: T,
+      key: string,
+      componentName: string,
+      location: string,
+      propFullName: string
+    ): Error | null;
   }
 
   interface Requireable<T> extends Validator<T> {
@@ -2200,65 +2580,81 @@ declare module "react" {
   // createElement
   function createElement<P extends HTMLAttributes<T>, T extends HTMLElement>(
     type: keyof ReactHTML,
-    props?: ClassAttributes<T> & P | null,
-    ...children: ReactNode[]): DetailedReactHTMLElement<P, T>;
+    props?: (ClassAttributes<T> & P) | null,
+    ...children: ReactNode[]
+  ): DetailedReactHTMLElement<P, T>;
 
   function createElement<P extends HTMLAttributes<T>, T extends HTMLElement>(
     type: string,
-    props?: ClassAttributes<T> & P | null,
-    ...children: ReactNode[]): ReactElement<P>;
+    props?: (ClassAttributes<T> & P) | null,
+    ...children: ReactNode[]
+  ): ReactElement<P>;
 
   function createElement<P extends SVGAttributes<T>, T extends SVGElement>(
     type: keyof ReactSVG,
-    props?: ClassAttributes<T> & P | null,
-    ...children: ReactNode[]): ReactSVGElement;
+    props?: (ClassAttributes<T> & P) | null,
+    ...children: ReactNode[]
+  ): ReactSVGElement;
 
   function createElement<P extends DOMAttributes<T>, T extends Element>(
     type: string,
-    props?: ClassAttributes<T> & P | null,
-    ...children: ReactNode[]): DOMElement<P, T>;
+    props?: (ClassAttributes<T> & P) | null,
+    ...children: ReactNode[]
+  ): DOMElement<P, T>;
 
   function createElement<P extends {}>(
     type: FunctionComponent<P>,
-    props?: Attributes & P | null,
-    ...children: ReactNode[]): FunctionComponentElement<P>;
+    props?: (Attributes & P) | null,
+    ...children: ReactNode[]
+  ): FunctionComponentElement<P>;
 
   function createElement<P extends {}>(
     type: ComponentClass<P>,
-    props?: ClassAttributes<ComponentClass<P>> & P | null,
-    ...children: ReactNode[]): CElement<P, ComponentClass<P>>;
+    props?: (ClassAttributes<ComponentClass<P>> & P) | null,
+    ...children: ReactNode[]
+  ): CElement<P, ComponentClass<P>>;
 
   function createElement<P extends {}>(
     type: FunctionComponent<P> | ComponentClass<P> | string,
-    props?: Attributes & P | null,
-    ...children: ReactNode[]): ReactElement<P>;
+    props?: (Attributes & P) | null,
+    ...children: ReactNode[]
+  ): ReactElement<P>;
 
   // Detailed element types
-  interface DetailedReactHTMLElement<P extends HTMLAttributes<T>, T extends HTMLElement> extends ReactElement<P, string> {
+  interface DetailedReactHTMLElement<
+    P extends HTMLAttributes<T>,
+    T extends HTMLElement
+  > extends ReactElement<P, string> {
     type: keyof ReactHTML;
     props: P;
     key: Key | null;
   }
 
-  interface ReactSVGElement extends ReactElement<SVGAttributes<SVGElement>, string> {
+  interface ReactSVGElement
+    extends ReactElement<SVGAttributes<SVGElement>, string> {
     type: keyof ReactSVG;
     props: SVGAttributes<SVGElement>;
     key: Key | null;
   }
 
-  interface DOMElement<P extends HTMLAttributes<T> | SVGAttributes<T>, T extends Element> extends ReactElement<P, string> {
+  interface DOMElement<
+    P extends HTMLAttributes<T> | SVGAttributes<T>,
+    T extends Element
+  > extends ReactElement<P, string> {
     type: string;
     props: P;
     key: Key | null;
   }
 
-  interface FunctionComponentElement<P> extends ReactElement<P, FunctionComponent<P>> {
+  interface FunctionComponentElement<P>
+    extends ReactElement<P, FunctionComponent<P>> {
     type: FunctionComponent<P>;
     props: P;
     key: Key | null;
   }
 
-  interface CElement<P, T extends Component<P, ComponentState>> extends ReactElement<P, ComponentClass<P>> {
+  interface CElement<P, T extends Component<P, ComponentState>>
+    extends ReactElement<P, ComponentClass<P>> {
     type: ComponentClass<P>;
     props: P;
     key: Key | null;
@@ -2325,7 +2721,7 @@ declare module "react" {
     view: SVGProps<SVGViewElement>;
   }
 
-  interface SVGProps<T> extends SVGAttributes<T>, ClassAttributes<T> { }
+  interface SVGProps<T> extends SVGAttributes<T>, ClassAttributes<T> {}
 
   interface SVGAttributes<T> extends AriaAttributes, DOMAttributes<T> {
     className?: string | undefined;
@@ -2349,8 +2745,21 @@ declare module "react" {
     accentHeight?: number | string | undefined;
     accumulate?: "none" | "sum" | undefined;
     additive?: "replace" | "sum" | undefined;
-    alignmentBaseline?: "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" |
-    "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit" | undefined;
+    alignmentBaseline?:
+      | "auto"
+      | "baseline"
+      | "before-edge"
+      | "text-before-edge"
+      | "middle"
+      | "central"
+      | "after-edge"
+      | "text-after-edge"
+      | "ideographic"
+      | "alphabetic"
+      | "hanging"
+      | "mathematical"
+      | "inherit"
+      | undefined;
     allowReorder?: "no" | "yes" | undefined;
     alphabetic?: number | string | undefined;
     amplitude?: number | string | undefined;
@@ -2374,7 +2783,12 @@ declare module "react" {
     clipPathUnits?: number | string | undefined;
     clipRule?: number | string | undefined;
     colorInterpolation?: number | string | undefined;
-    colorInterpolationFilters?: "auto" | "sRGB" | "linearRGB" | "inherit" | undefined;
+    colorInterpolationFilters?:
+      | "auto"
+      | "sRGB"
+      | "linearRGB"
+      | "inherit"
+      | undefined;
     colorProfile?: number | string | undefined;
     colorRendering?: number | string | undefined;
     contentScriptType?: number | string | undefined;
@@ -2594,51 +3008,70 @@ declare module "react" {
   function cloneElement<P extends HTMLAttributes<T>, T extends HTMLElement>(
     element: DetailedReactHTMLElement<P, T>,
     props?: P,
-    ...children: ReactNode[]): DetailedReactHTMLElement<P, T>;
+    ...children: ReactNode[]
+  ): DetailedReactHTMLElement<P, T>;
 
   function cloneElement<P extends HTMLAttributes<T>, T extends HTMLElement>(
     element: ReactHTMLElement<T>,
     props?: P,
-    ...children: ReactNode[]): ReactHTMLElement<T>;
+    ...children: ReactNode[]
+  ): ReactHTMLElement<T>;
 
   function cloneElement<P extends SVGAttributes<T>, T extends SVGElement>(
     element: ReactSVGElement,
     props?: P,
-    ...children: ReactNode[]): ReactSVGElement;
+    ...children: ReactNode[]
+  ): ReactSVGElement;
 
   function cloneElement<P extends DOMAttributes<T>, T extends Element>(
     element: DOMElement<P, T>,
     props?: DOMAttributes<T> & P,
-    ...children: ReactNode[]): DOMElement<P, T>;
+    ...children: ReactNode[]
+  ): DOMElement<P, T>;
 
   function cloneElement<P>(
     element: FunctionComponentElement<P>,
     props?: Partial<P> & Attributes,
-    ...children: ReactNode[]): FunctionComponentElement<P>;
+    ...children: ReactNode[]
+  ): FunctionComponentElement<P>;
 
   function cloneElement<P, T extends Component<P, ComponentState>>(
     element: CElement<P, T>,
     props?: Partial<P> & ClassAttributes<T>,
-    ...children: ReactNode[]): CElement<P, T>;
+    ...children: ReactNode[]
+  ): CElement<P, T>;
 
   function cloneElement<P>(
     element: ReactElement<P>,
     props?: Partial<P> & Attributes,
-    ...children: ReactNode[]): ReactElement<P>;
+    ...children: ReactNode[]
+  ): ReactElement<P>;
 
   // createContext
   function createContext<T>(defaultValue: T): Context<T>;
 
   // isValidElement
-  function isValidElement<P>(object: {} | null | undefined): object is ReactElement<P>;
+  function isValidElement<P>(
+    object: {} | null | undefined
+  ): object is ReactElement<P>;
 
   // Children utilities
   interface ReactChildren {
-    map<T, C>(children: C | ReadonlyArray<C>, fn: (child: C, index: number) => T): C extends null | undefined ? C : Array<Exclude<T, boolean | null | undefined>>;
-    forEach<C>(children: C | ReadonlyArray<C>, fn: (child: C, index: number) => void): void;
+    map<T, C>(
+      children: C | ReadonlyArray<C>,
+      fn: (child: C, index: number) => T
+    ): C extends null | undefined
+      ? C
+      : Array<Exclude<T, boolean | null | undefined>>;
+    forEach<C>(
+      children: C | ReadonlyArray<C>,
+      fn: (child: C, index: number) => void
+    ): void;
     count(children: any): number;
     only<C>(children: C): C extends any[] ? never : C;
-    toArray(children: ReactNode | ReactNode[]): Array<Exclude<ReactNode, boolean | null | undefined>>;
+    toArray(
+      children: ReactNode | ReactNode[]
+    ): Array<Exclude<ReactNode, boolean | null | undefined>>;
   }
 
   const Children: ReactChildren;
@@ -2660,4 +3093,32 @@ declare module "react" {
   // Lazy
   function lazy<T extends ComponentType<any>>(
     factory: () => Promise<{ default: T }>
-  ): La…
+  ): LazyExoticComponent<T>;
+
+  interface LazyExoticComponent<T extends ComponentType<any>>
+    extends ExoticComponent<ComponentPropsWithRef<T>> {
+    readonly _result: T;
+  }
+}
+
+// JSX namespace declaration
+declare global {
+  namespace JSX {
+    interface Element extends React.ReactElement<any, any> {}
+    interface ElementClass extends React.Component<any> {
+      render(): React.ReactNode;
+    }
+    interface ElementAttributesProperty {
+      props: {};
+    }
+    interface ElementChildrenAttribute {
+      children: {};
+    }
+    interface IntrinsicAttributes extends React.Attributes {}
+    interface IntrinsicClassAttributes<T> extends React.ClassAttributes<T> {}
+
+    interface IntrinsicElements {
+      [elemName: string]: any;
+    }
+  }
+}

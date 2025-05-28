@@ -49,6 +49,7 @@ import { PriceHistoryCard } from '@/components/price-history-card'
 import { CRMDashboard } from '@/components/crm-dashboard'
 import { CommissionTracker } from '@/components/commission-tracker'
 import { AccessRestriction } from '@/components/access-restriction'
+import { TasksManager } from '@/components/tasks-manager'
 
 export default function DashboardPage () {
   const { can, userRole } = usePermissions()
@@ -498,22 +499,7 @@ export default function DashboardPage () {
             </TabsContent>
 
             <TabsContent value='tasks'>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Gestion des tâches</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='text-center py-12'>
-                    <Target className='w-12 h-12 text-gray-400 mx-auto mb-4' />
-                    <h3 className='text-lg font-semibold mb-2'>
-                      Système de tâches
-                    </h3>
-                    <p className='text-gray-600'>
-                      Planification et suivi des activités
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              <TasksManager />
             </TabsContent>
 
             <TabsContent value='reports'>

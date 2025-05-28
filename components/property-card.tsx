@@ -241,12 +241,11 @@ export function PropertyCard ({
         setPricingType(upgradePlan as 'simple' | 'premium' | 'agent')
         setShowPricingModal(true)
       } else {
-        toast.info('Mise à niveau ou connexion requise.')
-      }
+        toast.info('Mise à niveau ou connexion requise.')      }
       return
     }
 
-    window.location.href = `/properties/${property.slug || property._id}`
+    window.location.href = `/property/${property.slug || property._id}`
   }
 
   const imageUrl =
@@ -275,9 +274,9 @@ export function PropertyCard ({
       {' '}
       <Card
         className={cn(
-          'overflow-hidden group transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-slate-700/50 flex flex-col h-full transform hover:-translate-y-2 hover:scale-[1.02]',
-          'focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-lg',
-          'relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-blue-500/5 before:via-purple-500/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100',
+          'overflow-hidden group transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-slate-700/50 flex flex-col h-full transform hover:-translate-y-1 sm:hover:-translate-y-2 hover:scale-[1.01] sm:hover:scale-[1.02]',
+          'focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-900 rounded-xl sm:rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-lg',
+          'relative before:absolute before:inset-0 before:rounded-xl sm:before:rounded-2xl before:bg-gradient-to-br before:from-blue-500/5 before:via-purple-500/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100',
           property.isPremium && 'border-amber-300/50 dark:border-amber-700/70',
           isNewListing && 'ring-2 ring-blue-400/30 dark:ring-blue-500/20',
           className
@@ -285,15 +284,14 @@ export function PropertyCard ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {' '}
-        <CardHeader className='p-0 relative z-10'>
+        {' '}        <CardHeader className='p-0 relative z-10'>
           <Link
-            href={`/properties/${property.slug || property._id}`}
+            href={`/property/${property.slug || property._id}`}
             passHref
             legacyBehavior
           >
             <a
-              className='block aspect-[16/10] relative overflow-hidden rounded-t-2xl group/image'
+              className='block aspect-[4/3] sm:aspect-[16/10] relative overflow-hidden rounded-t-xl sm:rounded-t-2xl group/image'
               onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                 if (!canActuallyViewDetails) {
                   e.preventDefault()
@@ -321,13 +319,13 @@ export function PropertyCard ({
               <div className='absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-700 rounded-t-2xl'></div>{' '}
               {/* Bouton de comparaison en position proéminente */}
               {onAddToComparison && (
-                <div className='absolute top-4 right-4 z-20'>
+                <div className='absolute top-2 sm:top-4 right-2 sm:right-4 z-20'>
                   <Button
                     variant='outline'
                     size='icon'
                     onClick={handleCompare}
                     className={cn(
-                      'h-9 w-9 rounded-full transition-all duration-300 shadow-lg relative',
+                      'h-7 w-7 sm:h-9 sm:w-9 rounded-full transition-all duration-300 shadow-lg relative',
                       isInComparison
                         ? 'bg-blue-100 dark:bg-blue-900/60 border-blue-300 dark:border-blue-600 text-blue-600 dark:text-blue-400'
                         : 'bg-white/90 hover:bg-white dark:bg-slate-800/90 dark:hover:bg-slate-800 border-white/60 dark:border-slate-700/60'
@@ -348,13 +346,15 @@ export function PropertyCard ({
                 </div>
               )}
               {/* Badges positionnés avec design premium */}
-              <div className='absolute top-4 left-4 z-20 flex flex-col gap-2'>
+              <div className='absolute top-2 sm:top-4 left-2 sm:left-4 z-20 flex flex-col gap-1 sm:gap-2'>
                 {property.isPremium === true && (
                   <Badge
                     variant='default'
-                    className='bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 border-0 shadow-lg backdrop-blur-sm text-xs px-3 py-1.5 font-bold rounded-full transform hover:scale-105 transition-transform duration-300'
+                    className='bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 border-0 shadow-lg backdrop-blur-sm text-xs sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 font-bold rounded-full transform hover:scale-105 transition-transform duration-300'
                   >
-                    <Zap className='w-3.5 h-3.5 mr-1.5 fill-current' /> Premium
+                    <Zap className='w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 mr-1 sm:mr-1.5 fill-current' /> 
+                    <span className='hidden sm:inline'>Premium</span>
+                    <span className='sm:hidden'>P</span>
                   </Badge>
                 )}
                 {property.isFeatured === true && (
@@ -387,12 +387,12 @@ export function PropertyCard ({
                     <Button
                       size='icon'
                       variant='ghost'
-                      className='absolute top-4 right-4 z-20 w-11 h-11 rounded-full bg-white/90 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-700 backdrop-blur-sm shadow-lg border border-white/50 dark:border-slate-700/50 transition-all duration-300 transform hover:scale-110 hover:shadow-xl'
+                      className='absolute top-2 sm:top-4 right-2 sm:right-4 z-20 w-8 h-8 sm:w-11 sm:h-11 rounded-full bg-white/90 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-700 backdrop-blur-sm shadow-lg border border-white/50 dark:border-slate-700/50 transition-all duration-300 transform hover:scale-110 hover:shadow-xl'
                       onClick={handleFavorite}
                     >
                       <Heart
                         className={cn(
-                          'w-5 h-5 transition-all duration-300',
+                          'w-4 h-4 sm:w-5 sm:h-5 transition-all duration-300',
                           isFavoritedState
                             ? 'fill-red-500 text-red-500 scale-110'
                             : 'text-slate-600 dark:text-slate-300 group-hover/image:text-red-400'
@@ -412,7 +412,7 @@ export function PropertyCard ({
             </a>
           </Link>
         </CardHeader>{' '}
-        <CardContent className='p-4 sm:p-5 md:p-6 flex-grow flex flex-col relative z-10'>
+        <CardContent className='p-3 sm:p-4 md:p-5 lg:p-6 flex-grow flex flex-col relative z-10'>
           {/* Titre cliquable avec effet premium */}{' '}
           <div
             onClick={() => handleViewDetailsClick()}
@@ -420,7 +420,7 @@ export function PropertyCard ({
           >
             <CardTitle
               className={cn(
-                'text-lg sm:text-xl md:text-2xl font-bold transition-all duration-300 leading-tight',
+                'text-sm sm:text-lg md:text-xl lg:text-2xl font-bold transition-all duration-300 leading-tight',
                 'bg-gradient-to-r bg-clip-text',
                 'from-slate-800 to-slate-700 dark:from-slate-100 dark:to-slate-200',
                 'group-hover/titleblock:from-blue-600 group-hover/titleblock:to-blue-500',
@@ -432,8 +432,8 @@ export function PropertyCard ({
               </span>
             </CardTitle>
           </div>{' '}
-          <div className='flex items-center text-muted-foreground text-sm mb-4 group/location'>
-            <MapPin className='h-4 w-4 mr-2 flex-shrink-0 text-blue-500 dark:text-blue-400 group-hover/location:animate-pulse' />
+          <div className='flex items-center text-muted-foreground text-xs sm:text-sm mb-3 sm:mb-4 group/location'>
+            <MapPin className='h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 flex-shrink-0 text-blue-500 dark:text-blue-400 group-hover/location:animate-pulse' />
             <div
               className={cn(
                 'text-slate-600 dark:text-slate-300 overflow-hidden transition-all duration-300',
@@ -452,7 +452,7 @@ export function PropertyCard ({
             </div>
           </div>{' '}
           {/* Informations clés avec design premium */}
-          <div className='grid grid-cols-2 gap-x-4 gap-y-3 text-sm text-slate-700 dark:text-slate-300 mb-5 bg-gradient-to-br from-slate-50/80 to-slate-100/80 dark:from-slate-800/50 dark:to-slate-700/50 backdrop-blur-sm rounded-xl border border-slate-200/50 dark:border-slate-700/50 p-4 shadow-sm'>
+          <div className='grid grid-cols-2 gap-x-2 sm:gap-x-4 gap-y-2 sm:gap-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300 mb-3 sm:mb-5 bg-gradient-to-br from-slate-50/80 to-slate-100/80 dark:from-slate-800/50 dark:to-slate-700/50 backdrop-blur-sm rounded-lg sm:rounded-xl border border-slate-200/50 dark:border-slate-700/50 p-2.5 sm:p-4 shadow-sm'>
             <div
               className='flex items-center gap-2 truncate group/info hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300'
               title={property.propertyType}
@@ -460,7 +460,7 @@ export function PropertyCard ({
               {propertyIcon &&
               typeof propertyIcon === 'object' &&
               'props' in propertyIcon ? (
-                <div className='h-4 w-4 text-blue-500 dark:text-blue-400 flex-shrink-0 group-hover/info:scale-110 transition-transform duration-300'>
+                <div className='h-3 w-3 sm:h-4 sm:w-4 text-blue-500 dark:text-blue-400 flex-shrink-0 group-hover/info:scale-110 transition-transform duration-300'>
                   {propertyIcon}
                 </div>
               ) : (
@@ -579,7 +579,7 @@ export function PropertyCard ({
             </div>
           ) : null}
         </CardContent>{' '}
-        <CardFooter className='p-4 sm:p-5 md:p-6 pt-0 mt-auto relative z-10'>
+        <CardFooter className='p-3 sm:p-4 md:p-5 lg:p-6 pt-0 mt-auto relative z-10'>
           <div className='w-full'>
             {/* Prix et upgrade badge sur une ligne */}
             <div className='flex items-center justify-between border-t border-slate-200/80 dark:border-slate-700/80 pt-4 mb-4'>
@@ -590,7 +590,7 @@ export function PropertyCard ({
               >
                 <div
                   className={cn(
-                    'text-xl sm:text-2xl font-bold transition-all duration-500 cursor-default flex-shrink-0 break-words max-w-full',
+                    'text-base sm:text-xl md:text-2xl font-bold transition-all duration-500 cursor-default flex-shrink-0 break-words max-w-full',
                     isHovered
                       ? 'bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent scale-110'
                       : 'bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent'
@@ -642,23 +642,32 @@ export function PropertyCard ({
               )}
             </div>
             {/* Boutons d'action en bas */}
-            <div className='flex gap-2 items-center'>
+            <div className='flex gap-1.5 sm:gap-2 items-center'>
               <Button
                 variant={canActuallyViewDetails ? 'default' : 'secondary'}
                 className={cn(
-                  'flex-1 h-11 text-sm font-medium transition-all duration-300 rounded-lg',
+                  'flex-1 h-9 sm:h-11 text-xs sm:text-sm font-medium transition-all duration-300 rounded-md sm:rounded-lg',
                   canActuallyViewDetails
                     ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-lg'
                     : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300'
                 )}
                 onClick={() => handleViewDetailsClick()}
               >
-                <Eye className='h-4 w-4 mr-2' />
-                {canActuallyViewDetails
-                  ? 'Voir détails'
-                  : upgradeNeededForDetails
-                  ? `Upgrade ${upgradeNeededForDetails}`
-                  : 'Accès Restreint'}
+                <Eye className='h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2' />
+                <span className='hidden sm:inline'>
+                  {canActuallyViewDetails
+                    ? 'Voir détails'
+                    : upgradeNeededForDetails
+                    ? `Upgrade ${upgradeNeededForDetails}`
+                    : 'Accès Restreint'}
+                </span>
+                <span className='sm:hidden'>
+                  {canActuallyViewDetails
+                    ? 'Détails'
+                    : upgradeNeededForDetails
+                    ? 'Upgrade'
+                    : 'Restreint'}
+                </span>
               </Button>
 
               {onAddToComparison && (
@@ -675,7 +684,7 @@ export function PropertyCard ({
                             !!requiresUpgrade('canCompareProperties'))
                         }
                         className={cn(
-                          'h-11 w-11 transition-all duration-300 rounded-lg relative',
+                          'h-9 w-9 sm:h-11 sm:w-11 transition-all duration-300 rounded-md sm:rounded-lg relative',
                           isInComparison
                             ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-600 dark:text-blue-400'
                             : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
@@ -711,7 +720,7 @@ export function PropertyCard ({
                 <Button
                   variant='ghost'
                   size='sm'
-                  className='text-blue-600 dark:text-blue-400 text-xs h-auto py-1.5 px-3 font-medium truncate max-w-full hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-full border border-blue-200 dark:border-blue-700/50 transition-all duration-300 hover:shadow-sm flex items-center gap-1.5'
+                  className='text-blue-600 dark:text-blue-400 text-xs h-auto py-1 sm:py-1.5 px-2 sm:px-3 font-medium truncate max-w-full hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-full border border-blue-200 dark:border-blue-700/50 transition-all duration-300 hover:shadow-sm flex items-center gap-1 sm:gap-1.5'
                   onClick={() => {
                     setPricingType('simple')
                     setShowPricingModal(true)

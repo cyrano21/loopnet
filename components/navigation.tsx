@@ -58,6 +58,18 @@ function Navigation() {
             >
               CRE Expliqué
             </Link>
+            <Link
+              href="/tools"
+              className="text-muted-foreground hover:text-blue-600 px-3 py-2 text-sm font-medium"
+            >
+              Outils
+            </Link>
+            <Link
+              href="/pricing"
+              className="text-muted-foreground hover:text-blue-600 px-3 py-2 text-sm font-medium"
+            >
+              Abonnements
+            </Link>
 
             {/* Theme Toggle */}
             <ThemeToggle />
@@ -110,6 +122,26 @@ function Navigation() {
                         Favoris
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/agent-dashboard" className="flex items-center">
+                        <Building className="mr-2 h-4 w-4" />
+                        Dashboard Agent
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="flex items-center">
+                        <User className="mr-2 h-4 w-4" />
+                        Administration
+                      </Link>
+                    </DropdownMenuItem>
+                    {process.env.NODE_ENV === 'development' && (
+                      <DropdownMenuItem asChild>
+                        <a href="/api/seed" className="flex items-center" target="_blank">
+                          <User className="mr-2 h-4 w-4" />
+                          Seed Database
+                        </a>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="cursor-pointer" onSelect={() => signOut({ callbackUrl: "/" })}>
                       <LogOut className="mr-2 h-4 w-4" />
@@ -177,6 +209,12 @@ function Navigation() {
               className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-blue-600"
             >
               CRE Expliqué
+            </Link>
+            <Link
+              href="/tools"
+              className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-blue-600"
+            >
+              Outils
             </Link>
 
             {session ? (

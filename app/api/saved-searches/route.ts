@@ -1,94 +1,203 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from 'next/server'
+import { connectDB } from '@/lib/mongodb'
+import SavedSearch from '@/models/SavedSearch'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
-export async function GET(request: Request) {
+// GET /api/saved-searches - Récupérer les recherches sauvegardées
+export async function GET(request: NextRequest) {
   try {
-    // Mock data - Dans une vraie application, ceci viendrait de votre base de données
-    const mockSearches = [
-      {
-        id: "search-1",
-        name: "Bureaux Downtown SF",
-        filters: {
-          propertyType: "office",
-          city: "San Francisco",
-          minPrice: "1000000",
-          maxPrice: "5000000",
-          minSurface: "5000"
-        },
-        alertEnabled: true,
-        createdAt: "2024-01-15T10:00:00Z",
-        lastRun: "2024-01-20T08:30:00Z",
-        resultsCount: 23
-      },
-      {
-        id: "search-2", 
-        name: "Retail Los Angeles",
-        filters: {
-          propertyType: "retail",
-          city: "Los Angeles",
-          transactionType: "lease",
-          maxPrice: "50"
-        },
-        alertEnabled: false,
-        createdAt: "2024-01-18T14:20:00Z",
-        lastRun: "2024-01-19T09:15:00Z",
-        resultsCount: 15
-      },
-      {
-        id: "search-3",
-        name: "Entrepôts Zone Industrielle",
-        filters: {
-          propertyType: "industrial",
-          minSurface: "10000",
-          transactionType: "sale"
-        },
-        alertEnabled: true,
-        createdAt: "2024-01-10T16:45:00Z",
-        resultsCount: 8
-      }
-    ]
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Non autorisé' },
+        { status: 401 }
+      )
+    }
 
-    return NextResponse.json({ searches: mockSearches })
+    await connectDB()
+
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const isActive = searchParams.get('active')
+    const sortBy = searchParams.get('sortBy') || 'createdAt'
+    const sortOrder = searchParams.get('sortOrder') || 'desc'
+
+    // Construire le filtre
+    const filter: any = { user: session.user.id }
+    
+    if (isActive !== null) {
+      filter.isActive = isActive === 'true'
+    }
+
+    // Options de tri
+    const sortOptions: any = {}
+    sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1
+
+    // Pagination
+    const skip = (page - 1) * limit
+
+    // Récupérer les recherches sauvegardées
+    const savedSearches = await SavedSearch.find(filter)
+      .populate('user', 'name email')
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit)
+      .lean()
+
+    // Compter le total
+    const total = await SavedSearch.countDocuments(filter)
+
+    // Calculer les métadonnées de pagination
+    const totalPages = Math.ceil(total / limit)
+    const hasNextPage = page < totalPages
+    const hasPrevPage = page > 1
+
+    return NextResponse.json({
+      savedSearches,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: total,
+        itemsPerPage: limit,
+        hasNextPage,
+        hasPrevPage
+      }
+    })
   } catch (error) {
-    console.error("Erreur lors de la récupération des recherches sauvegardées:", error)
+    console.error('Erreur lors de la récupération des recherches sauvegardées:', error)
     return NextResponse.json(
-      { error: "Erreur interne du serveur" },
+      { error: 'Erreur serveur interne' },
       { status: 500 }
     )
   }
 }
 
-export async function POST(request: Request) {
+// POST /api/saved-searches - Créer une nouvelle recherche sauvegardée
+export async function POST(request: NextRequest) {
   try {
-    const { name, filters, alertEnabled } = await request.json()
-
-    if (!name || !filters) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "Le nom et les filtres sont requis" },
+        { error: 'Non autorisé' },
+        { status: 401 }
+      )
+    }
+
+    await connectDB()
+
+    const body = await request.json()
+    const {
+      name,
+      searchCriteria,
+      alertFrequency,
+      isActive = true,
+      description,
+      tags
+    } = body
+
+    // Validation des champs requis
+    if (!name || !searchCriteria) {
+      return NextResponse.json(
+        { error: 'Le nom et les critères de recherche sont requis' },
         { status: 400 }
       )
     }
 
-    // Mock création - Dans une vraie application, sauvegarder en base de données
-    const newSearch = {
-      id: `search-${Date.now()}`,
-      name,
-      filters,
-      alertEnabled: alertEnabled || false,
-      createdAt: new Date().toISOString(),
-      resultsCount: 0
+    // Vérifier si une recherche avec le même nom existe déjà pour cet utilisateur
+    const existingSearch = await SavedSearch.findOne({
+      user: session.user.id,
+      name: name.trim()
+    })
+
+    if (existingSearch) {
+      return NextResponse.json(
+        { error: 'Une recherche avec ce nom existe déjà' },
+        { status: 409 }
+      )
     }
 
-    console.log("Nouvelle recherche sauvegardée:", newSearch)
-
-    return NextResponse.json({ 
-      success: true, 
-      search: newSearch,
-      message: "Recherche sauvegardée avec succès"
+    // Créer la nouvelle recherche sauvegardée
+    const savedSearch = new SavedSearch({
+      user: session.user.id,
+      name: name.trim(),
+      description: description?.trim(),
+      searchCriteria,
+      alertFrequency: alertFrequency || 'weekly',
+      isActive,
+      tags: tags || [],
+      lastExecuted: null,
+      resultCount: 0,
+      statistics: {
+        totalExecutions: 0,
+        avgResultCount: 0,
+        lastResultCount: 0,
+        bestResultCount: 0,
+        executionHistory: []
+      }
     })
-  } catch (error) {
-    console.error("Erreur lors de la sauvegarde de la recherche:", error)
+
+    await savedSearch.save()
+
+    // Populer les données utilisateur pour la réponse
+    await savedSearch.populate('user', 'name email')
+
     return NextResponse.json(
-      { error: "Erreur interne du serveur" },
+      {
+        message: 'Recherche sauvegardée créée avec succès',
+        savedSearch
+      },
+      { status: 201 }
+    )
+
+  } catch (error) {
+    console.error('Erreur lors de la création de la recherche sauvegardée:', error)
+    return NextResponse.json(
+      { error: 'Erreur serveur interne' },
+      { status: 500 }
+    )
+  }
+}
+
+// DELETE /api/saved-searches - Supprimer plusieurs recherches sauvegardées
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Non autorisé' },
+        { status: 401 }
+      )
+    }
+
+    await connectDB()
+
+    const { searchParams } = new URL(request.url)
+    const ids = searchParams.get('ids')?.split(',')
+
+    if (!ids || ids.length === 0) {
+      return NextResponse.json(
+        { error: 'IDs des recherches requis' },
+        { status: 400 }
+      )
+    }
+
+    // Supprimer les recherches sauvegardées
+    const result = await SavedSearch.deleteMany({
+      _id: { $in: ids },
+      user: session.user.id
+    })
+
+    return NextResponse.json({
+      message: `${result.deletedCount} recherche(s) supprimée(s)`,
+      deletedCount: result.deletedCount
+    })
+
+  } catch (error) {
+    console.error('Erreur lors de la suppression des recherches sauvegardées:', error)
+    return NextResponse.json(
+      { error: 'Erreur serveur interne' },
       { status: 500 }
     )
   }
