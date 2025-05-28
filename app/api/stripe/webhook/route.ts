@@ -1,105 +1,85 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { stripe } from "@/lib/stripe"
-import { headers } from "next/headers"
-import { connectToDatabase } from "@/lib/mongodb"
-import User from "@/models/User"
+import Stripe from "stripe"
 
-const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || "whsec_12345"
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    // Vérifier que Stripe est configuré
     if (!stripe) {
-      return NextResponse.json({ error: "Stripe non configuré" }, { status: 503 })
+      return NextResponse.json(
+        { error: "Stripe n'est pas configuré" },
+        { status: 503 }
+      )
     }
 
     const body = await request.text()
-    const headersList = headers()
-    const signature = headersList.get("stripe-signature")
+    const signature = request.headers.get("stripe-signature")
 
-    let event
-
-    try {
-      event = stripe.webhooks.constructEvent(body, signature!, endpointSecret)
-    } catch (err: any) {
-      console.log(`⚠️ Webhook signature verification failed.`, err.message)
-      return NextResponse.json({ error: "Webhook signature verification failed" }, { status: 400 })
+    if (!signature) {
+      return NextResponse.json(
+        { error: "Missing stripe-signature header" },
+        { status: 400 }
+      )
     }
 
-    // Connecter à la base de données
-    await connectToDatabase()
+    let event: Stripe.Event
 
-    let subscription
-    let status
+    try {
+      event = stripe.webhooks.constructEvent(
+        body,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET!
+      )
+    } catch (err) {
+      console.error("Webhook signature verification failed:", err)
+      return NextResponse.json(
+        { error: "Invalid signature" },
+        { status: 400 }
+      )
+    }
 
-    // Gérer les événements comme dans votre code
+    // Traiter les événements Stripe
     switch (event.type) {
       case "customer.subscription.created":
-        subscription = event.data.object
-        status = subscription.status
-        console.log(`Subscription status is ${status}.`)
-
-        // Mettre à jour l'utilisateur avec le nouveau plan
-        if (subscription.metadata?.userId) {
-          await User.findByIdAndUpdate(subscription.metadata.userId, {
-            stripeCustomerId: subscription.customer,
-            stripeSubscriptionId: subscription.id,
-            subscriptionStatus: status,
-            plan: subscription.metadata.planId,
-            subscriptionStartDate: new Date(subscription.current_period_start * 1000),
-            subscriptionEndDate: new Date(subscription.current_period_end * 1000),
-          })
-        }
+        const subscriptionCreated = event.data.object as Stripe.Subscription
+        console.log("Subscription created:", subscriptionCreated.id)
+        // TODO: Mettre à jour le rôle de l'utilisateur dans la base de données
         break
 
       case "customer.subscription.updated":
-        subscription = event.data.object
-        status = subscription.status
-        console.log(`Subscription status is ${status}.`)
-
-        // Mettre à jour le statut de l'abonnement
-        if (subscription.metadata?.userId) {
-          await User.findByIdAndUpdate(subscription.metadata.userId, {
-            subscriptionStatus: status,
-            subscriptionEndDate: new Date(subscription.current_period_end * 1000),
-          })
-        }
+        const subscriptionUpdated = event.data.object as Stripe.Subscription
+        console.log("Subscription updated:", subscriptionUpdated.id)
+        // TODO: Mettre à jour le statut de l'abonnement
         break
 
       case "customer.subscription.deleted":
-        subscription = event.data.object
-        status = subscription.status
-        console.log(`Subscription status is ${status}.`)
-
-        // Révoquer l'accès premium
-        if (subscription.metadata?.userId) {
-          await User.findByIdAndUpdate(subscription.metadata.userId, {
-            subscriptionStatus: "canceled",
-            plan: "free",
-          })
-        }
+        const subscriptionDeleted = event.data.object as Stripe.Subscription
+        console.log("Subscription deleted:", subscriptionDeleted.id)
+        // TODO: Révoquer l'accès premium
         break
 
-      case "customer.subscription.trial_will_end":
-        subscription = event.data.object
-        status = subscription.status
-        console.log(`Subscription trial will end: ${status}.`)
-
-        // Envoyer une notification à l'utilisateur
-        // TODO: Implémenter l'envoi d'email
+      case "invoice.payment_succeeded":
+        const invoice = event.data.object as Stripe.Invoice
+        console.log("Payment succeeded for invoice:", invoice.id)
+        // TODO: Confirmer le paiement et prolonger l'accès
         break
 
-      case "entitlements.active_entitlement_summary.updated":
-        subscription = event.data.object
-        console.log(`Active entitlement summary updated for ${subscription}.`)
+      case "invoice.payment_failed":
+        const failedInvoice = event.data.object as Stripe.Invoice
+        console.log("Payment failed for invoice:", failedInvoice.id)
+        // TODO: Notifier l'utilisateur de l'échec du paiement
         break
 
       default:
-        console.log(`Unhandled event type ${event.type}.`)
+        console.log(`Unhandled event type: ${event.type}`)
     }
 
     return NextResponse.json({ received: true })
   } catch (error) {
-    console.error("Erreur webhook:", error)
-    return NextResponse.json({ error: "Erreur traitement webhook" }, { status: 500 })
+    console.error("Webhook error:", error)
+    return NextResponse.json(
+      { error: "Webhook handler failed" },
+      { status: 500 }
+    )
   }
 }

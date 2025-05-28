@@ -21,6 +21,7 @@ import { Badge } from '@/components/ui/badge'
 import { PageLayout } from '@/components/page-layout'
 import { useFavorites } from '@/hooks/use-favorites'
 import { useToast } from '@/hooks/use-toast'
+import { FreemiumListingGuard } from '@/components/freemium-listing-guard'
 
 interface Property {
   _id: string
@@ -378,20 +379,22 @@ export default function PropertyDetailPage () {
                     </div>
                   </div>
                 </div>
-                <div className='space-y-2'>
-                  <Button className='w-full' size='sm'>
-                    <Phone className='w-4 h-4 mr-2' />
-                    Appeler
-                  </Button>
-                  <Button variant='outline' className='w-full' size='sm'>
-                    <Mail className='w-4 h-4 mr-2' />
-                    Email
-                  </Button>
-                  <Button variant='outline' className='w-full' size='sm'>
-                    <MessageSquare className='w-4 h-4 mr-2' />
-                    Message
-                  </Button>
-                </div>
+                <FreemiumListingGuard action='contact'>
+                  <div className='space-y-2'>
+                    <Button className='w-full' size='sm'>
+                      <Phone className='w-4 h-4 mr-2' />
+                      Appeler
+                    </Button>
+                    <Button variant='outline' className='w-full' size='sm'>
+                      <Mail className='w-4 h-4 mr-2' />
+                      Email
+                    </Button>
+                    <Button variant='outline' className='w-full' size='sm'>
+                      <MessageSquare className='w-4 h-4 mr-2' />
+                      Message
+                    </Button>
+                  </div>
+                </FreemiumListingGuard>
               </CardContent>
             </Card>
 

@@ -8,10 +8,6 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'source.unsplash.com'
-      },
-      {
-        protocol: 'https',
         hostname: 'via.placeholder.com'
       },
       {
@@ -21,6 +17,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com'
+      },
+      {
+        protocol: 'https',
+        hostname: 'randomuser.me'
       }
     ]
   },
@@ -39,6 +39,10 @@ const nextConfig = {
       {
         source: '/icons/:path*',
         destination: '/icons/:path*'
+      },
+      {
+        source: '/articles/:slug*',
+        destination: '/news/:slug*'
       }
     ]
   },

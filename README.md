@@ -22,7 +22,7 @@ Ce projet utilise React 19, qui ne dispose pas encore de définitions de types o
 
 ### 1. Fichier de définition temporaire
 
-Un fichier de définition temporaire a été créé dans `src/react.d.ts` pour fournir les déclarations de types manquantes. Ce fichier contient :
+Un fichier de définition temporaire a été créé dans `types/react-fixes.d.ts` pour fournir les déclarations de types manquantes. Ce fichier contient :
 - Les déclarations pour les hooks React (useState, useEffect, etc.)
 - Les interfaces JSX.IntrinsicElements nécessaires pour les éléments HTML
 - Les types pour les événements et les props de base
@@ -58,7 +58,7 @@ Pour les composants qui requièrent des enfants, comme `AccessRestriction` ou `T
 ### Migration future
 
 Lorsque des définitions de types officielles pour React 19 seront disponibles, ces solutions temporaires pourront être supprimées en :
-1. Supprimant le fichier `src/react.d.ts`
+1. Supprimant le fichier `types/react-fixes.d.ts`
 2. Supprimant les variables temporaires dans `.env`
 3. Revertant les ajustements de typage dans les composants
 

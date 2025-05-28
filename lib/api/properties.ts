@@ -1,36 +1,6 @@
-export interface Property {
-  _id: string
-  title: string
-  description: string
-  propertyType: string
-  transactionType: 'rent' | 'sale' | 'vacation'
-  address: string
-  city: string
-  postalCode: string
-  country: string
-  price: number
-  surface: number
-  bedrooms?: number
-  bathrooms?: number
-  features: string[]
-  images: Array<{
-    url: string
-    publicId: string
-    alt: string
-    isPrimary: boolean
-  }>
-  owner: {
-    _id: string
-    name: string
-    email: string
-    phone?: string
-  }
-  status: 'active' | 'inactive' | 'sold' | 'rented'
-  publishedAt: string
-  views: number
-  isPremium: boolean
-  isFeatured: boolean
-}
+import { Property } from "@/types/property"
+
+export type { Property }
 
 export interface PropertiesResponse {
   properties: Property[]

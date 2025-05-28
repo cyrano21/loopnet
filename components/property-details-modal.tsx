@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -19,39 +19,10 @@ import {
   Share2,
   ChevronLeft,
   ChevronRight,
+  User,
 } from "lucide-react"
 import Image from "next/image"
-
-interface Property {
-  _id: string
-  title: string
-  description?: string
-  address: string
-  city: string
-  price: number
-  surface: number
-  propertyType: string
-  transactionType: string
-  images: Array<{
-    url: string
-    alt?: string
-    isPrimary?: boolean
-  }>
-  views: number
-  favorites: number
-  inquiries: number
-  pricePerSqm: number
-  status: string
-  yearBuilt?: number
-  parking?: number
-  amenities?: string[]
-  contact?: {
-    name: string
-    phone: string
-    email: string
-    company: string
-  }
-}
+import { Property, PropertyImage } from "@/types/property"
 
 interface PropertyDetailsModalProps {
   property: Property | null
@@ -63,9 +34,13 @@ interface PropertyDetailsModalProps {
 export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: PropertyDetailsModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
+  useEffect(() => {
+    setCurrentImageIndex(0)
+  }, [property])
+
   if (!property) return null
 
-  const formatPrice = (price: number, transactionType: string) => {
+  const formatPrice = (price: number, transactionType?: string) => {
     const formatted = new Intl.NumberFormat("fr-FR", {
       style: "currency",
       currency: "EUR",
@@ -75,53 +50,76 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
     return transactionType === "rent" ? `${formatted}/mois` : formatted
   }
 
+  const getImageUrl = (image: PropertyImage) => image?.url || '/placeholder-property.jpg'
+    
+  const getImageAlt = (image: PropertyImage, index: number) => {
+    return image?.alt || `Image ${index + 1} - ${property?.title || 'Bien immobilier'}`
+  }
+
+  const currentImage = property.images[currentImageIndex]
+  const hasMultipleImages = property.images.length > 1
+
   const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev === property.images.length - 1 ? 0 : prev + 1))
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === property.images.length - 1 ? 0 : prevIndex + 1
+    )
   }
 
   const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? property.images.length - 1 : prev - 1))
+    setCurrentImageIndex((prevIndex) =>
+      prevIndex === 0 ? property.images.length - 1 : prevIndex - 1
+    )
   }
 
-  type BadgeType = 'sale' | 'rent' | 'vacation';
+  type TransactionType = 'sale' | 'rent' | 'vacation' | string
+  type BadgeVariant = 'default' | 'secondary' | 'outline'
   
-  const getTransactionBadge = (type: string) => {
-    const badges: Record<BadgeType, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
+  const getTransactionBadge = (type: TransactionType) => {
+    const badges: Record<TransactionType, { label: string; variant: BadgeVariant }> = {
       sale: { label: "Vente", variant: "default" },
       rent: { label: "Location", variant: "secondary" },
       vacation: { label: "Location vacances", variant: "outline" },
+      // Valeur par défaut si le type n'est pas reconnu
+      default: { label: "À vendre", variant: "default" }
     }
-    return badges[type as BadgeType] || badges.sale
+    return badges[type as keyof typeof badges] || badges.default
   }
 
-  const transactionBadge = getTransactionBadge(property.transactionType)
+  const transactionType = property.transactionType || 'sale'
+  const transactionBadge = getTransactionBadge(transactionType)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="text-xl font-semibold line-clamp-1">{property.title}</DialogTitle>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
+      <DialogHeader>
+        <div className="flex justify-between items-start">
+          <div>
+            <DialogTitle className="text-2xl font-bold">{property.title}</DialogTitle>
+              <div className="flex items-center text-sm text-gray-500 mt-1">
+                <MapPin className="w-4 h-4 mr-1" />
+                {[property.address, property.city].filter(Boolean).join(', ') || property.title}
+              </div>
           </div>
-        </DialogHeader>
+          <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      </DialogHeader>
 
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="space-y-6">
           {/* Image Gallery */}
           {property.images.length > 0 && (
             <div className="relative">
               <div className="relative h-64 md:h-80 overflow-hidden rounded-lg">
                 <Image
-                  src={property.images[currentImageIndex]?.url || "/placeholder.svg"}
-                  alt={property.images[currentImageIndex]?.alt || property.title}
+                  src={getImageUrl(property.images[currentImageIndex])}
+                  alt={getImageAlt(property.images[currentImageIndex], currentImageIndex)}
                   fill
                   className="object-cover"
                 />
 
                 {/* Navigation Arrows */}
-                {property.images.length > 1 && (
+                {hasMultipleImages && (
                   <>
                     <Button
                       variant="secondary"
@@ -143,7 +141,7 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
                 )}
 
                 {/* Image Counter */}
-                {property.images.length > 1 && (
+                {hasMultipleImages && (
                   <div className="absolute bottom-2 right-2 bg-black/50 text-white px-2 py-1 rounded text-sm">
                     {currentImageIndex + 1} / {property.images.length}
                   </div>
@@ -151,7 +149,7 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
               </div>
 
               {/* Thumbnail Strip */}
-              {property.images.length > 1 && (
+              {hasMultipleImages && (
                 <div className="flex gap-2 mt-2 overflow-x-auto">
                   {property.images.map((image, index) => (
                     <button
@@ -164,8 +162,8 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
                       }`}
                     >
                       <Image
-                        src={image.url || "/placeholder.svg"}
-                        alt={image.alt || `Image ${index + 1}`}
+                        src={getImageUrl(image)}
+                        alt={getImageAlt(image, index)}
                         width={64}
                         height={64}
                         className="w-full h-full object-cover"
@@ -182,9 +180,15 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
             {/* Main Info */}
             <div className="md:col-span-2 space-y-4">
               <div className="flex items-center gap-2">
-                <Badge variant={transactionBadge.variant}>{transactionBadge.label}</Badge>
+                <Badge variant={transactionBadge.variant as 'default' | 'secondary' | 'outline'}>{transactionBadge.label}</Badge>
                 <Badge variant="outline">{property.propertyType}</Badge>
-                <Badge className="bg-green-100 text-green-800">{property.status}</Badge>
+                <Badge className="bg-green-100 text-green-800">
+                  {property.status === 'active' ? 'Disponible' : 
+                   property.status === 'sold' ? 'Vendu' : 
+                   property.status === 'rented' ? 'Loué' : 
+                   property.status === 'pending' ? 'En attente' : 
+                   property.status}
+                </Badge>
               </div>
 
               <div className="space-y-2">
@@ -194,7 +198,7 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
                 <div className="flex items-center text-gray-600">
                   <MapPin className="h-4 w-4 mr-1" />
                   <span>
-                    {property.address}, {property.city}
+                    {[property.address, property.city].filter(Boolean).join(', ') || property.title}
                   </span>
                 </div>
               </div>
@@ -202,9 +206,8 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
               {/* Property Details */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
                 <div className="text-center">
-                  <Square className="h-5 w-5 mx-auto mb-1 text-gray-600" />
-                  <div className="text-sm text-gray-600">Surface</div>
-                  <div className="font-semibold">{property.surface} m²</div>
+                  <div className="text-sm font-medium">{property.price / property.surface} €/m²</div>
+                  <div className="text-xs text-gray-500">Prix au m²</div>
                 </div>
 
                 {property.yearBuilt && (
@@ -215,7 +218,7 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
                   </div>
                 )}
 
-                {property.parking && (
+                {property.parking && property.parking !== '0' && (
                   <div className="text-center">
                     <Car className="h-5 w-5 mx-auto mb-1 text-gray-600" />
                     <div className="text-sm text-gray-600">Parking</div>
@@ -225,8 +228,8 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
 
                 <div className="text-center">
                   <Building className="h-5 w-5 mx-auto mb-1 text-gray-600" />
-                  <div className="text-sm text-gray-600">Prix/m²</div>
-                  <div className="font-semibold">{property.pricePerSqm} €</div>
+                  <div className="text-sm text-gray-600">Surface</div>
+                  <div className="font-semibold">{property.surface} m²</div>
                 </div>
               </div>
 
@@ -238,15 +241,14 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
                 </div>
               )}
 
-              {/* Amenities */}
-              {property.amenities && property.amenities.length > 0 && (
-                <div>
-                  <h3 className="font-semibold mb-2">Équipements</h3>
+              {/* Features */}
+              {property.features.length > 0 && (
+                <div className="space-y-2">
+                  <h3 className="font-medium text-gray-900">Équipements</h3>
                   <div className="flex flex-wrap gap-2">
-                    {property.amenities.map((amenity, index) => (
-                      <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                        <Wifi className="h-3 w-3" />
-                        {amenity}
+                    {property.features.map((feature, index) => (
+                      <Badge key={index} variant="outline" className="text-sm">
+                        {feature}
                       </Badge>
                     ))}
                   </div>
@@ -271,32 +273,27 @@ export function PropertyDetailsModal({ property, isOpen, onClose, onFavorite }: 
               <Separator />
 
               {/* Contact Info */}
-              {property.contact && (
-                <div className="space-y-3">
-                  <h3 className="font-semibold">Contact</h3>
-                  <div className="space-y-2">
-                    <div>
-                      <div className="font-medium">{property.contact.name}</div>
-                      <div className="text-sm text-gray-600">{property.contact.company}</div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Button variant="default" className="w-full" asChild>
-                        <a href={`tel:${property.contact.phone}`}>
-                          <Phone className="h-4 w-4 mr-2" />
-                          Appeler
-                        </a>
-                      </Button>
-                      <Button variant="outline" className="w-full" asChild>
-                        <a href={`mailto:${property.contact.email}`}>
-                          <Mail className="h-4 w-4 mr-2" />
-                          Email
-                        </a>
-                      </Button>
-                    </div>
+              <div className="space-y-4">
+                <h3 className="font-medium text-gray-900">Contact</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center">
+                    <User className="h-4 w-4 mr-2 text-gray-500" />
+                    <span>{property.contactInfo.name}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Mail className="h-4 w-4 mr-2 text-gray-500" />
+                    <a href={`mailto:${property.contactInfo.email}`} className="text-blue-600 hover:underline">
+                      {property.contactInfo.email}
+                    </a>
+                  </div>
+                  <div className="flex items-center">
+                    <Phone className="h-4 w-4 mr-2 text-gray-500" />
+                    <a href={`tel:${property.contactInfo.phone}`} className="text-blue-600 hover:underline">
+                      {property.contactInfo.phone}
+                    </a>
                   </div>
                 </div>
-              )}
+              </div>
 
               <Separator />
 

@@ -1,7 +1,6 @@
 "use client"
 
 import type { ReactNode } from "react"
-import { Navigation } from "@/components/navigation"
 import { Breadcrumbs } from "@/components/breadcrumbs"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
@@ -19,8 +18,6 @@ export function PageLayout({ children, title, showBackButton = false, className 
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
-
       {/* Header avec breadcrumbs et titre */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4">

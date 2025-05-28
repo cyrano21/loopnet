@@ -1,389 +1,495 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { TrendingUp, TrendingDown, Eye, Users, DollarSign, Building2, Calendar, BarChart3 } from "lucide-react"
-import Link from "next/link"
+import { useState, useRef, useEffect } from 'react'
+import {
+  Send,
+  Bot,
+  User,
+  Sparkles,
+  TrendingUp,
+  Calculator,
+  FileText,
+  Building2
+} from 'lucide-react'
+import Link from 'next/link'
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { RoleGuard } from '@/components/role-guard'
 
-export default function AnalyticsPage() {
-  const [dateRange, setDateRange] = useState("30d")
-  const [propertyFilter, setPropertyFilter] = useState("all")
+interface Message {
+  id: string
+  type: 'user' | 'ai'
+  content: string
+  timestamp: Date
+  suggestions?: string[]
+}
 
-  const overviewStats = [
+export default function AIAssistantPage () {
+  const [messages, setMessages] = useState<Message[]>([
     {
-      title: "Total Views",
-      value: "12,847",
-      change: "+15.3%",
-      trend: "up",
-      icon: Eye,
-      color: "text-blue-600",
+      id: '1',
+      type: 'ai',
+      content:
+        "Hello! I'm your AI Real Estate Assistant powered by advanced language models. I can help you with property valuations, market analysis, generating property descriptions, and much more. How can I assist you today?",
+      timestamp: new Date(),
+      suggestions: [
+        'Generate a property description',
+        'Analyze market trends',
+        'Calculate property valuation',
+        'Create marketing content'
+      ]
+    }
+  ])
+  const [inputValue, setInputValue] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement | null>(null)
+
+  const aiFeatures = [
+    {
+      title: 'Property Descriptions',
+      description:
+        'Generate compelling, professional property descriptions automatically',
+      icon: FileText,
+      color: 'text-blue-600',
+      example:
+        'Create a description for a 15,000 sq ft office building in downtown SF'
     },
     {
-      title: "Unique Visitors",
-      value: "3,421",
-      change: "+8.7%",
-      trend: "up",
-      icon: Users,
-      color: "text-green-600",
-    },
-    {
-      title: "Inquiries",
-      value: "247",
-      change: "+23.1%",
-      trend: "up",
-      icon: DollarSign,
-      color: "text-purple-600",
-    },
-    {
-      title: "Conversion Rate",
-      value: "7.2%",
-      change: "-2.1%",
-      trend: "down",
+      title: 'Market Analysis',
+      description:
+        'Get AI-powered insights on market trends and property values',
       icon: TrendingUp,
-      color: "text-orange-600",
+      color: 'text-green-600',
+      example: 'Analyze the office market trends in San Francisco for Q4 2024'
     },
+    {
+      title: 'Property Valuation',
+      description: 'Estimate property values using advanced AI algorithms',
+      icon: Calculator,
+      color: 'text-purple-600',
+      example: 'Value a 50,000 sq ft warehouse in Phoenix, AZ'
+    },
+    {
+      title: 'Investment Analysis',
+      description: 'Analyze investment potential and ROI calculations',
+      icon: Building2,
+      color: 'text-orange-600',
+      example: 'Calculate ROI for a $2.5M office building with 6.5% cap rate'
+    }
   ]
 
-  const topProperties = [
-    {
-      id: 1,
-      title: "Downtown Office Complex",
-      views: 1247,
-      inquiries: 23,
-      conversionRate: "1.8%",
-      revenue: "$45,000",
-      trend: "up",
-    },
-    {
-      id: 2,
-      title: "Retail Shopping Center",
-      views: 892,
-      inquiries: 18,
-      conversionRate: "2.0%",
-      revenue: "$32,000",
-      trend: "up",
-    },
-    {
-      id: 3,
-      title: "Industrial Warehouse",
-      views: 634,
-      inquiries: 12,
-      conversionRate: "1.9%",
-      revenue: "$28,000",
-      trend: "down",
-    },
-    {
-      id: 4,
-      title: "Medical Office Building",
-      views: 523,
-      inquiries: 15,
-      conversionRate: "2.9%",
-      revenue: "$35,000",
-      trend: "up",
-    },
-  ]
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
-  const trafficSources = [
-    { source: "Direct", visitors: 1247, percentage: 36.4 },
-    { source: "Google Search", visitors: 892, percentage: 26.1 },
-    { source: "Social Media", visitors: 634, percentage: 18.5 },
-    { source: "Email", visitors: 423, percentage: 12.4 },
-    { source: "Referrals", visitors: 225, percentage: 6.6 },
-  ]
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
 
-  const inquiryTrends = [
-    { month: "Jan", inquiries: 45, conversions: 8 },
-    { month: "Feb", inquiries: 52, conversions: 12 },
-    { month: "Mar", inquiries: 48, conversions: 9 },
-    { month: "Apr", inquiries: 61, conversions: 15 },
-    { month: "May", inquiries: 58, conversions: 13 },
-    { month: "Jun", inquiries: 67, conversions: 18 },
-  ]
+  const handleSendMessage = async () => {
+    if (!inputValue.trim()) return
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      type: 'user',
+      content: inputValue,
+      timestamp: new Date()
+    }
+
+    setMessages(prev => [...prev, userMessage])
+    setInputValue('')
+    setIsLoading(true)
+
+    try {
+      // Call AI API (Hugging Face or OpenAI)
+      const response = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: inputValue,
+          context: 'real_estate',
+          history: messages.slice(-5) // Send last 5 messages for context
+        })
+      })
+
+      const data = await response.json()
+
+      const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'ai',
+        content: data.response,
+        timestamp: new Date(),
+        suggestions: data.suggestions
+      }
+
+      setMessages(prev => [...prev, aiMessage])
+    } catch (error) {
+      console.error('AI chat error:', error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        type: 'ai',
+        content:
+          "I apologize, but I'm experiencing some technical difficulties. Please try again in a moment.",
+        timestamp: new Date()
+      }
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInputValue(suggestion)
+  }
+
+  const handleFeatureExample = (example: string) => {
+    setInputValue(example)
+  }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className='min-h-screen bg-background'>
       {/* Header */}
-      <header className="border-b bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <Link href="/" className="flex items-center space-x-2">
-                <Building2 className="h-8 w-8 text-blue-600" />
-                <span className="text-2xl font-bold text-blue-600">LoopNet</span>
+      <header className='border-b bg-white'>
+        <div className='container mx-auto px-4'>
+          <div className='flex items-center justify-between h-16'>
+            <div className='flex items-center space-x-8'>
+              <Link href='/' className='flex items-center space-x-2'>
+                <Building2 className='h-8 w-8 text-blue-600' />
+                <span className='text-2xl font-bold text-blue-600'>
+                  LoopNet
+                </span>
               </Link>
-              <nav className="hidden md:flex space-x-6">
-                <Link href="/properties" className="text-gray-700 hover:text-blue-600">
+              <nav className='hidden md:flex space-x-6'>
+                <Link
+                  href='/properties'
+                  className='text-gray-700 hover:text-blue-600'
+                >
                   Properties
                 </Link>
-                <Link href="/dashboard" className="text-gray-700 hover:text-blue-600">
-                  Dashboard
+                <Link
+                  href='/ai-assistant'
+                  className='text-blue-600 font-medium'
+                >
+                  AI Assistant
                 </Link>
-                <Link href="/analytics" className="text-blue-600 font-medium">
-                  Analytics
+                <Link
+                  href='/dashboard'
+                  className='text-gray-700 hover:text-blue-600'
+                >
+                  Dashboard
                 </Link>
               </nav>
             </div>
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost">Profile</Button>
-              <Button>Sign Out</Button>
+            <div className='flex items-center space-x-4'>
+              <Badge className='bg-gradient-to-r from-purple-600 to-blue-600 text-white'>
+                <Sparkles className='h-3 w-3 mr-1' />
+                AI Powered
+              </Badge>
+              <Button variant='ghost'>Profile</Button>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-6">
-        {/* Page Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <BarChart3 className="h-8 w-8 text-blue-600" />
-              Analytics Dashboard
-            </h1>
-            <p className="text-gray-600">Track your property performance and market insights</p>
-          </div>
-          <div className="flex gap-4">
-            <Select value={dateRange} onValueChange={setDateRange}>
-              <SelectTrigger className="w-40">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7d">Last 7 days</SelectItem>
-                <SelectItem value="30d">Last 30 days</SelectItem>
-                <SelectItem value="90d">Last 90 days</SelectItem>
-                <SelectItem value="1y">Last year</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={propertyFilter} onValueChange={setPropertyFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Properties</SelectItem>
-                <SelectItem value="office">Office</SelectItem>
-                <SelectItem value="retail">Retail</SelectItem>
-                <SelectItem value="industrial">Industrial</SelectItem>
-                <SelectItem value="medical">Medical</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+      <div className='container mx-auto px-4 py-6'>
+        <div className='max-w-6xl mx-auto'>
+          <Tabs defaultValue='chat' className='space-y-6'>
+            <div className='flex items-center justify-between'>
+              <div>
+                <h1 className='text-3xl font-bold flex items-center gap-3'>
+                  <Bot className='h-8 w-8 text-blue-600' />
+                  AI Real Estate Assistant
+                </h1>
+                <p className='text-gray-600'>
+                  Powered by advanced language models and real estate expertise
+                </p>
+              </div>
+              <TabsList>
+                <TabsTrigger value='chat'>Chat Assistant</TabsTrigger>
+                <TabsTrigger value='features'>AI Features</TabsTrigger>
+                <TabsTrigger value='tools'>AI Tools</TabsTrigger>
+              </TabsList>
+            </div>
 
-        {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {overviewStats.map((stat, index) => (
-            <Card key={index}>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-2xl font-bold">{stat.value}</p>
-                    <div className="flex items-center mt-1">
-                      {stat.trend === "up" ? (
-                        <TrendingUp className="h-4 w-4 text-green-600 mr-1" />
-                      ) : (
-                        <TrendingDown className="h-4 w-4 text-red-600 mr-1" />
-                      )}
-                      <span className={stat.trend === "up" ? "text-green-600" : "text-red-600"}>{stat.change}</span>
-                    </div>
-                  </div>
-                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
+            <TabsContent value='chat' className='space-y-6'>
+              <div className='grid grid-cols-1 lg:grid-cols-4 gap-6'>
+                {/* Chat Interface */}
+                <div className='lg:col-span-3'>
+                  <Card className='h-[600px] flex flex-col'>
+                    <CardHeader>
+                      <CardTitle className='flex items-center gap-2'>
+                        <Bot className='h-5 w-5 text-blue-600' />
+                        AI Chat Assistant
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className='flex-1 flex flex-col p-0'>
+                      {/* Messages */}
+                      <div className='flex-1 overflow-y-auto p-4 space-y-4'>
+                        {messages.map(message => (
+                          <div
+                            key={message.id}
+                            className={`flex gap-3 ${
+                              message.type === 'user'
+                                ? 'justify-end'
+                                : 'justify-start'
+                            }`}
+                          >
+                            {message.type === 'ai' && (
+                              <Avatar className='w-8 h-8'>
+                                <AvatarFallback className='bg-blue-100 text-blue-600'>
+                                  <Bot className='h-4 w-4' />
+                                </AvatarFallback>
+                              </Avatar>
+                            )}
+                            <div
+                              className={`max-w-[80%] rounded-lg p-3 ${
+                                message.type === 'user'
+                                  ? 'bg-blue-600 text-white'
+                                  : 'bg-gray-100 text-gray-900'
+                              }`}
+                            >
+                              <p className='text-sm'>{message.content}</p>
+                              <p className='text-xs opacity-70 mt-1'>
+                                {message.timestamp.toLocaleTimeString()}
+                              </p>
+                              {message.suggestions && (
+                                <div className='mt-3 space-y-2'>
+                                  <p className='text-xs font-medium'>
+                                    Suggested actions:
+                                  </p>
+                                  <div className='flex flex-wrap gap-2'>
+                                    {message.suggestions.map(
+                                      (suggestion, index) => (
+                                        <Button
+                                          key={index}
+                                          size='sm'
+                                          variant='outline'
+                                          className='text-xs h-6'
+                                          onClick={() =>
+                                            handleSuggestionClick(suggestion)
+                                          }
+                                        >
+                                          {suggestion}
+                                        </Button>
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            {message.type === 'user' && (
+                              <Avatar className='w-8 h-8'>
+                                <AvatarFallback className='bg-green-100 text-green-600'>
+                                  <User className='h-4 w-4' />
+                                </AvatarFallback>
+                              </Avatar>
+                            )}
+                          </div>
+                        ))}
+                        {isLoading && (
+                          <div className='flex gap-3 justify-start'>
+                            <Avatar className='w-8 h-8'>
+                              <AvatarFallback className='bg-blue-100 text-blue-600'>
+                                <Bot className='h-4 w-4' />
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className='bg-gray-100 rounded-lg p-3'>
+                              <div className='flex space-x-1'>
+                                <div className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'></div>
+                                <div
+                                  className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
+                                  style={{ animationDelay: '0.1s' }}
+                                ></div>
+                                <div
+                                  className='w-2 h-2 bg-gray-400 rounded-full animate-bounce'
+                                  style={{ animationDelay: '0.2s' }}
+                                ></div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        <div ref={messagesEndRef} />
+                      </div>
+
+                      {/* Input */}
+                      <div className='border-t p-4'>
+                        <div className='flex gap-2'>
+                          <Input
+                            value={inputValue}
+                            onChange={(
+                              e: React.ChangeEvent<HTMLInputElement>
+                            ) => setInputValue(e.target.value)}
+                            placeholder='Ask me anything about real estate...'
+                            onKeyDown={(
+                              e: React.KeyboardEvent<HTMLInputElement>
+                            ) => e.key === 'Enter' && handleSendMessage()}
+                            disabled={isLoading}
+                          />
+                          <Button
+                            onClick={handleSendMessage}
+                            disabled={isLoading || !inputValue.trim()}
+                          >
+                            <Send className='h-4 w-4' />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
 
-        {/* Main Analytics */}
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="properties">Property Performance</TabsTrigger>
-            <TabsTrigger value="traffic">Traffic Sources</TabsTrigger>
-            <TabsTrigger value="inquiries">Inquiry Analysis</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Views Chart */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Property Views Over Time</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-600">Views trend chart</p>
-                      <p className="text-sm text-gray-500">Chart.js integration</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Conversion Funnel */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Conversion Funnel</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                      <span className="font-medium">Property Views</span>
-                      <span className="text-lg font-bold">12,847</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                      <span className="font-medium">Detail Page Views</span>
-                      <span className="text-lg font-bold">3,421</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                      <span className="font-medium">Contact Inquiries</span>
-                      <span className="text-lg font-bold">247</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
-                      <span className="font-medium">Qualified Leads</span>
-                      <span className="text-lg font-bold">89</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="properties" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Top Performing Properties</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {topProperties.map((property) => (
-                    <div key={property.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-medium">{property.title}</h3>
-                        <Badge
-                          className={
-                            property.trend === "up" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                          }
-                        >
-                          {property.trend === "up" ? "↗" : "↘"} Trending {property.trend}
-                        </Badge>
-                      </div>
-                      <div className="grid grid-cols-4 gap-4 text-sm">
-                        <div>
-                          <div className="text-gray-600">Views</div>
-                          <div className="font-semibold">{property.views.toLocaleString()}</div>
+                {/* AI Features Sidebar */}
+                <div className='space-y-4'>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className='text-lg'>Quick Actions</CardTitle>
+                    </CardHeader>
+                    <CardContent className='space-y-3'>
+                      {aiFeatures.map((feature, index) => (
+                        <div key={index} className='border rounded-lg p-3'>
+                          <div className='flex items-center gap-2 mb-2'>
+                            <feature.icon
+                              className={`h-4 w-4 ${feature.color}`}
+                            />
+                            <h4 className='font-medium text-sm'>
+                              {feature.title}
+                            </h4>
+                          </div>
+                          <p className='text-xs text-gray-600 mb-2'>
+                            {feature.description}
+                          </p>
+                          <Button
+                            size='sm'
+                            variant='outline'
+                            className='w-full text-xs'
+                            onClick={() =>
+                              handleFeatureExample(feature.example)
+                            }
+                          >
+                            Try Example
+                          </Button>
                         </div>
-                        <div>
-                          <div className="text-gray-600">Inquiries</div>
-                          <div className="font-semibold">{property.inquiries}</div>
+                      ))}
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className='text-lg'>AI Capabilities</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className='space-y-2 text-sm'>
+                        <div className='flex items-center gap-2'>
+                          <div className='w-2 h-2 bg-green-500 rounded-full'></div>
+                          <span>Property Valuation</span>
                         </div>
-                        <div>
-                          <div className="text-gray-600">Conversion</div>
-                          <div className="font-semibold">{property.conversionRate}</div>
+                        <div className='flex items-center gap-2'>
+                          <div className='w-2 h-2 bg-green-500 rounded-full'></div>
+                          <span>Market Analysis</span>
                         </div>
-                        <div>
-                          <div className="text-gray-600">Revenue</div>
-                          <div className="font-semibold">{property.revenue}</div>
+                        <div className='flex items-center gap-2'>
+                          <div className='w-2 h-2 bg-green-500 rounded-full'></div>
+                          <span>Content Generation</span>
+                        </div>
+                        <div className='flex items-center gap-2'>
+                          <div className='w-2 h-2 bg-green-500 rounded-full'></div>
+                          <span>Investment Analysis</span>
+                        </div>
+                        <div className='flex items-center gap-2'>
+                          <div className='w-2 h-2 bg-green-500 rounded-full'></div>
+                          <span>Document Review</span>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+              </div>
+            </TabsContent>
 
-          <TabsContent value="traffic" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Traffic Sources</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {trafficSources.map((source, index) => (
-                      <div key={index} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-                          <span className="font-medium">{source.source}</span>
-                        </div>
-                        <div className="text-right">
-                          <div className="font-semibold">{source.visitors.toLocaleString()}</div>
-                          <div className="text-sm text-gray-600">{source.percentage}%</div>
-                        </div>
+            <TabsContent value='features' className='space-y-6'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                {aiFeatures.map((feature, index) => (
+                  <Card
+                    key={index}
+                    className='border-2 hover:border-blue-300 transition-colors'
+                  >
+                    <CardContent className='p-6'>
+                      <div className='flex items-center gap-3 mb-4'>
+                        <feature.icon className={`h-8 w-8 ${feature.color}`} />
+                        <h3 className='text-xl font-semibold'>
+                          {feature.title}
+                        </h3>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      <p className='text-gray-600 mb-4'>
+                        {feature.description}
+                      </p>
+                      <div className='bg-gray-50 p-3 rounded-lg mb-4'>
+                        <p className='text-sm font-medium text-gray-700 mb-1'>
+                          Example:
+                        </p>
+                        <p className='text-sm text-gray-600 italic'>
+                          "{feature.example}"
+                        </p>
+                      </div>
+                      <Button
+                        className='w-full'
+                        onClick={() => handleFeatureExample(feature.example)}
+                      >
+                        Try This Feature
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Geographic Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <Calendar className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-600">Geographic map</p>
-                      <p className="text-sm text-gray-500">Map visualization</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+            <TabsContent value='tools' className='space-y-6'>
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Property Description Generator</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className='text-sm text-gray-600 mb-4'>
+                      Generate professional property descriptions using AI
+                    </p>
+                    <Button className='w-full'>Launch Tool</Button>
+                  </CardContent>
+                </Card>
 
-          <TabsContent value="inquiries" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Inquiry Trends</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <div className="text-center">
-                      <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                      <p className="text-gray-600">Inquiry trend chart</p>
-                      <p className="text-sm text-gray-500">Monthly inquiry analysis</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Market Analysis Tool</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className='text-sm text-gray-600 mb-4'>
+                      Get AI-powered market insights and trends
+                    </p>
+                    <Button className='w-full'>Launch Tool</Button>
+                  </CardContent>
+                </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Inquiry Response Times</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span>Average Response Time</span>
-                      <span className="font-bold text-green-600">2.3 hours</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Response Rate</span>
-                      <span className="font-bold text-blue-600">94.2%</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Follow-up Rate</span>
-                      <span className="font-bold text-purple-600">78.5%</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span>Conversion to Meeting</span>
-                      <span className="font-bold text-orange-600">36.1%</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Valuation Calculator</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className='text-sm text-gray-600 mb-4'>
+                      AI-powered property valuation and analysis
+                    </p>
+                    <Button className='w-full'>Launch Tool</Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   )

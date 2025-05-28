@@ -1,23 +1,40 @@
-"use client"
+'use client'
 
-import type React from "react"
+import React, { ReactNode } from 'react'
+import { usePropertyComparison } from '@/hooks/use-property-comparison'
+import { ComparisonBar } from './comparison-bar'
+import { PropertyComparisonModal } from './property-comparison-modal'
+import { Property } from '@/types/property'
 
-import { createContext, useContext } from "react"
-import { usePropertyComparison } from "@/hooks/use-property-comparison"
-import { ComparisonBar } from "./comparison-bar"
-import { PropertyComparisonModal } from "./property-comparison-modal"
+// Contournement temporaire pour React 19 - import direct des fonctions
+const createContext = (React as any).createContext
+const useContext = (React as any).useContext
 
-const ComparisonContext = createContext<ReturnType<typeof usePropertyComparison> | null>(null)
+interface ComparisonContextType {
+  comparisonList: Property[]
+  addToComparison: (property: Property) => void
+  removeFromComparison: (propertyId: string) => void
+  clearComparison: () => void
+  openComparison: () => void
+  isComparisonOpen: boolean
+  setIsComparisonOpen: (isOpen: boolean) => void
+}
 
-export function useComparison() {
+const ComparisonContext = createContext(null) as any
+
+export function useComparison () {
   const context = useContext(ComparisonContext)
   if (!context) {
-    throw new Error("useComparison must be used within ComparisonProvider")
+    throw new Error('useComparison must be used within ComparisonProvider')
   }
   return context
 }
 
-export function ComparisonProvider({ children }: { children: React.ReactNode }) {
+export function ComparisonProvider ({
+  children
+}: {
+  children: React.ReactNode
+}) {
   const comparison = usePropertyComparison()
 
   return (

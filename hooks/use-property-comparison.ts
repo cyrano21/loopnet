@@ -2,27 +2,8 @@
 
 import { useState, useCallback, useEffect } from "react"
 import { toast } from "sonner"
-import { usePermissions } from "./use-permissions"
-
-interface Property {
-  _id: string
-  title: string
-  price: number
-  location?: {
-    address: string
-    city: string
-    state: string
-  }
-  images: any[]
-  propertyType: string
-  size?: number
-  surface?: number
-  bedrooms?: number
-  bathrooms?: number
-  description: string
-  city?: string
-  address?: string
-}
+import { usePermissions } from "@/hooks/use-permissions"
+import { Property } from "@/types/property"
 
 export function usePropertyComparison() {
   const { can, limit, userRole } = usePermissions()

@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import Image from 'next/image'
 import {
   Search,
   Building2,
@@ -15,14 +16,27 @@ import {
   Briefcase,
   Zap,
   Landmark,
-  Store // Ajout de Store
+  Store,
+  Calculator,
+  Bell,
+  Sparkles,
+  BarChart3,
+  Target,
+  ArrowRight,
+  Shield
 } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation' // VOTRE useRouter
+import { useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
+import { useComparison } from '@/components/comparison-provider'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -33,8 +47,9 @@ import {
 } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { PropertyCard } from '@/components/property-card' // Import du composant PropertyCard complet
-import { useProperties } from '@/hooks/use-properties' // VOTRE hook useProperties
+import { PropertyCard } from '@/components/property-card'
+import { CompanyLogoItem } from '@/components/company-logo-item'
+import { useProperties } from '@/hooks/use-properties'
 import { cn } from '@/lib/utils'
 
 // Hook useOnScreen with proper typing
@@ -69,6 +84,16 @@ function useOnScreen (
   return isIntersecting
 }
 
+const handleLogoError = (e: React.SyntheticEvent<HTMLImageElement>): void => {
+  const target = e.currentTarget as HTMLImageElement
+  target.style.display = 'none'
+  const fallback = target.nextElementSibling as HTMLElement
+  if (fallback) {
+    fallback.style.display = 'flex'
+    fallback.classList.remove('hidden')
+  }
+}
+
 export default function HomePage () {
   // VOTRE ÉTAT ET LOGIQUE EXISTANTE SONT PRÉSERVÉS
   const [searchType, setSearchType] = useState('forLease')
@@ -80,9 +105,11 @@ export default function HomePage () {
     seconds: 30
   })
   const [searchQuery, setSearchQuery] = useState('')
+  const [isToolsSidebarOpen, setIsToolsSidebarOpen] = useState(false)
 
   const router = useRouter()
-  const { properties, loading } = useProperties({ page: 1, limit: 8 }) // VOTRE HOOK
+  const { properties, loading, error } = useProperties({ page: 1, limit: 8 }) // VOTRE HOOK
+  const comparison = useComparison() // Hook pour la fonctionnalité de comparaison
 
   // Refs pour les animations
   const trustSectionRef = useRef<HTMLDivElement | null>(null)
@@ -128,24 +155,24 @@ export default function HomePage () {
 
   // VOS DONNÉES SONT PRÉSERVÉES
   const companyLogos = [
-    'Amazon',
-    'Google',
-    'Goldman Sachs',
-    'IBM',
-    'Netflix',
-    'Blackstone',
-    'Intel',
-    'Starbucks',
-    '3M',
-    'Pfizer',
-    'Target',
-    'Walmart',
-    'Adobe',
-    'Disney',
-    'FedEx',
-    'Home Depot',
-    'Microsoft',
-    'Apple'
+    { name: 'Amazon', logo: '/logos/amazon.svg' },
+    { name: 'Google', logo: '/logos/google.svg' },
+    { name: 'Goldman Sachs', logo: '/logos/goldman-sachs.svg' },
+    { name: 'IBM', logo: '/logos/ibm.svg' },
+    { name: 'Netflix', logo: '/logos/netflix.svg' },
+    { name: 'Blackstone', logo: '/logos/blackstone.svg' },
+    { name: 'Intel', logo: '/logos/intel.svg' },
+    { name: 'Starbucks', logo: '/logos/starbucks.svg' },
+    { name: '3M', logo: '/logos/3m.svg' },
+    { name: 'Pfizer', logo: '/logos/pfizer.svg' },
+    { name: 'Target', logo: '/logos/target.svg' },
+    { name: 'Walmart', logo: '/logos/walmart.svg' },
+    { name: 'Adobe', logo: '/logos/adobe.svg' },
+    { name: 'Disney', logo: '/logos/disney.svg' },
+    { name: 'FedEx', logo: '/logos/fedex.svg' },
+    { name: 'Home Depot', logo: '/logos/home-depot.svg' },
+    { name: 'Microsoft', logo: '/logos/microsoft.svg' },
+    { name: 'Apple', logo: '/logos/apple.svg' }
   ]
   const propertyTypesData = [
     // Renommé pour éviter conflit avec type 'propertyTypes' ailleurs
@@ -303,969 +330,1321 @@ export default function HomePage () {
   const formatTime = (time: number) => time.toString().padStart(2, '0')
 
   return (
-    <div className='min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300 overflow-x-hidden'>
-      {/* Hero Section */}
-      <section className='relative text-white py-20 md:py-28 lg:py-32 overflow-hidden isolate'>
-        <div className='absolute inset-0 z-[-1]'>
-          <Image
-            src='https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&h=600&fit=crop&crop=center' // VOTRE IMAGE
-            alt='City skyline'
-            fill
-            className='object-cover'
-            priority
-            quality={75}
-          />
-          <div className='absolute inset-0 bg-gradient-to-br from-blue-700/80 via-blue-600/70 to-sky-500/60'></div>{' '}
-          {/* Gradient un peu plus prononcé */}
-        </div>
-
-        <div className='relative z-10 container mx-auto px-4'>
-          <div className='max-w-3xl mx-auto text-center'>
-            <h1 className='text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-shadow-lg animate-fade-in-down'>
-              The World's #1 Commercial Real Estate Marketplace
-            </h1>
-            <p className='text-lg md:text-xl mb-10 text-slate-100 animate-fade-in-up animation-delay-200'>
-              Find, Lease, or Buy Your Next Commercial Property With Us. Explore
-              Thousands of Listings.
-            </p>
-
-            <Card className='bg-white/95 dark:bg-slate-800/95 backdrop-blur-md text-slate-900 dark:text-slate-100 p-5 md:p-8 shadow-2xl rounded-xl transform transition-all hover:scale-[1.01] duration-300 animate-fade-in-up animation-delay-400'>
-              <CardContent className='p-0'>
-                <div className='flex flex-wrap justify-center mb-6 border-b border-slate-200 dark:border-slate-700'>
-                  {[
-                    // VOS DONNÉES DE TABS
-                    {
-                      key: 'forLease',
-                      label: 'For Lease',
-                      icon: <Briefcase className='w-4 h-4 mr-1.5' />
-                    },
-                    {
-                      key: 'forSale',
-                      label: 'For Sale',
-                      icon: <TrendingUp className='w-4 h-4 mr-1.5' />
-                    },
-                    {
-                      key: 'auctions',
-                      label: 'Auctions',
-                      icon: <Clock className='w-4 h-4 mr-1.5' />
-                    },
-                    {
-                      key: 'businesses',
-                      label: 'Businesses For Sale',
-                      icon: <Store className='w-4 h-4 mr-1.5' />
-                    }
-                  ].map(tab => (
-                    <button
-                      key={tab.key}
-                      onClick={() => {
-                        setSearchType(tab.key)
-                        router.push(`/properties?type=${tab.key}`)
-                      }} // VOTRE LOGIQUE
-                      className={cn(
-                        'flex items-center px-3 sm:px-4 py-2.5 font-medium text-sm sm:text-base transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 rounded-t-md',
-                        searchType === tab.key
-                          ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-slate-50 dark:bg-slate-700/50'
-                          : 'text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700/30'
-                      )}
-                    >
-                      {tab.icon}
-                      {tab.label}
-                    </button>
-                  ))}
+    <div className='min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-300 overflow-x-hidden relative'>
+      {/* Main Content Wrapper - Add padding for sidebar */}
+      <div className='xl:pr-80 2xl:pr-96 transition-all duration-300'>
+        {/* Tools Sidebar - Desktop */}
+        <div className='fixed right-0 top-1/2 transform -translate-y-1/2 z-50 hidden xl:block 2xl:block'>
+          <div className='bg-white/95 dark:bg-slate-800/95 backdrop-blur-md shadow-2xl rounded-l-2xl border border-slate-200 dark:border-slate-700 p-6 w-80 2xl:w-96 max-h-[80vh] overflow-y-auto tools-sidebar-scroll'>
+            <div className='flex items-center justify-between mb-6'>
+              <div className='flex items-center space-x-2'>
+                <div className='p-2 2xl:p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg'>
+                  <Zap className='w-5 h-5 2xl:w-6 2xl:h-6 text-white' />
                 </div>
+                <h3 className='text-lg 2xl:text-xl font-bold text-slate-800 dark:text-slate-100'>
+                  Outils Pro
+                </h3>
+              </div>
+              <Badge className='bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 text-xs px-2 py-1'>
+                Nouveaux
+              </Badge>
+            </div>
 
-                <div className='flex overflow-x-auto space-x-2.5 sm:space-x-3 mb-6 pb-2 -mx-2 px-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent'>
-                  {propertyTypesData.map(
-                    (
-                      type // VOS propertyTypesData
-                    ) => (
-                      <button
-                        key={type.id}
-                        onClick={() => {
-                          setSelectedPropertyType(type.id.toString())
-                          router.push(
-                            `/properties?propertyType=${
-                              type.id
-                            }&name=${encodeURIComponent(type.name)}`
-                          )
-                        }} // VOTRE LOGIQUE
-                        className={cn(
-                          'flex-shrink-0 group flex flex-col items-center p-2.5 w-20 h-20 sm:w-24 sm:h-24 justify-center rounded-lg transition-all duration-200 transform hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-800',
-                          selectedPropertyType === type.id.toString()
-                            ? 'bg-blue-100 dark:bg-blue-600/40 text-blue-700 dark:text-blue-300 shadow-md ring-1 ring-blue-300 dark:ring-blue-500'
-                            : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600'
-                        )}
-                      >
-                        <span className='text-2xl sm:text-3xl mb-1 transition-transform duration-200 group-hover:scale-110'>
-                          {type.icon}
-                        </span>
-                        <span className='text-xs font-medium'>{type.name}</span>
-                      </button>
-                    )
-                  )}
-                </div>
-
-                <div className='flex flex-col sm:flex-row gap-2.5 sm:gap-3 mb-4'>
-                  <div className='flex-1 relative'>
-                    <MapPin className='absolute left-3.5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500 pointer-events-none' />
-                    <Input
-                      placeholder='Enter location, address, city, or ZIP code'
-                      className='h-12 text-base pl-11 focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 rounded-md'
-                      value={searchQuery} // VOTRE ÉTAT
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setSearchQuery(e.target.value)
-                      } // VOTRE GESTIONNAIRE
-                      onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
-                        e.key === 'Enter' && handleSearch()
-                      }
-                    />
+            <div className='space-y-4'>
+              {/* Calculateur Gratuit */}
+              <Link href='/tools/cap-rate-calculator' className='group block'>
+                <div className='p-4 2xl:p-5 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl border border-emerald-200 dark:border-emerald-700/30 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]'>
+                  <div className='flex items-start space-x-3 mb-3'>
+                    <div className='p-2 2xl:p-3 bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg shadow-md'>
+                      <Calculator className='w-4 h-4 2xl:w-5 2xl:h-5 text-white' />
+                    </div>
+                    <div className='flex-1'>
+                      <h4 className='font-semibold text-sm 2xl:text-base text-slate-800 dark:text-slate-100 mb-1'>
+                        Calculateur Cap Rate
+                      </h4>
+                      <Badge className='bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs px-2 py-0.5'>
+                        <Star className='w-3 h-3 mr-1' />
+                        Gratuit
+                      </Badge>
+                    </div>
                   </div>
-                  <Button
-                    onClick={handleSearch} // VOTRE GESTIONNAIRE
-                    size='lg'
-                    className='h-12 px-6 sm:px-8 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 rounded-md text-base'
-                  >
-                    <Search className='w-5 h-5 mr-2' />
-                    Search
-                  </Button>
+                  <p className='text-xs 2xl:text-sm text-slate-600 dark:text-slate-400 mb-2'>
+                    Calculez instantanément la rentabilité
+                  </p>
+                  <div className='flex items-center text-emerald-600 dark:text-emerald-400 text-xs 2xl:text-sm font-medium group-hover:translate-x-1 transition-transform'>
+                    Essayer <ArrowRight className='w-3 h-3 ml-1' />
+                  </div>
                 </div>
+              </Link>
 
-                <div className='flex flex-wrap gap-2.5 sm:gap-3 text-sm'>
-                  {/* VOS SELECTS SONT PRÉSERVÉS */}
-                  <Select>
-                    <SelectTrigger className='w-full sm:w-auto sm:flex-1 md:w-44 h-10 dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 rounded-md text-slate-700 dark:text-slate-300'>
-                      <SelectValue placeholder='Price Range' />
-                    </SelectTrigger>
-                    <SelectContent className='dark:bg-slate-700 dark:text-slate-100 border-slate-600'>
-                      <SelectItem value='0-500k'>$0 - $500K</SelectItem>
-                      <SelectItem value='500k-1m'>$500K - $1M</SelectItem>
-                      <SelectItem value='1m-5m'>$1M - $5M</SelectItem>
-                      <SelectItem value='5m+'>$5M+</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select>
-                    <SelectTrigger className='w-full sm:w-auto sm:flex-1 md:w-44 h-10 dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 rounded-md text-slate-700 dark:text-slate-300'>
-                      <SelectValue placeholder='Size (sq ft)' />
-                    </SelectTrigger>
-                    <SelectContent className='dark:bg-slate-700 dark:text-slate-100 border-slate-600'>
-                      <SelectItem value='0-5k'>0 - 5,000</SelectItem>
-                      <SelectItem value='5k-10k'>5,000 - 10,000</SelectItem>
-                      <SelectItem value='10k-25k'>10,000 - 25,000</SelectItem>
-                      <SelectItem value='25k+'>25,000+</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant='link'
-                    className='text-blue-600 dark:text-blue-400 hover:underline p-0 h-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm text-sm'
-                  >
-                    More Filters <ChevronDown className='w-4 h-4 ml-1' />
-                  </Button>
+              {/* Alertes Premium */}
+              <div className='group cursor-pointer relative'>
+                {/* Notification Badge */}
+                <div className='absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-red-500 to-orange-500 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg z-10'>
+                  3
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Section */}
-      <section
-        ref={trustSectionRef}
-        className={cn(
-          'py-16 bg-white dark:bg-slate-800 transition-all duration-1000 ease-out',
-          isTrustSectionOnScreen
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-12'
-        )}
-      >
-        <div className='container mx-auto px-4 text-center'>
-          {/* VOTRE TEXTE PRÉSERVÉ */}
-          <p className='text-lg text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto'>
-            For over 30 years, LoopNet has been the trusted brand for Commercial
-            Real Estate
-          </p>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8'>
-            {/* VOS STATS PRÉSERVÉES, juste un léger style ajouté */}
-            {[
-              {
-                value: '300K+',
-                label: 'Active Listings',
-                icon: (
-                  <Building2 className='w-10 h-10 text-blue-500 mb-3 mx-auto' />
-                )
-              },
-              {
-                value: '13M+',
-                label: 'Monthly Visitors',
-                icon: (
-                  <Users className='w-10 h-10 text-green-500 mb-3 mx-auto' />
-                )
-              },
-              {
-                value: '$109B+',
-                label: 'In Transaction Value',
-                icon: (
-                  <TrendingUp className='w-10 h-10 text-purple-500 mb-3 mx-auto' />
-                )
-              }
-            ].map((stat, index) => (
-              <div
-                key={index}
-                className={cn(
-                  'p-6 bg-slate-100 dark:bg-slate-700/70 rounded-xl shadow-lg transition-all duration-500 ease-out hover:shadow-xl hover:scale-105',
-                  isTrustSectionOnScreen
-                    ? `opacity-100 scale-100 animation-delay-${index * 150}`
-                    : 'opacity-0 scale-90'
-                )}
-              >
-                {stat.icon}
-                <div className='text-4xl font-extrabold text-blue-600 dark:text-blue-400 mb-2'>
-                  {stat.value}
-                </div>
-                <div className='text-slate-600 dark:text-slate-400'>
-                  {stat.label}
+                <div className='p-4 2xl:p-5 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-200 dark:border-blue-700/30 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]'>
+                  <div className='flex items-start space-x-3 mb-3'>
+                    <div className='p-2 2xl:p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg shadow-md'>
+                      <Bell className='w-4 h-4 2xl:w-5 2xl:h-5 text-white' />
+                    </div>
+                    <div className='flex-1'>
+                      <h4 className='font-semibold text-sm 2xl:text-base text-slate-800 dark:text-slate-100 mb-1'>
+                        Alertes Intelligentes
+                      </h4>
+                      <Badge className='bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs px-2 py-0.5'>
+                        <Sparkles className='w-3 h-3 mr-1' />
+                        Premium
+                      </Badge>
+                    </div>
+                  </div>
+                  <p className='text-xs 2xl:text-sm text-slate-600 dark:text-slate-400 mb-2'>
+                    Notifications automatiques
+                  </p>
+                  <div className='flex items-center text-blue-600 dark:text-blue-400 text-xs 2xl:text-sm font-medium group-hover:translate-x-1 transition-transform'>
+                    Découvrir <ArrowRight className='w-3 h-3 ml-1' />
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Company Logos Carousel */}
-      <section
-        ref={companyLogosRef}
-        className={cn(
-          'py-12 bg-slate-50 dark:bg-slate-900/50 overflow-hidden transition-all duration-1000 ease-out',
-          isCompanyLogosOnScreen ? 'opacity-100' : 'opacity-0'
-        )}
-      >
-        <div className='container mx-auto px-4'>
-          <h3 className='text-center text-xl font-semibold text-slate-700 dark:text-slate-300 mb-10'>
-            Companies actively searching on LoopNet
-          </h3>
-          <div className='relative group'>
-            <div className='flex animate-scroll-smooth space-x-12 md:space-x-16 items-center'>
-              {companyLogos.map(
-                (
-                  company,
-                  index // VOS companyLogos
-                ) => (
-                  <div
-                    key={index}
-                    className='flex-shrink-0 w-36 h-20 bg-white dark:bg-slate-800 rounded-lg shadow-md flex items-center justify-center p-4 transition-all duration-300 hover:shadow-xl hover:scale-105 grayscale hover:grayscale-0 opacity-75 hover:opacity-100 dark:opacity-60 dark:hover:opacity-100'
-                    title={company}
-                  >
-                    <span className='text-sm font-medium text-slate-600 dark:text-slate-400 text-center'>
-                      {company}
-                    </span>
+              {/* Analyses Pro */}
+              <div className='group cursor-pointer'>
+                <div className='p-4 2xl:p-5 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-700/30 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]'>
+                  <div className='flex items-start space-x-3 mb-3'>
+                    <div className='p-2 2xl:p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg shadow-md'>
+                      <BarChart3 className='w-4 h-4 2xl:w-5 2xl:h-5 text-white' />
+                    </div>
+                    <div className='flex-1'>
+                      <h4 className='font-semibold text-sm 2xl:text-base text-slate-800 dark:text-slate-100 mb-1'>
+                        Analyses de Marché
+                      </h4>
+                      <Badge className='bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs px-2 py-0.5'>
+                        <Target className='w-3 h-3 mr-1' />
+                        Pro
+                      </Badge>
+                    </div>
                   </div>
-                )
-              )}
+                  <p className='text-xs 2xl:text-sm text-slate-600 dark:text-slate-400 mb-2'>
+                    Tendances du marché détaillées
+                  </p>
+                  <div className='flex items-center text-purple-600 dark:text-purple-400 text-xs 2xl:text-sm font-medium group-hover:translate-x-1 transition-transform'>
+                    Explorer <ArrowRight className='w-3 h-3 ml-1' />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Trending on LoopNet */}
-      <section
-        ref={trendingSectionRef}
-        className={cn(
-          'py-16 bg-white dark:bg-slate-800 transition-all duration-1000 ease-out',
-          isTrendingSectionOnScreen
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-12'
-        )}
-      >
-        <div className='container mx-auto px-4'>
-          <div className='flex flex-col sm:flex-row items-center justify-between mb-10'>
-            <h2 className='text-3xl font-bold text-slate-800 dark:text-slate-100 mb-3 sm:mb-0'>
-              Trending on LoopNet
-            </h2>
-            <Link
-              href='/properties'
-              className='text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center group transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm'
-            >
-              See More
-              <ChevronDown className='w-5 h-5 ml-1 transform rotate-[-90deg] group-hover:translate-x-1 transition-transform' />
-            </Link>
-          </div>
-
-          <Tabs
-            value={trendingTab}
-            onValueChange={setTrendingTab}
-            className='w-full'
-          >
-            <TabsList className='grid w-full grid-cols-3 max-w-lg mx-auto mb-8 bg-slate-100 dark:bg-slate-700 rounded-lg p-1 shadow-sm'>
-              {Object.keys(trendingPropertiesData).map(
-                (
-                  key // VOS trendingPropertiesData
-                ) => (
-                  <TabsTrigger
-                    key={key}
-                    value={key}
-                    className='data-[state=active]:bg-white dark:data-[state=active]:bg-slate-600 data-[state=active]:shadow-md data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-300 rounded-md h-10 text-sm font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-700'
-                  >
-                    {key.replace(/([A-Z])/g, ' $1').trim()}{' '}
-                    {/* Pour "ForLease" -> "For Lease" */}
-                  </TabsTrigger>
-                )
-              )}
-            </TabsList>
-
-            {Object.entries(trendingPropertiesData).map(
-              (
-                [key, trendProps] // VOS trendingPropertiesData
-              ) => (
-                <TabsContent
-                  key={key}
-                  value={key}
-                  className='mt-8 focus:outline-none'
+            <div className='mt-6 pt-4 border-t border-slate-200 dark:border-slate-700'>
+              <Link href='/tools'>
+                <Button
+                  size='sm'
+                  className='w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs rounded-lg shadow-md'
                 >
-                  <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
-                    {trendProps.map(
-                      (
-                        property,
-                        idx // VOS données de propriété de tendance
-                      ) => (
-                        <div
-                          key={property.id}
-                          className={cn(
-                            'transition-all duration-500 ease-out',
-                            isTrendingSectionOnScreen
-                              ? `opacity-100 translate-y-0 animation-delay-${
-                                  idx * 100
-                                }`
-                              : 'opacity-0 translate-y-8'
-                          )}
-                        >
-                          <Card className='overflow-hidden group hover:shadow-2xl dark:bg-slate-700/80 dark:border-slate-600 transition-all duration-300 transform hover:-translate-y-1.5 rounded-xl'>
-                            <CardHeader className='p-0 relative'>
-                              <Link
-                                href={`/mock-property/${property.id}`}
-                                legacyBehavior
-                              >
-                                <a className='block aspect-[4/3] relative overflow-hidden rounded-t-xl'>
-                                  <Image
-                                    src={property.image}
-                                    alt={property.type}
-                                    fill
-                                    className='object-cover group-hover:scale-110 transition-transform duration-500'
-                                    sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw'
-                                    quality={70}
-                                  />
-                                  <Badge
-                                    variant='secondary'
-                                    className='absolute top-3 left-3 z-10 bg-blue-600 text-white dark:bg-blue-500 dark:text-slate-900 shadow-md text-xs px-2 py-1'
-                                  >
-                                    {property.type}
-                                  </Badge>
-                                  <div className='absolute top-3 right-3 z-10'>
-                                    <Button
-                                      asChild
-                                      size='icon'
-                                      variant='ghost'
-                                      className='w-9 h-9 rounded-full bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 backdrop-blur-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-0'
-                                    >
-                                      <button
-                                        aria-label='Ajouter aux favoris'
-                                        title='Ajouter aux favoris'
-                                      >
-                                        <Heart className='w-4 h-4 text-slate-600 dark:text-slate-300 group-hover:text-red-500 dark:group-hover:text-red-400 group-hover:fill-red-500/20 transition-all' />
-                                      </button>
-                                    </Button>
-                                  </div>
-                                </a>
-                              </Link>
-                            </CardHeader>
-                            <CardContent className='p-4'>
-                              <Link
-                                href={`/mock-property/${property.id}`}
-                                legacyBehavior
-                              >
-                                <a className='block'>
-                                  <h3 className='font-semibold text-blue-700 dark:text-blue-400 text-md mb-1 hover:underline leading-tight'>
-                                    {property.price}
-                                  </h3>
-                                  <p
-                                    className='text-sm text-slate-700 dark:text-slate-300 mb-1 truncate group-hover:text-clip group-hover:whitespace-normal'
-                                    title={property.address}
-                                  >
-                                    {property.address}
-                                  </p>
-                                  <p className='text-xs text-slate-500 dark:text-slate-400'>
-                                    {property.size}
-                                  </p>
-                                </a>
-                              </Link>
-                            </CardContent>
-                          </Card>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </TabsContent>
-              )
-            )}
-          </Tabs>
-        </div>
-      </section>
-
-      {/* Featured Properties from Database */}
-      <section
-        ref={featuredSectionRef}
-        className={cn(
-          'py-16 bg-slate-100 dark:bg-slate-800/50 transition-all duration-1000 ease-out',
-          isFeaturedSectionOnScreen ? 'opacity-100' : 'opacity-0'
-        )}
-      >
-        <div className='container mx-auto px-4'>
-          <div className='flex flex-col sm:flex-row items-center justify-between mb-12'>
-            <div>
-              <h2 className='text-3xl font-bold text-slate-800 dark:text-slate-100 mb-2'>
-                Featured Properties
-              </h2>
-              <p className='text-slate-600 dark:text-slate-400'>
-                Discover our best investment opportunities
-              </p>{' '}
-              {/* VOTRE TEXTE */}
+                  <Zap className='w-4 h-4 mr-2' />
+                  Tous les outils
+                </Button>
+              </Link>
             </div>
-            <Link href='/properties' passHref legacyBehavior>
-              <Button
-                variant='outline'
-                size='lg'
-                className='mt-4 sm:mt-0 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md'
-              >
-                View All Properties{' '}
-                <ChevronDown className='w-5 h-5 ml-2 transform rotate-[-90deg] group-hover:translate-x-1 transition-transform' />
-              </Button>
-            </Link>
           </div>
-
-          {loading ? ( // VOTRE LOGIQUE DE CHARGEMENT
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
-              {[...Array(8)].map((_, i) => (
-                <div
-                  key={i}
-                  className='bg-white dark:bg-slate-700 rounded-xl shadow-lg h-96 animate-pulse'
-                />
-              ))}
-            </div>
-          ) : (
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
-              {properties.slice(0, 8).map(
-                (
-                  propertyData,
-                  idx // VOS DONNÉES DE `useProperties`
-                ) => (
-                  <div
-                    key={propertyData._id}
-                    className={cn(
-                      'transition-all duration-500 ease-out',
-                      isFeaturedSectionOnScreen
-                        ? `opacity-100 translate-y-0 animation-delay-${
-                            idx * 100
-                          }`
-                        : 'opacity-0 translate-y-10'
-                    )}
-                  >
-                    {/* Assurez-vous que `propertyData` est compatible avec les props de `PropertyCard` */}
-                    <PropertyCard property={propertyData as any} />
-                  </div>
-                )
-              )}
-            </div>
-          )}
         </div>
-      </section>
 
-      {/* Live Auction Section */}
-      <section
-        ref={auctionSectionRef}
-        className={cn(
-          'py-20 bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-600 text-white transition-all duration-1000 ease-out',
-          isAuctionSectionOnScreen
-            ? 'opacity-100 scale-100'
-            : 'opacity-0 scale-95'
-        )}
-      >
-        <div className='container mx-auto px-4'>
-          <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
+        {/* Tools Sidebar - Mobile/Tablet */}
+        {isToolsSidebarOpen && (
+          <div className='fixed inset-0 z-50 xl:hidden'>
+            {/* Backdrop */}
             <div
-              className={cn(
-                'bg-white/10 dark:bg-black/20 backdrop-blur-md p-6 sm:p-8 rounded-xl shadow-2xl transition-all duration-500 ease-out',
-                isAuctionSectionOnScreen
-                  ? 'translate-x-0 opacity-100'
-                  : '-translate-x-10 opacity-0'
-              )}
-            >
-              <div className='flex items-center space-x-3 mb-6'>
-                <Badge
-                  variant='destructive'
-                  className='text-sm px-3 py-1 bg-red-500 border-red-500 shadow-md'
-                >
-                  <Clock className='w-4 h-4 mr-2 animate-pulse' /> LIVE
-                </Badge>
-                <span className='text-lg font-semibold opacity-90'>
-                  Auction Ending Soon
-                </span>
-              </div>
-              {/* VOS DONNÉES D'ENCHÈRE STATIQUES */}
-              <h3 className='text-3xl font-bold mb-2'>Health Care</h3>
-              <p className='text-lg mb-6 opacity-80 flex items-center'>
-                <MapPin className='w-5 h-5 mr-2 opacity-70' /> Boynton Beach, FL
-              </p>
-              <div className='flex items-center justify-center space-x-1.5 sm:space-x-3 mb-8 p-4 bg-white/5 dark:bg-black/10 rounded-lg shadow-inner'>
-                {/* VOTRE LOGIQUE `timeLeft` */}
-                {[
-                  { label: 'Hours', value: timeLeft.hours },
-                  { label: 'Minutes', value: timeLeft.minutes },
-                  { label: 'Seconds', value: timeLeft.seconds }
-                ]
-                  .map(time => (
-                    <div key={time.label} className='text-center px-1'>
-                      <div className='text-2xl sm:text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-amber-500 tabular-nums leading-none'>
-                        {formatTime(time.value)}
+              className='absolute inset-0 bg-black/50 backdrop-blur-sm'
+              onClick={() => setIsToolsSidebarOpen(false)}
+            />
+
+            {/* Sidebar */}
+            <div className='absolute right-0 top-0 h-full w-full max-w-sm bg-white dark:bg-slate-800 shadow-2xl transform transition-transform duration-300 ease-out'>
+              <div className='p-6 h-full overflow-y-auto tools-sidebar-scroll'>
+                <div className='flex items-center justify-between mb-6'>
+                  <div className='flex items-center space-x-2'>
+                    <div className='p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg'>
+                      <Zap className='w-5 h-5 text-white' />
+                    </div>
+                    <h3 className='text-lg font-bold text-slate-800 dark:text-slate-100'>
+                      Outils Pro
+                    </h3>
+                  </div>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    onClick={() => setIsToolsSidebarOpen(false)}
+                    className='p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg'
+                  >
+                    <ChevronDown className='w-5 h-5 rotate-90' />
+                  </Button>
+                </div>
+
+                <div className='space-y-4'>
+                  {/* Calculateur Gratuit */}
+                  <Link
+                    href='/tools/cap-rate-calculator'
+                    className='group block'
+                    onClick={() => setIsToolsSidebarOpen(false)}
+                  >
+                    <div className='p-4 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/20 dark:to-green-900/20 rounded-xl border border-emerald-200 dark:border-emerald-700/30 hover:shadow-lg transition-all duration-300'>
+                      <div className='flex items-start space-x-3 mb-3'>
+                        <div className='p-3 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-md'>
+                          <Calculator className='w-6 h-6 text-white' />
+                        </div>
+                        <div className='flex-1'>
+                          <h4 className='font-semibold text-base text-slate-800 dark:text-slate-100 mb-2'>
+                            Calculateur Cap Rate
+                          </h4>
+                          <Badge className='bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 text-xs px-3 py-1'>
+                            Gratuit
+                          </Badge>
+                        </div>
                       </div>
-                      <div className='text-xs sm:text-sm opacity-70 uppercase tracking-wider mt-1'>
-                        {time.label}
+                      <p className='text-sm text-slate-600 dark:text-slate-400 mb-3'>
+                        Calculez instantanément la rentabilité de vos
+                        investissements
+                      </p>
+                      <div className='flex items-center text-emerald-600 dark:text-emerald-400 text-sm font-medium group-hover:translate-x-1 transition-transform'>
+                        Essayer maintenant{' '}
+                        <ArrowRight className='w-4 h-4 ml-2' />
                       </div>
                     </div>
-                  ))
-                  .reduce((prev, curr, index, arr) => {
-                    prev.push(curr)
-                    if (index < arr.length / 2 - 1) {
-                      prev.push(
-                        <div
-                          key={`sep-${index}`}
-                          className='text-xl sm:text-2xl md:text-3xl opacity-50 pt-1'
-                        >
-                          :
+                  </Link>
+
+                  {/* Alertes Premium */}
+                  <div
+                    className='group cursor-pointer'
+                    onClick={() => setIsToolsSidebarOpen(false)}
+                  >
+                    <div className='p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border border-blue-200 dark:border-blue-700/30 hover:shadow-lg transition-all duration-300'>
+                      <div className='flex items-start space-x-3 mb-3'>
+                        <div className='p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-md'>
+                          <Bell className='w-6 h-6 text-white' />
                         </div>
-                      )
-                    }
-                    return prev
-                  }, [] as React.ReactNode[])}
-              </div>
-              <div className='text-center'>
-                <div className='text-sm opacity-80 mb-1'>Starting Bid</div>
-                <div className='text-3xl md:text-4xl font-bold'>$1,750,000</div>
-              </div>{' '}
-              {/* VOS DONNÉES STATIQUES */}
-              <Button
-                size='xl'
-                className='w-full mt-8 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold text-lg transition-transform transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-purple-700 rounded-lg py-3.5'
-              >
-                Place Your Bid
-              </Button>
-            </div>
-            <div
-              className={cn(
-                'transition-all duration-500 ease-out delay-200',
-                isAuctionSectionOnScreen
-                  ? 'translate-x-0 opacity-100'
-                  : 'translate-x-10 opacity-0'
-              )}
-            >
-              {/* VOTRE TEXTE STATIQUE */}
-              <h2 className='text-3xl md:text-4xl font-bold mb-6'>
-                Discover Your Next Investment at Auction
-              </h2>
-              <p className='text-lg md:text-xl mb-8 opacity-90 leading-relaxed'>
-                Identify and bid on quality assets through our transparent and
-                competitive platform—all online. Join the investors worldwide
-                who have partnered with us to successfully transact 11,000+
-                properties.
-              </p>
-              <div className='flex flex-col sm:flex-row gap-4'>
-                <Button
-                  size='xl'
-                  variant='secondary'
-                  className='bg-white/90 hover:bg-white text-purple-700 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-purple-600 transition-transform transform hover:scale-105 rounded-lg px-8 py-3.5 text-base'
-                >
-                  Learn More About Auctions
-                </Button>
-                <Button
-                  size='xl'
-                  variant='outline'
-                  className='border-white/50 text-white hover:bg-white/10 dark:border-slate-400 dark:hover:bg-slate-700/50 transition-transform transform hover:scale-105 rounded-lg px-8 py-3.5 text-base'
-                >
-                  View Auction Listings
-                </Button>
+                        <div className='flex-1'>
+                          <h4 className='font-semibold text-base text-slate-800 dark:text-slate-100 mb-2'>
+                            Alertes Intelligentes
+                          </h4>
+                          <Badge className='bg-gradient-to-r from-blue-500 to-purple-600 text-white text-xs px-3 py-1'>
+                            Premium
+                          </Badge>
+                        </div>
+                      </div>
+                      <p className='text-sm text-slate-600 dark:text-slate-400 mb-3'>
+                        Recevez des notifications automatiques pour les
+                        opportunités
+                      </p>
+                      <div className='flex items-center text-blue-600 dark:text-blue-400 text-sm font-medium group-hover:translate-x-1 transition-transform'>
+                        Découvrir Premium{' '}
+                        <ArrowRight className='w-4 h-4 ml-2' />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Analyses Pro */}
+                  <div
+                    className='group cursor-pointer'
+                    onClick={() => setIsToolsSidebarOpen(false)}
+                  >
+                    <div className='p-4 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-900/20 dark:to-indigo-900/20 rounded-xl border border-purple-200 dark:border-purple-700/30 hover:shadow-lg transition-all duration-300'>
+                      <div className='flex items-start space-x-3 mb-3'>
+                        <div className='p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-md'>
+                          <BarChart3 className='w-6 h-6 text-white' />
+                        </div>
+                        <div className='flex-1'>
+                          <h4 className='font-semibold text-base text-slate-800 dark:text-slate-100 mb-2'>
+                            Analyses de Marché
+                          </h4>
+                          <Badge className='bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs px-3 py-1'>
+                            Pro
+                          </Badge>
+                        </div>
+                      </div>
+                      <p className='text-sm text-slate-600 dark:text-slate-400 mb-3'>
+                        Accédez à des analyses détaillées et des tendances du
+                        marché
+                      </p>
+                      <div className='flex items-center text-purple-600 dark:text-purple-400 text-sm font-medium group-hover:translate-x-1 transition-transform'>
+                        Explorer Pro <ArrowRight className='w-4 h-4 ml-2' />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className='mt-8 pt-6 border-t border-slate-200 dark:border-slate-700'>
+                  <Link
+                    href='/tools'
+                    onClick={() => setIsToolsSidebarOpen(false)}
+                  >
+                    <Button
+                      size='lg'
+                      className='w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl shadow-md'
+                    >
+                      <Zap className='w-5 h-5 mr-3' />
+                      Découvrir tous les outils
+                      <ArrowRight className='w-4 h-4 ml-2' />
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Popular Cities Carousel */}
-      <section
-        ref={citiesSectionRef}
-        className={cn(
-          'py-16 bg-slate-100 dark:bg-slate-800/50 transition-all duration-1000 ease-out',
-          isCitiesSectionOnScreen ? 'opacity-100' : 'opacity-0'
         )}
-      >
-        <div className='container mx-auto px-4'>
-          <h2 className='text-3xl font-bold text-center text-slate-800 dark:text-slate-100 mb-12'>
-            Explore Popular Cities
-          </h2>
-          <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6'>
-            {popularCitiesData.map(
-              (
-                city,
-                index // VOS popularCitiesData
-              ) => (
-                <Link
+
+        {/* Mobile Tools Button */}
+        <div className='fixed bottom-6 right-6 z-40 xl:hidden'>
+          <Button
+            size='lg'
+            className='bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 w-16 h-16 p-0 flex items-center justify-center tools-button-pulse'
+            onClick={() => setIsToolsSidebarOpen(true)}
+          >
+            <Zap className='w-7 h-7' />
+          </Button>
+        </div>
+
+        {/* Hero Section */}
+        <section className='relative text-white py-20 md:py-28 lg:py-32 overflow-hidden isolate'>
+          <div className='absolute inset-0 z-[-1]'>
+            <Image
+              src='https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&h=600&fit=crop&crop=center' // VOTRE IMAGE
+              alt='City skyline'
+              fill
+              className='object-cover'
+              priority
+              quality={75}
+            />
+            <div className='absolute inset-0 bg-gradient-to-br from-blue-700/80 via-blue-600/70 to-sky-500/60'></div>{' '}
+            {/* Gradient un peu plus prononcé */}
+          </div>
+
+          <div className='relative z-10 container mx-auto px-4'>
+            <div className='max-w-3xl mx-auto text-center'>
+              <h1 className='text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-shadow-lg animate-fade-in-down'>
+                The World's #1 Commercial Real Estate Marketplace
+              </h1>
+              <p className='text-lg md:text-xl mb-10 text-slate-100 animate-fade-in-up animation-delay-200'>
+                Find, Lease, or Buy Your Next Commercial Property With Us.
+                Explore Thousands of Listings.
+              </p>
+
+              <Card className='bg-white/95 dark:bg-slate-800/95 backdrop-blur-md text-slate-900 dark:text-slate-100 p-5 md:p-8 shadow-2xl rounded-xl transform transition-all hover:scale-[1.01] duration-300 animate-fade-in-up animation-delay-400'>
+                <CardContent className='p-0'>
+                  <div className='flex flex-wrap justify-center mb-6 border-b border-slate-200 dark:border-slate-700'>
+                    {[
+                      // VOS DONNÉES DE TABS
+                      {
+                        key: 'forLease',
+                        label: 'For Lease',
+                        icon: <Briefcase className='w-4 h-4 mr-1.5' />
+                      },
+                      {
+                        key: 'forSale',
+                        label: 'For Sale',
+                        icon: <TrendingUp className='w-4 h-4 mr-1.5' />
+                      },
+                      {
+                        key: 'auctions',
+                        label: 'Auctions',
+                        icon: <Clock className='w-4 h-4 mr-1.5' />
+                      },
+                      {
+                        key: 'businesses',
+                        label: 'Businesses For Sale',
+                        icon: <Store className='w-4 h-4 mr-1.5' />
+                      }
+                    ].map(tab => (
+                      <button
+                        key={tab.key}
+                        onClick={() => {
+                          setSearchType(tab.key)
+                          router.push(`/properties?type=${tab.key}`)
+                        }} // VOTRE LOGIQUE
+                        className={cn(
+                          'flex items-center px-3 sm:px-4 py-2.5 font-medium text-sm sm:text-base transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 rounded-t-md',
+                          searchType === tab.key
+                            ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-slate-50 dark:bg-slate-700/50'
+                            : 'text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700/30'
+                        )}
+                      >
+                        {tab.icon}
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className='flex overflow-x-auto space-x-2.5 sm:space-x-3 mb-6 pb-2 -mx-2 px-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent'>
+                    {propertyTypesData.map(
+                      (
+                        type // VOS propertyTypesData
+                      ) => (
+                        <button
+                          key={type.id}
+                          onClick={() => {
+                            setSelectedPropertyType(type.id.toString())
+                            router.push(
+                              `/properties?propertyType=${
+                                type.id
+                              }&name=${encodeURIComponent(type.name)}`
+                            )
+                          }} // VOTRE LOGIQUE
+                          className={cn(
+                            'flex-shrink-0 group flex flex-col items-center p-2.5 w-20 h-20 sm:w-24 sm:h-24 justify-center rounded-lg transition-all duration-200 transform hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-800',
+                            selectedPropertyType === type.id.toString()
+                              ? 'bg-blue-100 dark:bg-blue-600/40 text-blue-700 dark:text-blue-300 shadow-md ring-1 ring-blue-300 dark:ring-blue-500'
+                              : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600'
+                          )}
+                        >
+                          <span className='text-2xl sm:text-3xl mb-1 transition-transform duration-200 group-hover:scale-110'>
+                            {type.icon}
+                          </span>
+                          <span className='text-xs font-medium'>
+                            {type.name}
+                          </span>
+                        </button>
+                      )
+                    )}
+                  </div>
+
+                  <div className='flex flex-col sm:flex-row gap-2.5 sm:gap-3 mb-4'>
+                    <div className='flex-1 relative'>
+                      <MapPin className='absolute left-3.5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500 pointer-events-none' />
+                      <Input
+                        placeholder='Enter location, address, city, or ZIP code'
+                        className='h-12 text-base pl-11 focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 rounded-md'
+                        value={searchQuery} // VOTRE ÉTAT
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setSearchQuery(e.target.value)
+                        } // VOTRE GESTIONNAIRE
+                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+                          e.key === 'Enter' && handleSearch()
+                        }
+                      />
+                    </div>
+                    <Button
+                      onClick={handleSearch} // VOTRE GESTIONNAIRE
+                      size='lg'
+                      className='h-12 px-6 sm:px-8 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 rounded-md text-base'
+                    >
+                      <Search className='w-5 h-5 mr-2' />
+                      Search
+                    </Button>
+                  </div>
+
+                  <div className='flex flex-wrap gap-2.5 sm:gap-3 text-sm'>
+                    {/* VOS SELECTS SONT PRÉSERVÉS */}
+                    <Select>
+                      <SelectTrigger className='w-full sm:w-auto sm:flex-1 md:w-44 h-10 dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 rounded-md text-slate-700 dark:text-slate-300'>
+                        <SelectValue placeholder='Price Range' />
+                      </SelectTrigger>
+                      <SelectContent className='dark:bg-slate-700 dark:text-slate-100 border-slate-600'>
+                        <SelectItem value='0-500k'>$0 - $500K</SelectItem>
+                        <SelectItem value='500k-1m'>$500K - $1M</SelectItem>
+                        <SelectItem value='1m-5m'>$1M - $5M</SelectItem>
+                        <SelectItem value='5m+'>$5M+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select>
+                      <SelectTrigger className='w-full sm:w-auto sm:flex-1 md:w-44 h-10 dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 rounded-md text-slate-700 dark:text-slate-300'>
+                        <SelectValue placeholder='Size (sq ft)' />
+                      </SelectTrigger>
+                      <SelectContent className='dark:bg-slate-700 dark:text-slate-100 border-slate-600'>
+                        <SelectItem value='0-5k'>0 - 5,000</SelectItem>
+                        <SelectItem value='5k-10k'>5,000 - 10,000</SelectItem>
+                        <SelectItem value='10k-25k'>10,000 - 25,000</SelectItem>
+                        <SelectItem value='25k+'>25,000+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant='link'
+                      className='text-blue-600 dark:text-blue-400 hover:underline p-0 h-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm text-sm'
+                    >
+                      More Filters <ChevronDown className='w-4 h-4 ml-1' />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Trust Section */}
+        <section
+          ref={trustSectionRef}
+          className={cn(
+            'py-16 bg-white dark:bg-slate-800 transition-all duration-1000 ease-out',
+            isTrustSectionOnScreen
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-12'
+          )}
+        >
+          <div className='container mx-auto px-4 text-center'>
+            {/* VOTRE TEXTE PRÉSERVÉ */}
+            <p className='text-lg text-slate-600 dark:text-slate-400 mb-12 max-w-2xl mx-auto'>
+              For over 30 years, LoopNet has been the trusted brand for
+              Commercial Real Estate
+            </p>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8'>
+              {/* VOS STATS PRÉSERVÉES, juste un léger style ajouté */}
+              {[
+                {
+                  value: '300K+',
+                  label: 'Active Listings',
+                  icon: (
+                    <Building2 className='w-10 h-10 text-blue-500 mb-3 mx-auto' />
+                  )
+                },
+                {
+                  value: '13M+',
+                  label: 'Monthly Visitors',
+                  icon: (
+                    <Users className='w-10 h-10 text-green-500 mb-3 mx-auto' />
+                  )
+                },
+                {
+                  value: '$109B+',
+                  label: 'In Transaction Value',
+                  icon: (
+                    <TrendingUp className='w-10 h-10 text-purple-500 mb-3 mx-auto' />
+                  )
+                }
+              ].map((stat, index) => (
+                <div
                   key={index}
-                  href={`/search/${city.name.toLowerCase().replace(' ', '-')}`} // VOTRE LOGIQUE DE LIEN
                   className={cn(
-                    'block group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transform transition-all duration-300 hover:-translate-y-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800',
-                    isCitiesSectionOnScreen
-                      ? `opacity-100 scale-100 animation-delay-${index * 100}`
+                    'p-6 bg-slate-100 dark:bg-slate-700/70 rounded-xl shadow-lg transition-all duration-500 ease-out hover:shadow-xl hover:scale-105',
+                    isTrustSectionOnScreen
+                      ? `opacity-100 scale-100 animation-delay-${index * 150}`
                       : 'opacity-0 scale-90'
                   )}
                 >
-                  <div className='relative aspect-[3/4]'>
-                    {' '}
-                    {/* Ratio d'aspect pour la cohérence */}
-                    <Image
-                      src={city.image}
-                      alt={city.name}
-                      fill
-                      className='object-cover group-hover:scale-110 transition-transform duration-500'
-                      sizes='(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw'
-                      quality={70}
-                    />
-                    <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent'></div>
-                    <div className='absolute bottom-0 left-0 p-3 sm:p-4 w-full'>
-                      <h3 className='font-semibold text-md sm:text-lg text-white group-hover:text-blue-300 transition-colors drop-shadow-md text-center sm:text-left'>
-                        {city.name}
-                      </h3>
-                    </div>
+                  {stat.icon}
+                  <div className='text-4xl font-extrabold text-blue-600 dark:text-blue-400 mb-2'>
+                    {stat.value}
                   </div>
-                </Link>
-              )
+                  <div className='text-slate-600 dark:text-slate-400'>
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Company Logos Carousel - Premium Design */}
+        <section
+          ref={companyLogosRef}
+          className={cn(
+            'py-16 relative overflow-hidden transition-all duration-1000 ease-out',
+            isCompanyLogosOnScreen ? 'opacity-100' : 'opacity-0'
+          )}
+        >
+          {/* Premium gradient background */}
+          <div className='absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-800 dark:to-blue-900/20'></div>
+
+          {/* Subtle pattern overlay */}
+          <div className='absolute inset-0 opacity-[0.02] dark:opacity-[0.05] pattern-dots'></div>
+
+          <div className='relative z-10 container mx-auto px-4'>
+            {/* Premium Header */}
+            <div className='text-center mb-12'>
+              <div className='flex items-center justify-center space-x-3 mb-4'>
+                <div className='h-px w-16 bg-gradient-to-r from-transparent to-blue-300 dark:to-blue-600'></div>
+                <Badge className='bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/40 dark:to-purple-900/40 text-blue-700 dark:text-blue-300 border-0 px-4 py-1.5'>
+                  <Sparkles className='w-3 h-3 mr-1.5' />
+                  Partenaires Premium
+                </Badge>
+                <div className='h-px w-16 bg-gradient-to-l from-transparent to-blue-300 dark:to-blue-600'></div>
+              </div>
+              <h3 className='text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 dark:from-slate-100 dark:via-slate-200 dark:to-slate-100 bg-clip-text text-transparent mb-3'>
+                Entreprises qui font confiance à LoopNet
+              </h3>
+              <p className='text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed'>
+                Rejoignez les leaders mondiaux qui utilisent notre plateforme
+                pour leurs investissements immobiliers
+              </p>
+            </div>
+
+            {/* Premium Carousel Container */}
+            <div className='relative group'>
+              {/* Gradient fade edges */}
+              <div className='absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-slate-50 via-slate-50/80 to-transparent dark:from-slate-900 dark:via-slate-900/80 dark:to-transparent z-10 pointer-events-none'></div>
+              <div className='absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-slate-50 via-slate-50/80 to-transparent dark:from-slate-900 dark:via-slate-900/80 dark:to-transparent z-10 pointer-events-none'></div>
+
+              {/* Container with overflow hidden for smooth scrolling */}
+              <div className='overflow-hidden py-8'>
+                <div className='flex animate-scroll-smooth space-x-8 md:space-x-12 items-center w-max group-hover:animation-play-state-paused'>
+                  {/* First set of logos */}
+                  {companyLogos.map((company, index) => (
+                    <CompanyLogoItem
+                      key={`first-${index}`}
+                      src={company.logo}
+                      name={company.name}
+                      width={140}
+                      height={70}
+                      className={cn(
+                        isCompanyLogosOnScreen
+                          ? `animation-delay-${index * 50}`
+                          : ''
+                      )}
+                    />
+                  ))}
+                  {/* Duplicate set for seamless loop */}
+                  {companyLogos.map((company, index) => (
+                    <CompanyLogoItem
+                      key={`second-${index}`}
+                      src={company.logo}
+                      name={company.name}
+                      width={140}
+                      height={70}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Premium Trust Indicators */}
+            <div className='mt-12 text-center'>
+              <div className='flex flex-wrap items-center justify-center gap-6 text-sm text-slate-600 dark:text-slate-400'>
+                <div className='flex items-center space-x-2'>
+                  <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
+                  <span>+10M recherches actives/mois</span>
+                </div>
+                <div className='flex items-center space-x-2'>
+                  <Shield className='w-4 h-4 text-blue-500' />
+                  <span>Partenariats certifiés</span>
+                </div>
+                <div className='flex items-center space-x-2'>
+                  <TrendingUp className='w-4 h-4 text-purple-500' />
+                  <span>96% Fortune 1000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Trending on LoopNet */}
+        <section
+          ref={trendingSectionRef}
+          className={cn(
+            'py-16 bg-white dark:bg-slate-800 transition-all duration-1000 ease-out',
+            isTrendingSectionOnScreen
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-12'
+          )}
+        >
+          <div className='container mx-auto px-4'>
+            <div className='flex flex-col sm:flex-row items-center justify-between mb-10'>
+              <h2 className='text-3xl font-bold text-slate-800 dark:text-slate-100 mb-3 sm:mb-0'>
+                Trending on LoopNet
+              </h2>
+              <Link
+                href='/properties'
+                className='text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center group transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm'
+              >
+                See More
+                <ChevronDown className='w-5 h-5 ml-1 transform rotate-[-90deg] group-hover:translate-x-1 transition-transform' />
+              </Link>
+            </div>
+
+            <Tabs
+              value={trendingTab}
+              onValueChange={setTrendingTab}
+              className='w-full'
+            >
+              <TabsList className='grid w-full grid-cols-3 max-w-lg mx-auto mb-8 bg-slate-100 dark:bg-slate-700 rounded-lg p-1 shadow-sm'>
+                {Object.keys(trendingPropertiesData).map(
+                  (
+                    key // VOS trendingPropertiesData
+                  ) => (
+                    <TabsTrigger
+                      key={key}
+                      value={key}
+                      className='data-[state=active]:bg-white dark:data-[state=active]:bg-slate-600 data-[state=active]:shadow-md data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-300 rounded-md h-10 text-sm font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-700'
+                    >
+                      {key.replace(/([A-Z])/g, ' $1').trim()}{' '}
+                      {/* Pour "ForLease" -> "For Lease" */}
+                    </TabsTrigger>
+                  )
+                )}
+              </TabsList>
+
+              {Object.entries(trendingPropertiesData).map(
+                (
+                  [key, trendProps] // VOS trendingPropertiesData
+                ) => (
+                  <TabsContent
+                    key={key}
+                    value={key}
+                    className='mt-8 focus:outline-none'
+                  >
+                    <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6'>
+                      {trendProps.map(
+                        (
+                          property,
+                          idx // VOS données de propriété de tendance
+                        ) => (
+                          <div
+                            key={property.id}
+                            className={cn(
+                              'transition-all duration-500 ease-out',
+                              isTrendingSectionOnScreen
+                                ? `opacity-100 translate-y-0 animation-delay-${
+                                    idx * 100
+                                  }`
+                                : 'opacity-0 translate-y-8'
+                            )}
+                          >
+                            <Card className='overflow-hidden group hover:shadow-2xl dark:bg-slate-700/80 dark:border-slate-600 transition-all duration-300 transform hover:-translate-y-1.5 rounded-xl'>
+                              <CardHeader className='p-0 relative'>
+                                <Link
+                                  href={`/mock-property/${property.id}`}
+                                  legacyBehavior
+                                >
+                                  <a className='block aspect-[4/3] relative overflow-hidden rounded-t-xl'>
+                                    <Image
+                                      src={property.image}
+                                      alt={property.type}
+                                      fill
+                                      className='object-cover group-hover:scale-110 transition-transform duration-500'
+                                      sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw'
+                                      quality={70}
+                                    />
+                                    <Badge
+                                      variant='secondary'
+                                      className='absolute top-3 left-3 z-10 bg-blue-600 text-white dark:bg-blue-500 dark:text-slate-900 shadow-md text-xs px-2 py-1'
+                                    >
+                                      {property.type}
+                                    </Badge>
+                                    <div className='absolute top-3 right-3 z-10'>
+                                      <Button
+                                        asChild
+                                        size='icon'
+                                        variant='ghost'
+                                        className='w-9 h-9 rounded-full bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 backdrop-blur-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-0'
+                                      >
+                                        <button
+                                          aria-label='Ajouter aux favoris'
+                                          title='Ajouter aux favoris'
+                                        >
+                                          <Heart className='w-4 h-4 text-slate-600 dark:text-slate-300 group-hover:text-red-500 dark:group-hover:text-red-400 group-hover:fill-red-500/20 transition-all' />
+                                        </button>
+                                      </Button>
+                                    </div>
+                                  </a>
+                                </Link>
+                              </CardHeader>
+                              <CardContent className='p-4'>
+                                <Link
+                                  href={`/mock-property/${property.id}`}
+                                  legacyBehavior
+                                >
+                                  <a className='block'>
+                                    <h3 className='font-semibold text-blue-700 dark:text-blue-400 text-md mb-1 hover:underline leading-tight'>
+                                      {property.price}
+                                    </h3>
+                                    <p
+                                      className='text-sm text-slate-700 dark:text-slate-300 mb-1 truncate group-hover:text-clip group-hover:whitespace-normal'
+                                      title={property.address}
+                                    >
+                                      {property.address}
+                                    </p>
+                                    <p className='text-xs text-slate-500 dark:text-slate-400'>
+                                      {property.size}
+                                    </p>
+                                  </a>
+                                </Link>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </TabsContent>
+                )
+              )}
+            </Tabs>
+          </div>
+        </section>
+
+        {/* Featured Properties from Database */}
+        <section
+          ref={featuredSectionRef}
+          className={cn(
+            'py-16 bg-slate-100 dark:bg-slate-800/50 transition-all duration-1000 ease-out',
+            isFeaturedSectionOnScreen ? 'opacity-100' : 'opacity-0'
+          )}
+        >
+          <div className='container mx-auto px-4'>
+            <div className='flex flex-col sm:flex-row items-center justify-between mb-12'>
+              <div>
+                <h2 className='text-3xl font-bold text-slate-800 dark:text-slate-100 mb-2'>
+                  Featured Properties
+                </h2>
+                <p className='text-slate-600 dark:text-slate-400'>
+                  Discover our best investment opportunities
+                </p>{' '}
+                {/* VOTRE TEXTE */}
+              </div>
+              <Link href='/properties' passHref legacyBehavior>
+                <Button
+                  variant='outline'
+                  size='lg'
+                  className='mt-4 sm:mt-0 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-slate-700 group focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md'
+                >
+                  View All Properties{' '}
+                  <ChevronDown className='w-5 h-5 ml-2 transform rotate-[-90deg] group-hover:translate-x-1 transition-transform' />
+                </Button>
+              </Link>
+            </div>
+
+            {loading ? ( // VOTRE LOGIQUE DE CHARGEMENT
+              <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6'>
+                {[...Array(8)].map((_, i) => (
+                  <div
+                    key={i}
+                    className='bg-white dark:bg-slate-700 rounded-xl shadow-lg h-96 animate-pulse'
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className='grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6'>
+                {properties.slice(0, 8).map(
+                  (
+                    propertyData,
+                    idx // VOS DONNÉES DE `useProperties`
+                  ) => (
+                    <div
+                      key={propertyData._id}
+                      className={cn(
+                        'transition-all duration-500 ease-out',
+                        isFeaturedSectionOnScreen
+                          ? `opacity-100 translate-y-0 animation-delay-${
+                              idx * 100
+                            }`
+                          : 'opacity-0 translate-y-10'
+                      )}
+                    >
+                      {/* Connexion au système de comparaison */}
+                      <PropertyCard
+                        property={propertyData as any}
+                        onAddToComparison={comparison.addToComparison}
+                        isInComparison={comparison.comparisonList.some(
+                          (item: { _id: string }) =>
+                            item._id === propertyData._id
+                        )}
+                      />
+                    </div>
+                  )
+                )}
+              </div>
             )}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Commercial Real Estate Explained */}
-      <section
-        ref={articlesSectionRef}
-        className={cn(
-          'py-16 bg-white dark:bg-slate-800 transition-all duration-1000 ease-out',
-          isArticlesSectionOnScreen ? 'opacity-100' : 'opacity-0'
-        )}
-      >
-        <div className='container mx-auto px-4'>
-          <div className='flex flex-col sm:flex-row items-center justify-between mb-12'>
-            <h2 className='text-3xl font-bold text-slate-800 dark:text-slate-100 mb-3 sm:mb-0'>
-              Commercial Real Estate Explained
+        {/* Live Auction Section */}
+        <section
+          ref={auctionSectionRef}
+          className={cn(
+            'py-20 bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-600 text-white transition-all duration-1000 ease-out',
+            isAuctionSectionOnScreen
+              ? 'opacity-100 scale-100'
+              : 'opacity-0 scale-95'
+          )}
+        >
+          <div className='container mx-auto px-4'>
+            <div className='grid grid-cols-1 lg:grid-cols-2 gap-12 items-center'>
+              <div
+                className={cn(
+                  'bg-white/10 dark:bg-black/20 backdrop-blur-md p-6 sm:p-8 rounded-xl shadow-2xl transition-all duration-500 ease-out',
+                  isAuctionSectionOnScreen
+                    ? 'translate-x-0 opacity-100'
+                    : '-translate-x-10 opacity-0'
+                )}
+              >
+                <div className='flex items-center space-x-3 mb-6'>
+                  <Badge
+                    variant='destructive'
+                    className='text-sm px-3 py-1 bg-red-500 border-red-500 shadow-md'
+                  >
+                    <Clock className='w-4 h-4 mr-2 animate-pulse' /> LIVE
+                  </Badge>
+                  <span className='text-lg font-semibold opacity-90'>
+                    Auction Ending Soon
+                  </span>
+                </div>
+                {/* VOS DONNÉES D'ENCHÈRE STATIQUES */}
+                <h3 className='text-3xl font-bold mb-2'>Health Care</h3>
+                <p className='text-lg mb-6 opacity-80 flex items-center'>
+                  <MapPin className='w-5 h-5 mr-2 opacity-70' /> Boynton Beach,
+                  FL
+                </p>
+                <div className='flex items-center justify-center space-x-1.5 sm:space-x-3 mb-8 p-4 bg-white/5 dark:bg-black/10 rounded-lg shadow-inner'>
+                  {/* VOTRE LOGIQUE `timeLeft` */}
+                  {[
+                    { label: 'Hours', value: timeLeft.hours },
+                    { label: 'Minutes', value: timeLeft.minutes },
+                    { label: 'Seconds', value: timeLeft.seconds }
+                  ]
+                    .map(time => (
+                      <div key={time.label} className='text-center px-1'>
+                        <div className='text-2xl sm:text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-amber-500 tabular-nums leading-none'>
+                          {formatTime(time.value)}
+                        </div>
+                        <div className='text-xs sm:text-sm opacity-70 uppercase tracking-wider mt-1'>
+                          {time.label}
+                        </div>
+                      </div>
+                    ))
+                    .reduce((prev, curr, index, arr) => {
+                      prev.push(curr)
+                      if (index < arr.length / 2 - 1) {
+                        prev.push(
+                          <div
+                            key={`sep-${index}`}
+                            className='text-xl sm:text-2xl md:text-3xl opacity-50 pt-1'
+                          >
+                            :
+                          </div>
+                        )
+                      }
+                      return prev
+                    }, [] as React.ReactNode[])}
+                </div>
+                <div className='text-center'>
+                  <div className='text-sm opacity-80 mb-1'>Starting Bid</div>
+                  <div className='text-3xl md:text-4xl font-bold'>
+                    $1,750,000
+                  </div>
+                </div>{' '}
+                {/* VOS DONNÉES STATIQUES */}
+                <Button
+                  size='xl'
+                  className='w-full mt-8 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold text-lg transition-transform transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-purple-700 rounded-lg py-3.5'
+                >
+                  Place Your Bid
+                </Button>
+              </div>
+              <div
+                className={cn(
+                  'transition-all duration-500 ease-out delay-200',
+                  isAuctionSectionOnScreen
+                    ? 'translate-x-0 opacity-100'
+                    : 'translate-x-10 opacity-0'
+                )}
+              >
+                {/* VOTRE TEXTE STATIQUE */}
+                <h2 className='text-3xl md:text-4xl font-bold mb-6'>
+                  Discover Your Next Investment at Auction
+                </h2>
+                <p className='text-lg md:text-xl mb-8 opacity-90 leading-relaxed'>
+                  Identify and bid on quality assets through our transparent and
+                  competitive platform—all online. Join the investors worldwide
+                  who have partnered with us to successfully transact 11,000+
+                  properties.
+                </p>
+                <div className='flex flex-col sm:flex-row gap-4'>
+                  <Button
+                    size='xl'
+                    variant='secondary'
+                    className='bg-white/90 hover:bg-white text-purple-700 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-purple-600 transition-transform transform hover:scale-105 rounded-lg px-8 py-3.5 text-base'
+                  >
+                    Learn More About Auctions
+                  </Button>
+                  <Button
+                    size='xl'
+                    variant='outline'
+                    className='border-white/50 text-white hover:bg-white/10 dark:border-slate-400 dark:hover:bg-slate-700/50 transition-transform transform hover:scale-105 rounded-lg px-8 py-3.5 text-base'
+                  >
+                    View Auction Listings
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Popular Cities Carousel */}
+        <section
+          ref={citiesSectionRef}
+          className={cn(
+            'py-16 bg-slate-100 dark:bg-slate-800/50 transition-all duration-1000 ease-out',
+            isCitiesSectionOnScreen ? 'opacity-100' : 'opacity-0'
+          )}
+        >
+          <div className='container mx-auto px-4'>
+            <h2 className='text-3xl font-bold text-center text-slate-800 dark:text-slate-100 mb-12'>
+              Explore Popular Cities
+            </h2>
+            <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6'>
+              {popularCitiesData.map(
+                (
+                  city,
+                  index // VOS popularCitiesData
+                ) => (
+                  <Link
+                    key={index}
+                    href={`/search/${city.name
+                      .toLowerCase()
+                      .replace(' ', '-')}`} // VOTRE LOGIQUE DE LIEN
+                    className={cn(
+                      'block group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transform transition-all duration-300 hover:-translate-y-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800',
+                      isCitiesSectionOnScreen
+                        ? `opacity-100 scale-100 animation-delay-${index * 100}`
+                        : 'opacity-0 scale-90'
+                    )}
+                  >
+                    <div className='relative aspect-[3/4]'>
+                      {' '}
+                      {/* Ratio d'aspect pour la cohérence */}
+                      <Image
+                        src={city.image}
+                        alt={city.name}
+                        fill
+                        className='object-cover group-hover:scale-110 transition-transform duration-500'
+                        sizes='(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw'
+                        quality={70}
+                      />
+                      <div className='absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent'></div>
+                      <div className='absolute bottom-0 left-0 p-3 sm:p-4 w-full'>
+                        <h3 className='font-semibold text-md sm:text-lg text-white group-hover:text-blue-300 transition-colors drop-shadow-md text-center sm:text-left'>
+                          {city.name}
+                        </h3>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Commercial Real Estate Explained */}
+        <section
+          ref={articlesSectionRef}
+          className={cn(
+            'py-16 bg-white dark:bg-slate-800 transition-all duration-1000 ease-out',
+            isArticlesSectionOnScreen ? 'opacity-100' : 'opacity-0'
+          )}
+        >
+          <div className='container mx-auto px-4'>
+            <div className='flex flex-col sm:flex-row items-center justify-between mb-12'>
+              <h2 className='text-3xl font-bold text-slate-800 dark:text-slate-100 mb-3 sm:mb-0'>
+                Commercial Real Estate Explained
+              </h2>{' '}
+              {/* VOTRE TITRE */}
+              <Link
+                href='/cre-explained'
+                className='text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center group transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm'
+              >
+                See More{' '}
+                <ChevronDown className='w-5 h-5 ml-1 transform rotate-[-90deg] group-hover:translate-x-1 transition-transform' />
+              </Link>
+            </div>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+              {educationalArticlesData.map(
+                (
+                  article,
+                  index // VOS educationalArticlesData
+                ) => (
+                  <Card
+                    key={index}
+                    className={cn(
+                      'overflow-hidden group hover:shadow-2xl dark:bg-slate-700/80 dark:border-slate-600 transition-all duration-500 transform hover:-translate-y-1.5 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-800 rounded-xl',
+                      isArticlesSectionOnScreen
+                        ? `opacity-100 translate-y-0 animation-delay-${
+                            index * 150
+                          }`
+                        : 'opacity-0 translate-y-8'
+                    )}
+                  >
+                    <Link href={`/news/mock-article-${index}`} legacyBehavior>
+                      <a className='h-full flex flex-col'>
+                        {' '}
+                        {/* Assurer que la carte prend toute la hauteur et est flex col */}
+                        <div className='aspect-[16/9] overflow-hidden relative rounded-t-xl'>
+                          <Image
+                            src={article.image}
+                            alt={article.title}
+                            fill
+                            className='object-cover group-hover:scale-105 transition-transform duration-500'
+                            sizes='(max-width: 768px) 100vw, 33vw'
+                            quality={70}
+                          />
+                        </div>
+                        <CardContent className='p-5 sm:p-6 flex-grow flex flex-col'>
+                          {' '}
+                          {/* flex-grow ici */}
+                          <h3 className='font-semibold text-lg text-slate-800 dark:text-slate-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight'>
+                            {article.title}
+                          </h3>
+                          <p className='text-slate-600 dark:text-slate-300 text-sm line-clamp-3 mb-3 leading-relaxed flex-grow'>
+                            {article.description}
+                          </p>{' '}
+                          {/* flex-grow ici */}
+                          <span className='inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 group-hover:underline mt-auto pt-2'>
+                            {' '}
+                            {/* mt-auto pour pousser en bas */}
+                            Read article{' '}
+                            <ChevronDown className='w-4 h-4 ml-1 transform rotate-[-90deg] transition-transform' />
+                          </span>
+                        </CardContent>
+                      </a>
+                    </Link>
+                  </Card>
+                )
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Marketing to Listers */}
+        <section
+          ref={marketingSectionRef}
+          className={cn(
+            'py-20 bg-blue-600 dark:bg-blue-700 text-white transition-all duration-1000 ease-out',
+            isMarketingSectionOnScreen ? 'opacity-100' : 'opacity-0'
+          )}
+        >
+          <div className='container mx-auto px-4'>
+            {/* VOTRE CONTENU MARKETING STATIQUE */}
+            <div className='text-center mb-12'>
+              <h2 className='text-3xl md:text-4xl font-bold mb-4'>
+                LoopNet Listings Lease or Sell 14% Faster*
+              </h2>
+              <p className='text-lg opacity-90 max-w-2xl mx-auto'>
+                Reach millions of active tenants and investors. Our platform is
+                designed to get your property noticed and leased or sold
+                quickly.
+              </p>
+            </div>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mb-12'>
+              {[
+                {
+                  icon: <Users className='w-10 h-10' />,
+                  title: 'Right Audience',
+                  desc: '96% of the Fortune 1000 search on LoopNet.'
+                },
+                {
+                  icon: <Star className='w-10 h-10' />,
+                  title: 'Engage Prospects',
+                  desc: 'Stunning photography, videos and drone shots.'
+                },
+                {
+                  icon: <TrendingUp className='w-10 h-10' />,
+                  title: 'More Opportunity',
+                  desc: 'Find a tenant or buyer, faster than before.'
+                }
+              ].map((item, index) => (
+                <div
+                  key={item.title}
+                  className={cn(
+                    'text-center p-6 md:p-8 bg-white/10 dark:bg-black/20 backdrop-blur-md rounded-xl shadow-xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl',
+                    isMarketingSectionOnScreen
+                      ? `opacity-100 translate-y-0 animation-delay-${
+                          index * 100
+                        }`
+                      : 'opacity-0 translate-y-5'
+                  )}
+                >
+                  <div className='w-20 h-20 bg-white/20 dark:bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md ring-1 ring-white/20'>
+                    {item.icon}
+                  </div>
+                  <h3 className='text-2xl font-semibold mb-3'>{item.title}</h3>
+                  <p className='opacity-80 text-sm leading-relaxed'>
+                    {item.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div className='text-center'>
+              <Button
+                size='xl'
+                variant='secondary'
+                className='bg-white/90 hover:bg-white text-blue-700 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-blue-600 transition-transform transform hover:scale-105 rounded-lg px-10 py-3.5 text-base sm:text-lg'
+              >
+                Explore Marketing Solutions
+              </Button>
+              <p className='text-xs opacity-75 mt-6 max-w-md mx-auto'>
+                *Based on internal analysis comparing properties advertised on
+                LoopNet to properties listed only on CoStar.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section
+          ref={faqSectionRef}
+          className={cn(
+            'py-16 bg-slate-100 dark:bg-slate-800/50 transition-all duration-1000 ease-out',
+            isFaqSectionOnScreen ? 'opacity-100' : 'opacity-0'
+          )}
+        >
+          <div className='container mx-auto px-4'>
+            <h2 className='text-3xl font-bold text-center text-slate-800 dark:text-slate-100 mb-12'>
+              Commercial Real Estate Fundamentals: Essential Questions for
+              Investors & Businesses
             </h2>{' '}
             {/* VOTRE TITRE */}
-            <Link
-              href='/cre-explained'
-              className='text-blue-600 dark:text-blue-400 hover:underline font-medium flex items-center group transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm'
-            >
-              See More{' '}
-              <ChevronDown className='w-5 h-5 ml-1 transform rotate-[-90deg] group-hover:translate-x-1 transition-transform' />
-            </Link>
-          </div>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
-            {educationalArticlesData.map(
-              (
-                article,
-                index // VOS educationalArticlesData
-              ) => (
+            <div className='max-w-3xl mx-auto space-y-4 sm:space-y-5'>
+              {/* VOTRE STRUCTURE DE DONNÉES FAQ */}
+              {[
+                {
+                  question:
+                    'Is LoopNet Available for International Property Searches?',
+                  answer:
+                    'Yes, LoopNet operates globally, with dedicated platforms for commercial real estate in the UK, Canada, France, and Spain. These country specific versions offer localized commercial property listings and search capabilities.'
+                },
+                {
+                  question:
+                    'Office Space or Coworking: Which Fits Your Business Needs?',
+                  answer:
+                    "Deciding between coworking and traditional office space depends on your team's size, budget, and how quickly you need to move in. For short term flexibility or shared amenities, coworking spaces may be the better fit."
+                },
+                {
+                  question:
+                    'What Should I Know Before Investing in Multifamily Properties?',
+                  answer:
+                    'Multifamily properties offer steady cash flow, appreciation, and scalable management, making them a cornerstone of many investment portfolios. Key financial metrics like net operating income, cap rate, and internal rate of return help investors evaluate opportunities with precision.'
+                }
+              ].map((faq, index) => (
                 <Card
                   key={index}
                   className={cn(
-                    'overflow-hidden group hover:shadow-2xl dark:bg-slate-700/80 dark:border-slate-600 transition-all duration-500 transform hover:-translate-y-1.5 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-800 rounded-xl',
-                    isArticlesSectionOnScreen
-                      ? `opacity-100 translate-y-0 animation-delay-${
-                          index * 150
+                    'bg-white dark:bg-slate-700 shadow-md hover:shadow-lg dark:border-slate-600 transition-all duration-500 ease-out rounded-lg',
+                    isFaqSectionOnScreen
+                      ? `opacity-100 translate-x-0 animation-delay-${
+                          index * 100
                         }`
-                      : 'opacity-0 translate-y-8'
+                      : 'opacity-0 -translate-x-5'
                   )}
                 >
-                  <Link href={`/articles/mock-article-${index}`} legacyBehavior>
-                    <a className='h-full flex flex-col'>
-                      {' '}
-                      {/* Assurer que la carte prend toute la hauteur et est flex col */}
-                      <div className='aspect-[16/9] overflow-hidden relative rounded-t-xl'>
-                        <Image
-                          src={article.image}
-                          alt={article.title}
-                          fill
-                          className='object-cover group-hover:scale-105 transition-transform duration-500'
-                          sizes='(max-width: 768px) 100vw, 33vw'
-                          quality={70}
-                        />
+                  <CardContent className='p-0'>
+                    <details className='group p-5 sm:p-6'>
+                      <summary className='flex items-center justify-between cursor-pointer list-none font-semibold text-lg text-slate-800 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm'>
+                        <span className='flex-1 pr-2'>{faq.question}</span>{' '}
+                        {/* pr-2 pour espacement avec icône */}
+                        <ChevronDown className='w-5 h-5 text-slate-500 dark:text-slate-400 group-open:rotate-180 transition-transform duration-300 transform flex-shrink-0' />
+                      </summary>
+                      <div className='grid grid-rows-[0fr] group-open:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out'>
+                        <div className='overflow-hidden'>
+                          <p className='mt-4 text-slate-600 dark:text-slate-300 leading-relaxed text-base pt-4 border-t border-slate-200 dark:border-slate-600'>
+                            {faq.answer}
+                          </p>
+                        </div>
                       </div>
-                      <CardContent className='p-5 sm:p-6 flex-grow flex flex-col'>
-                        {' '}
-                        {/* flex-grow ici */}
-                        <h3 className='font-semibold text-lg text-slate-800 dark:text-slate-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight'>
-                          {article.title}
-                        </h3>
-                        <p className='text-slate-600 dark:text-slate-300 text-sm line-clamp-3 mb-3 leading-relaxed flex-grow'>
-                          {article.description}
-                        </p>{' '}
-                        {/* flex-grow ici */}
-                        <span className='inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 group-hover:underline mt-auto pt-2'>
-                          {' '}
-                          {/* mt-auto pour pousser en bas */}
-                          Read article{' '}
-                          <ChevronDown className='w-4 h-4 ml-1 transform rotate-[-90deg] transition-transform' />
-                        </span>
-                      </CardContent>
-                    </a>
-                  </Link>
+                    </details>
+                  </CardContent>
                 </Card>
-              )
-            )}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Marketing to Listers */}
-      <section
-        ref={marketingSectionRef}
-        className={cn(
-          'py-20 bg-blue-600 dark:bg-blue-700 text-white transition-all duration-1000 ease-out',
-          isMarketingSectionOnScreen ? 'opacity-100' : 'opacity-0'
-        )}
-      >
-        <div className='container mx-auto px-4'>
-          {/* VOTRE CONTENU MARKETING STATIQUE */}
-          <div className='text-center mb-12'>
-            <h2 className='text-3xl md:text-4xl font-bold mb-4'>
-              LoopNet Listings Lease or Sell 14% Faster*
-            </h2>
-            <p className='text-lg opacity-90 max-w-2xl mx-auto'>
-              Reach millions of active tenants and investors. Our platform is
-              designed to get your property noticed and leased or sold quickly.
-            </p>
-          </div>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-8 mb-12'>
-            {[
-              {
-                icon: <Users className='w-10 h-10' />,
-                title: 'Right Audience',
-                desc: '96% of the Fortune 1000 search on LoopNet.'
-              },
-              {
-                icon: <Star className='w-10 h-10' />,
-                title: 'Engage Prospects',
-                desc: 'Stunning photography, videos and drone shots.'
-              },
-              {
-                icon: <TrendingUp className='w-10 h-10' />,
-                title: 'More Opportunity',
-                desc: 'Find a tenant or buyer, faster than before.'
-              }
-            ].map((item, index) => (
-              <div
-                key={item.title}
-                className={cn(
-                  'text-center p-6 md:p-8 bg-white/10 dark:bg-black/20 backdrop-blur-md rounded-xl shadow-xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl',
-                  isMarketingSectionOnScreen
-                    ? `opacity-100 translate-y-0 animation-delay-${index * 100}`
-                    : 'opacity-0 translate-y-5'
-                )}
-              >
-                <div className='w-20 h-20 bg-white/20 dark:bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md ring-1 ring-white/20'>
-                  {item.icon}
-                </div>
-                <h3 className='text-2xl font-semibold mb-3'>{item.title}</h3>
-                <p className='opacity-80 text-sm leading-relaxed'>
-                  {item.desc}
+        {/* Footer */}
+        <footer className='bg-slate-900 dark:bg-black text-slate-300 dark:text-slate-400 py-16'>
+          <div className='container mx-auto px-4'>
+            <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-10'>
+              {' '}
+              {/* Ajustement des colonnes pour plus de responsivité */}
+              <div className='col-span-2 md:col-span-4 lg:col-span-2 pr-8'>
+                {' '}
+                {/* Ajustement du span */}
+                <Link
+                  href='/'
+                  className='flex items-center space-x-2 mb-4 group'
+                >
+                  <Building2 className='h-8 w-8 text-blue-500 group-hover:text-blue-400 transition-colors' />
+                  <span className='text-2xl font-bold text-white group-hover:text-slate-200 transition-colors'>
+                    LoopNet
+                  </span>
+                </Link>
+                <p className='text-sm mb-6 leading-relaxed'>
+                  The leading commercial real estate marketplace connecting
+                  buyers, sellers, and industry professionals worldwide.
                 </p>
               </div>
-            ))}
-          </div>
-          <div className='text-center'>
-            <Button
-              size='xl'
-              variant='secondary'
-              className='bg-white/90 hover:bg-white text-blue-700 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-blue-600 transition-transform transform hover:scale-105 rounded-lg px-10 py-3.5 text-base sm:text-lg'
-            >
-              Explore Marketing Solutions
-            </Button>
-            <p className='text-xs opacity-75 mt-6 max-w-md mx-auto'>
-              *Based on internal analysis comparing properties advertised on
-              LoopNet to properties listed only on CoStar.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section
-        ref={faqSectionRef}
-        className={cn(
-          'py-16 bg-slate-100 dark:bg-slate-800/50 transition-all duration-1000 ease-out',
-          isFaqSectionOnScreen ? 'opacity-100' : 'opacity-0'
-        )}
-      >
-        <div className='container mx-auto px-4'>
-          <h2 className='text-3xl font-bold text-center text-slate-800 dark:text-slate-100 mb-12'>
-            Commercial Real Estate Fundamentals: Essential Questions for
-            Investors & Businesses
-          </h2>{' '}
-          {/* VOTRE TITRE */}
-          <div className='max-w-3xl mx-auto space-y-4 sm:space-y-5'>
-            {/* VOTRE STRUCTURE DE DONNÉES FAQ */}
-            {[
-              {
-                question:
-                  'Is LoopNet Available for International Property Searches?',
-                answer:
-                  'Yes, LoopNet operates globally, with dedicated platforms for commercial real estate in the UK, Canada, France, and Spain. These country specific versions offer localized commercial property listings and search capabilities.'
-              },
-              {
-                question:
-                  'Office Space or Coworking: Which Fits Your Business Needs?',
-                answer:
-                  "Deciding between coworking and traditional office space depends on your team's size, budget, and how quickly you need to move in. For short term flexibility or shared amenities, coworking spaces may be the better fit."
-              },
-              {
-                question:
-                  'What Should I Know Before Investing in Multifamily Properties?',
-                answer:
-                  'Multifamily properties offer steady cash flow, appreciation, and scalable management, making them a cornerstone of many investment portfolios. Key financial metrics like net operating income, cap rate, and internal rate of return help investors evaluate opportunities with precision.'
-              }
-            ].map((faq, index) => (
-              <Card
-                key={index}
-                className={cn(
-                  'bg-white dark:bg-slate-700 shadow-md hover:shadow-lg dark:border-slate-600 transition-all duration-500 ease-out rounded-lg',
-                  isFaqSectionOnScreen
-                    ? `opacity-100 translate-x-0 animation-delay-${index * 100}`
-                    : 'opacity-0 -translate-x-5'
-                )}
-              >
-                <CardContent className='p-0'>
-                  <details className='group p-5 sm:p-6'>
-                    <summary className='flex items-center justify-between cursor-pointer list-none font-semibold text-lg text-slate-800 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm'>
-                      <span className='flex-1 pr-2'>{faq.question}</span>{' '}
-                      {/* pr-2 pour espacement avec icône */}
-                      <ChevronDown className='w-5 h-5 text-slate-500 dark:text-slate-400 group-open:rotate-180 transition-transform duration-300 transform flex-shrink-0' />
-                    </summary>
-                    <div className='grid grid-rows-[0fr] group-open:grid-rows-[1fr] transition-[grid-template-rows] duration-500 ease-in-out'>
-                      <div className='overflow-hidden'>
-                        <p className='mt-4 text-slate-600 dark:text-slate-300 leading-relaxed text-base pt-4 border-t border-slate-200 dark:border-slate-600'>
-                          {faq.answer}
-                        </p>
-                      </div>
-                    </div>
-                  </details>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className='bg-slate-900 dark:bg-black text-slate-300 dark:text-slate-400 py-16'>
-        <div className='container mx-auto px-4'>
-          <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-10'>
-            {' '}
-            {/* Ajustement des colonnes pour plus de responsivité */}
-            <div className='col-span-2 md:col-span-4 lg:col-span-2 pr-8'>
-              {' '}
-              {/* Ajustement du span */}
-              <Link href='/' className='flex items-center space-x-2 mb-4 group'>
-                <Building2 className='h-8 w-8 text-blue-500 group-hover:text-blue-400 transition-colors' />
-                <span className='text-2xl font-bold text-white group-hover:text-slate-200 transition-colors'>
-                  LoopNet
-                </span>
-              </Link>
-              <p className='text-sm mb-6 leading-relaxed'>
-                The leading commercial real estate marketplace connecting
-                buyers, sellers, and industry professionals worldwide.
+              {/* VOTRE STRUCTURE DE LIENS FOOTER PRÉSERVÉE */}
+              <div>
+                {' '}
+                <h3 className='font-semibold text-white mb-4 text-base'>
+                  For Sale
+                </h3>{' '}
+                <ul className='space-y-2 text-gray-400 text-sm'>
+                  {' '}
+                  <li>
+                    <Link href='#' className='hover:text-white'>
+                      Office Buildings for Sale
+                    </Link>
+                  </li>{' '}
+                  {/* ... autres liens */}{' '}
+                </ul>{' '}
+              </div>
+              <div>
+                {' '}
+                <h3 className='font-semibold text-white mb-4 text-base'>
+                  For Lease
+                </h3>{' '}
+                <ul className='space-y-2 text-gray-400 text-sm'>
+                  {' '}
+                  <li>
+                    <Link href='#' className='hover:text-white'>
+                      Office Space for Lease
+                    </Link>
+                  </li>{' '}
+                  {/* ... autres liens */}{' '}
+                </ul>{' '}
+              </div>
+              <div>
+                {' '}
+                <h3 className='font-semibold text-white mb-4 text-base'>
+                  Resources
+                </h3>{' '}
+                <ul className='space-y-2 text-gray-400 text-sm'>
+                  {' '}
+                  <li>
+                    <Link href='#' className='hover:text-white'>
+                      Market Data
+                    </Link>
+                  </li>{' '}
+                  {/* ... autres liens */}{' '}
+                </ul>{' '}
+              </div>
+              <div>
+                {' '}
+                <h3 className='font-semibold text-white mb-4 text-base'>
+                  Company
+                </h3>{' '}
+                <ul className='space-y-2 text-gray-400 text-sm'>
+                  {' '}
+                  <li>
+                    <Link href='#' className='hover:text-white'>
+                      About
+                    </Link>
+                  </li>{' '}
+                  {/* ... autres liens */}{' '}
+                </ul>{' '}
+              </div>
+            </div>
+            <div className='border-t border-slate-800 dark:border-slate-700 mt-10 pt-10 text-center text-sm'>
+              <p>
+                © {new Date().getFullYear()} LoopNet Clone. All rights reserved.
+              </p>{' '}
+              {/* VOTRE TEXTE */}
+              <p className='mt-2'>
+                <Link href='/terms' className='hover:underline mx-2'>
+                  Terms of Service
+                </Link>{' '}
+                |
+                <Link href='/privacy' className='hover:underline mx-2'>
+                  Privacy Policy
+                </Link>
               </p>
             </div>
-            {/* VOTRE STRUCTURE DE LIENS FOOTER PRÉSERVÉE */}
-            <div>
-              {' '}
-              <h3 className='font-semibold text-white mb-4 text-base'>
-                For Sale
-              </h3>{' '}
-              <ul className='space-y-2 text-gray-400 text-sm'>
-                {' '}
-                <li>
-                  <Link href='#' className='hover:text-white'>
-                    Office Buildings for Sale
-                  </Link>
-                </li>{' '}
-                {/* ... autres liens */}{' '}
-              </ul>{' '}
-            </div>
-            <div>
-              {' '}
-              <h3 className='font-semibold text-white mb-4 text-base'>
-                For Lease
-              </h3>{' '}
-              <ul className='space-y-2 text-gray-400 text-sm'>
-                {' '}
-                <li>
-                  <Link href='#' className='hover:text-white'>
-                    Office Space for Lease
-                  </Link>
-                </li>{' '}
-                {/* ... autres liens */}{' '}
-              </ul>{' '}
-            </div>
-            <div>
-              {' '}
-              <h3 className='font-semibold text-white mb-4 text-base'>
-                Resources
-              </h3>{' '}
-              <ul className='space-y-2 text-gray-400 text-sm'>
-                {' '}
-                <li>
-                  <Link href='#' className='hover:text-white'>
-                    Market Data
-                  </Link>
-                </li>{' '}
-                {/* ... autres liens */}{' '}
-              </ul>{' '}
-            </div>
-            <div>
-              {' '}
-              <h3 className='font-semibold text-white mb-4 text-base'>
-                Company
-              </h3>{' '}
-              <ul className='space-y-2 text-gray-400 text-sm'>
-                {' '}
-                <li>
-                  <Link href='#' className='hover:text-white'>
-                    About
-                  </Link>
-                </li>{' '}
-                {/* ... autres liens */}{' '}
-              </ul>{' '}
-            </div>
           </div>
-          <div className='border-t border-slate-800 dark:border-slate-700 mt-10 pt-10 text-center text-sm'>
-            <p>
-              © {new Date().getFullYear()} LoopNet Clone. All rights reserved.
-            </p>{' '}
-            {/* VOTRE TEXTE */}
-            <p className='mt-2'>
-              <Link href='/terms' className='hover:underline mx-2'>
-                Terms of Service
-              </Link>{' '}
-              |
-              <Link href='/privacy' className='hover:underline mx-2'>
-                Privacy Policy
-              </Link>
-            </p>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </div>{' '}
+      {/* Fermeture du wrapper principal */}
     </div>
   )
 }

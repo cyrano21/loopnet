@@ -253,14 +253,7 @@ export default function MockPropertyPage() {
         description: 'La propriété a été retirée de vos favoris'
       })
     } else {
-      addToFavorites({
-        id: property.id,
-        title: property.title,
-        price: property.price,
-        surface: property.surface,
-        location: property.location,
-        image: property.images[0]?.url
-      })
+      addToFavorites(property.id)
       toast({
         title: 'Ajouté aux favoris',
         description: 'La propriété a été ajoutée à vos favoris'
@@ -359,6 +352,8 @@ export default function MockPropertyPage() {
                           className={`w-3 h-3 rounded-full transition-colors ${
                             currentImageIndex === index ? 'bg-white' : 'bg-white/50'
                           }`}
+                          aria-label={`Voir l'image ${index + 1}`}
+                          title={`Image ${index + 1}`}
                         />
                       ))}
                     </div>
@@ -390,6 +385,8 @@ export default function MockPropertyPage() {
                         className={`flex-shrink-0 border-2 rounded-lg overflow-hidden ${
                           currentImageIndex === index ? 'border-blue-500' : 'border-gray-200'
                         }`}
+                        aria-label={`Sélectionner l'image ${index + 1}`}
+                        title={`Image ${index + 1} - ${image.alt || property.title}`}
                       >
                         <Image
                           src={image.url}

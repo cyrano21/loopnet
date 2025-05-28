@@ -23,7 +23,17 @@ export async function POST(request: Request) {
       payment_method_types: ["card"],
       line_items: [
         {
-          price: plan.priceId,
+          price_data: {
+            currency: 'eur',
+            product_data: {
+              name: plan.name,
+              description: plan.description,
+            },
+            unit_amount: plan.price * 100, // Prix en centimes
+            recurring: {
+              interval: 'month',
+            },
+          },
           quantity: 1,
         },
       ],

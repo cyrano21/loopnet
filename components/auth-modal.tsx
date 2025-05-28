@@ -86,7 +86,7 @@ export function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps) {
                 type="email"
                 placeholder="Enter your email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 className="pl-10"
                 disabled={isLoading}
               />

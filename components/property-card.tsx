@@ -14,6 +14,7 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+import { Property } from '@/types/property'
 import {
   MapPin,
   Bed,
@@ -32,7 +33,8 @@ import {
   Factory,
   Landmark,
   Home,
-  Users
+  Users,
+  Sparkles
 } from 'lucide-react'
 import { usePermissions } from '@/hooks/use-permissions'
 import { useFavorites } from '@/hooks/use-favorites'
@@ -96,6 +98,7 @@ const formatPriceInternal = (
   const isRental =
     transactionType?.toLowerCase().includes('rent') ||
     transactionType?.toLowerCase().includes('lease')
+
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -103,9 +106,7 @@ const formatPriceInternal = (
     maximumFractionDigits: isRental && price < 10000 ? 2 : 0
   })
   let formatted = formatter.format(price)
-  if (isRental) {
-    formatted += '/mo'
-  }
+  // Pas besoin d'ajouter le suffixe ici car il sera ajouté séparément dans le rendu
   return formatted
 }
 
@@ -137,6 +138,7 @@ export function PropertyCard ({
     'simple' | 'premium' | 'agent'
   >('premium')
   const [isFavoritedState, setIsFavoritedState] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
 
   // Mise à jour de l'état des favoris
   useEffect(() => {
@@ -268,24 +270,30 @@ export function PropertyCard ({
     property.publishedAt &&
     new Date(property.publishedAt) >
       new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-
   return (
     <>
+      {' '}
       <Card
         className={cn(
-          'overflow-hidden group transition-all duration-300 ease-in-out hover:shadow-2xl dark:hover:shadow-slate-700/50 flex flex-col h-full',
-          'focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-900 rounded-xl border border-slate-200 dark:border-slate-700/60 bg-card text-card-foreground',
+          'overflow-hidden group transition-all duration-500 ease-out hover:shadow-2xl hover:shadow-blue-500/10 dark:hover:shadow-slate-700/50 flex flex-col h-full transform hover:-translate-y-2 hover:scale-[1.02]',
+          'focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 dark:focus-within:ring-offset-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-lg',
+          'relative before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-blue-500/5 before:via-purple-500/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-500 hover:before:opacity-100',
+          property.isPremium && 'border-amber-300/50 dark:border-amber-700/70',
+          isNewListing && 'ring-2 ring-blue-400/30 dark:ring-blue-500/20',
           className
         )}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <CardHeader className='p-0 relative'>
+        {' '}
+        <CardHeader className='p-0 relative z-10'>
           <Link
             href={`/properties/${property.slug || property._id}`}
             passHref
             legacyBehavior
           >
             <a
-              className='block aspect-[16/10] relative overflow-hidden rounded-t-xl group/image'
+              className='block aspect-[16/10] relative overflow-hidden rounded-t-2xl group/image'
               onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
                 if (!canActuallyViewDetails) {
                   e.preventDefault()
@@ -297,9 +305,9 @@ export function PropertyCard ({
                 src={imageUrl}
                 alt={imageAlt}
                 fill
-                className='object-cover transition-transform duration-500 ease-in-out group-hover/image:scale-105'
+                className='object-cover transition-all duration-700 ease-out group-hover/image:scale-110 brightness-95 group-hover/image:brightness-105'
                 sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-                quality={70}
+                quality={75}
                 priority={false}
                 onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                   ;(
@@ -307,58 +315,86 @@ export function PropertyCard ({
                   ).src = `https://via.placeholder.com/400x300/EEEEEE/CCCCCC?text=Image+Error`
                 }}
               />
-
-              {/* Effet de survol sur l'image */}
-              <div className='absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 rounded-t-xl'></div>
-
-              {/* Badges positionnés */}
-              <div className='absolute top-3 left-3 z-10 flex flex-col gap-1.5'>
+              {/* Gradient overlay premium */}
+              <div className='absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-60 group-hover/image:opacity-80 transition-opacity duration-500 rounded-t-2xl'></div>{' '}
+              {/* Premium shine effect */}
+              <div className='absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-0 group-hover/image:opacity-100 transition-opacity duration-700 rounded-t-2xl'></div>{' '}
+              {/* Bouton de comparaison en position proéminente */}
+              {onAddToComparison && (
+                <div className='absolute top-4 right-4 z-20'>
+                  <Button
+                    variant='outline'
+                    size='icon'
+                    onClick={handleCompare}
+                    className={cn(
+                      'h-9 w-9 rounded-full transition-all duration-300 shadow-lg relative',
+                      isInComparison
+                        ? 'bg-blue-100 dark:bg-blue-900/60 border-blue-300 dark:border-blue-600 text-blue-600 dark:text-blue-400'
+                        : 'bg-white/90 hover:bg-white dark:bg-slate-800/90 dark:hover:bg-slate-800 border-white/60 dark:border-slate-700/60'
+                    )}
+                    aria-label={
+                      isInComparison
+                        ? 'Retirer de la comparaison'
+                        : 'Ajouter à la comparaison'
+                    }
+                  >
+                    <Scale
+                      className={cn(
+                        'h-4 w-4',
+                        isInComparison ? 'text-blue-600' : 'text-slate-600'
+                      )}
+                    />
+                  </Button>
+                </div>
+              )}
+              {/* Badges positionnés avec design premium */}
+              <div className='absolute top-4 left-4 z-20 flex flex-col gap-2'>
                 {property.isPremium === true && (
                   <Badge
                     variant='default'
-                    className='bg-amber-400 text-amber-900 border-amber-500 shadow-md text-xs px-2.5 py-1 font-semibold'
+                    className='bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 border-0 shadow-lg backdrop-blur-sm text-xs px-3 py-1.5 font-bold rounded-full transform hover:scale-105 transition-transform duration-300'
                   >
-                    <Zap className='w-3.5 h-3.5 mr-1' /> Premium
+                    <Zap className='w-3.5 h-3.5 mr-1.5 fill-current' /> Premium
                   </Badge>
                 )}
                 {property.isFeatured === true && (
                   <Badge
                     variant='destructive'
-                    className='bg-red-500 text-white shadow-md text-xs px-2.5 py-1 font-semibold'
+                    className='bg-gradient-to-r from-red-500 to-pink-600 text-white shadow-lg backdrop-blur-sm text-xs px-3 py-1.5 font-bold rounded-full transform hover:scale-105 transition-transform duration-300'
                   >
-                    <Star className='w-3.5 h-3.5 mr-1 fill-current' /> Featured
+                    <Star className='w-3.5 h-3.5 mr-1.5 fill-current' />{' '}
+                    Featured
                   </Badge>
                 )}
                 {isNewListing && (
-                  <Badge className='bg-green-500 text-white shadow-md text-xs px-2.5 py-1 font-semibold'>
-                    New
+                  <Badge className='bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg backdrop-blur-sm text-xs px-3 py-1.5 font-bold rounded-full transform hover:scale-105 transition-transform duration-300'>
+                    <Sparkles className='w-3.5 h-3.5 mr-1.5 fill-current' /> New
                   </Badge>
                 )}
                 {property.status && property.status.toLowerCase() !== 'active' && (
                   <Badge
                     variant='outline'
-                    className='bg-slate-100/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 shadow-md text-xs px-2.5 py-1 font-medium capitalize backdrop-blur-sm'
+                    className='bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-300 shadow-lg backdrop-blur-sm text-xs px-3 py-1.5 font-semibold capitalize rounded-full border-slate-300 dark:border-slate-600'
                   >
                     {property.status}
                   </Badge>
                 )}
               </div>
-
-              {/* Bouton Favori avec Tooltip */}
+              {/* Bouton Favori avec Tooltip */}{' '}
               <TooltipProvider delayDuration={100}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
                       size='icon'
                       variant='ghost'
-                      className='absolute top-2.5 right-2.5 z-10 w-9 h-9 rounded-full bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 backdrop-blur-sm shadow-md transition-all hover:scale-110 active:scale-95 focus-visible:ring-1 focus-visible:ring-blue-500'
+                      className='absolute top-4 right-4 z-20 w-11 h-11 rounded-full bg-white/90 dark:bg-slate-800/90 hover:bg-white dark:hover:bg-slate-700 backdrop-blur-sm shadow-lg border border-white/50 dark:border-slate-700/50 transition-all duration-300 transform hover:scale-110 hover:shadow-xl'
                       onClick={handleFavorite}
                     >
                       <Heart
                         className={cn(
-                          'w-5 h-5 transition-all',
+                          'w-5 h-5 transition-all duration-300',
                           isFavoritedState
-                            ? 'fill-red-500 text-red-500'
+                            ? 'fill-red-500 text-red-500 scale-110'
                             : 'text-slate-600 dark:text-slate-300 group-hover/image:text-red-400'
                         )}
                       />
@@ -375,90 +411,125 @@ export function PropertyCard ({
               </TooltipProvider>
             </a>
           </Link>
-        </CardHeader>
-
-        <CardContent className='p-4 sm:p-5 flex-grow flex flex-col'>
-          {/* Titre cliquable */}
+        </CardHeader>{' '}
+        <CardContent className='p-4 sm:p-5 md:p-6 flex-grow flex flex-col relative z-10'>
+          {/* Titre cliquable avec effet premium */}{' '}
           <div
             onClick={() => handleViewDetailsClick()}
-            className='cursor-pointer mb-2 group/titleblock'
+            className='cursor-pointer mb-3 group/titleblock'
           >
-            <CardTitle className='text-lg sm:text-xl group-hover/titleblock:text-blue-600 dark:group-hover/titleblock:text-blue-400 transition-colors line-clamp-2 leading-snug'>
-              {property.title}
+            <CardTitle
+              className={cn(
+                'text-lg sm:text-xl md:text-2xl font-bold transition-all duration-300 leading-tight',
+                'bg-gradient-to-r bg-clip-text',
+                'from-slate-800 to-slate-700 dark:from-slate-100 dark:to-slate-200',
+                'group-hover/titleblock:from-blue-600 group-hover/titleblock:to-blue-500',
+                isHovered ? 'line-clamp-none' : 'line-clamp-2'
+              )}
+            >
+              <span className='bg-clip-text hover:text-transparent'>
+                {property.title}
+              </span>
             </CardTitle>
-          </div>
-
-          <div className='flex items-center text-muted-foreground text-sm mb-3'>
-            <MapPin className='h-4 w-4 mr-1.5 flex-shrink-0 text-slate-500 dark:text-slate-400' />
-            <span
-              className='truncate'
+          </div>{' '}
+          <div className='flex items-center text-muted-foreground text-sm mb-4 group/location'>
+            <MapPin className='h-4 w-4 mr-2 flex-shrink-0 text-blue-500 dark:text-blue-400 group-hover/location:animate-pulse' />
+            <div
+              className={cn(
+                'text-slate-600 dark:text-slate-300 overflow-hidden transition-all duration-300',
+                isHovered ? 'whitespace-normal' : 'truncate'
+              )}
               title={`${property.address}, ${property.city}${
                 property.postalCode ? ', ' + property.postalCode : ''
               }`}
             >
               {property.address}, {property.city}
-            </span>
-          </div>
-
-          {/* Informations clés */}
-          <div className='grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm text-slate-700 dark:text-slate-300 mb-4 border-t border-b border-slate-200 dark:border-slate-700 py-3 my-auto'>
-            {' '}
+              {property.postalCode && (
+                <span className='text-xs text-slate-500 dark:text-slate-400 ml-1'>
+                  ({property.postalCode})
+                </span>
+              )}
+            </div>
+          </div>{' '}
+          {/* Informations clés avec design premium */}
+          <div className='grid grid-cols-2 gap-x-4 gap-y-3 text-sm text-slate-700 dark:text-slate-300 mb-5 bg-gradient-to-br from-slate-50/80 to-slate-100/80 dark:from-slate-800/50 dark:to-slate-700/50 backdrop-blur-sm rounded-xl border border-slate-200/50 dark:border-slate-700/50 p-4 shadow-sm'>
             <div
-              className='flex items-center gap-1.5 truncate'
+              className='flex items-center gap-2 truncate group/info hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300'
               title={property.propertyType}
             >
               {propertyIcon &&
               typeof propertyIcon === 'object' &&
               'props' in propertyIcon ? (
-                <div className='h-4 w-4 text-slate-500 dark:text-slate-400 flex-shrink-0'>
+                <div className='h-4 w-4 text-blue-500 dark:text-blue-400 flex-shrink-0 group-hover/info:scale-110 transition-transform duration-300'>
                   {propertyIcon}
                 </div>
               ) : (
-                <Building2 className='h-4 w-4 text-slate-500 dark:text-slate-400 flex-shrink-0' />
+                <Building2 className='h-4 w-4 text-blue-500 dark:text-blue-400 flex-shrink-0 group-hover/info:scale-110 transition-transform duration-300' />
               )}
-              <span className='truncate'>{property.propertyType}</span>
+              <span className='truncate font-medium'>
+                {property.propertyType}
+              </span>
             </div>
             <div
-              className='flex items-center gap-1.5 truncate'
+              className='flex items-center gap-2 truncate group/info hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300'
               title={`${property.surface.toLocaleString()} m²`}
             >
-              <Square className='h-4 w-4 text-slate-500 dark:text-slate-400 flex-shrink-0' />
-              <span className='truncate'>
+              <Square className='h-4 w-4 text-blue-500 dark:text-blue-400 flex-shrink-0 group-hover/info:scale-110 transition-transform duration-300' />
+              <span className='truncate font-medium'>
                 {property.surface.toLocaleString()} m²
               </span>
             </div>
             {property.bedrooms ? (
               <div
-                className='flex items-center gap-1.5 truncate'
+                className='flex items-center gap-2 truncate group/info hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300'
                 title={`${property.bedrooms} chambre(s)`}
               >
-                <Bed className='h-4 w-4 text-slate-500 dark:text-slate-400 flex-shrink-0' />
-                <span className='truncate'>{property.bedrooms} ch.</span>
+                <Bed className='h-4 w-4 text-blue-500 dark:text-blue-400 flex-shrink-0 group-hover/info:scale-110 transition-transform duration-300' />
+                <span className='truncate font-medium'>
+                  {property.bedrooms} ch.
+                </span>
               </div>
             ) : (
               <div className='min-h-[1.25rem]' />
             )}
             {property.bathrooms ? (
               <div
-                className='flex items-center gap-1.5 truncate'
+                className='flex items-center gap-2 truncate group/info hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300'
                 title={`${property.bathrooms} salle(s) de bain`}
               >
-                <Bath className='h-4 w-4 text-slate-500 dark:text-slate-400 flex-shrink-0' />
-                <span className='truncate'>{property.bathrooms} sdb.</span>
+                <Bath className='h-4 w-4 text-blue-500 dark:text-blue-400 flex-shrink-0 group-hover/info:scale-110 transition-transform duration-300' />
+                <span className='truncate font-medium'>
+                  {property.bathrooms} sdb.
+                </span>
               </div>
             ) : (
               <div className='min-h-[1.25rem]' />
             )}
-          </div>
-
+          </div>{' '}
           {/* Description courte */}
           {!(can('canViewSellerInfo') && property.contactInfo) &&
             property.description && (
-              <p className='text-slate-600 dark:text-slate-300 text-sm line-clamp-2 mb-4 leading-relaxed flex-grow'>
-                {property.description}
-              </p>
+              <div className='mb-4 flex-grow group/description'>
+                <p
+                  className={cn(
+                    'text-slate-600 dark:text-slate-300 text-sm leading-relaxed transition-all duration-500',
+                    isHovered ? 'line-clamp-3' : 'line-clamp-2',
+                    isHovered &&
+                      'bg-slate-50 dark:bg-slate-700/40 p-2 rounded-lg'
+                  )}
+                >
+                  {property.description}
+                </p>
+                {isHovered && property.description.length > 150 && (
+                  <div
+                    className='text-xs text-blue-500 dark:text-blue-400 text-right mt-1 font-medium hover:underline cursor-pointer'
+                    onClick={() => handleViewDetailsClick()}
+                  >
+                    Lire plus
+                  </div>
+                )}
+              </div>
             )}
-
           {/* Contact vendeur */}
           {can('canViewSellerInfo') && property.contactInfo ? (
             <div className='bg-slate-50 dark:bg-slate-700/60 p-3 rounded-md mb-1 mt-auto border border-slate-200 dark:border-slate-600 text-xs'>
@@ -507,16 +578,37 @@ export function PropertyCard ({
               </Button>
             </div>
           ) : null}
-        </CardContent>
-
-        <CardFooter className='p-4 sm:p-5 pt-0 mt-auto'>
-          <div className='w-full space-y-3 pt-4'>
-            <div className='w-full flex items-center justify-between'>
+        </CardContent>{' '}
+        <CardFooter className='p-4 sm:p-5 md:p-6 pt-0 mt-auto relative z-10'>
+          <div className='w-full'>
+            {/* Prix et upgrade badge sur une ligne */}
+            <div className='flex items-center justify-between border-t border-slate-200/80 dark:border-slate-700/80 pt-4 mb-4'>
+              {' '}
               <div
-                className='text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400'
+                className='relative group/price flex items-center flex-wrap'
                 title={`Prix: ${priceDisplay}`}
               >
-                {priceDisplay}
+                <div
+                  className={cn(
+                    'text-xl sm:text-2xl font-bold transition-all duration-500 cursor-default flex-shrink-0 break-words max-w-full',
+                    isHovered
+                      ? 'bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent scale-110'
+                      : 'bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent'
+                  )}
+                >
+                  {priceDisplay}
+                </div>
+                {isHovered && (
+                  <div className='absolute -top-1 -right-1 w-2 h-2 rounded-full bg-blue-500 animate-ping'></div>
+                )}
+                {(property.transactionType?.toLowerCase().includes('rent') ||
+                  property.transactionType
+                    ?.toLowerCase()
+                    .includes('lease')) && (
+                  <span className='text-xs text-slate-500 dark:text-slate-400 mt-1 ml-1 font-medium'>
+                    /mois
+                  </span>
+                )}
               </div>
               {showDetailsRestriction && (
                 <TooltipProvider delayDuration={100}>
@@ -525,7 +617,7 @@ export function PropertyCard ({
                       <Button
                         variant='ghost'
                         size='sm'
-                        className='text-xs text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40 px-2 py-1 h-auto rounded-md font-medium'
+                        className='text-xs bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/40 px-2 py-1 h-auto rounded-lg font-medium border border-amber-200 dark:border-amber-700 transition-all duration-300 ml-2 flex-shrink-0'
                         onClick={() => {
                           const plan = upgradeNeededForDetails
                           if (typeof plan === 'string')
@@ -536,7 +628,7 @@ export function PropertyCard ({
                           setShowPricingModal(true)
                         }}
                       >
-                        <Zap className='h-3.5 w-3.5 mr-1' />{' '}
+                        <Zap className='h-3 w-3 mr-1' />
                         {upgradeNeededForDetails}
                       </Button>
                     </TooltipTrigger>
@@ -549,19 +641,23 @@ export function PropertyCard ({
                 </TooltipProvider>
               )}
             </div>
-
-            <div className='w-full flex gap-2 items-stretch'>
+            {/* Boutons d'action en bas */}
+            <div className='flex gap-2 items-center'>
               <Button
                 variant={canActuallyViewDetails ? 'default' : 'secondary'}
-                size='sm'
-                className='flex-1 transition-colors dark:text-slate-100 shadow-sm hover:shadow-md text-sm py-2.5 rounded-md font-medium'
+                className={cn(
+                  'flex-1 h-11 text-sm font-medium transition-all duration-300 rounded-lg',
+                  canActuallyViewDetails
+                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-lg'
+                    : 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300'
+                )}
                 onClick={() => handleViewDetailsClick()}
               >
                 <Eye className='h-4 w-4 mr-2' />
                 {canActuallyViewDetails
                   ? 'Voir détails'
                   : upgradeNeededForDetails
-                  ? `Upgrade (${upgradeNeededForDetails})`
+                  ? `Upgrade ${upgradeNeededForDetails}`
                   : 'Accès Restreint'}
               </Button>
 
@@ -579,16 +675,16 @@ export function PropertyCard ({
                             !!requiresUpgrade('canCompareProperties'))
                         }
                         className={cn(
-                          'w-10 h-9 p-0 flex items-center justify-center transition-all duration-200 dark:border-slate-500 dark:hover:bg-slate-600 shadow-sm hover:shadow-md rounded-md',
+                          'h-11 w-11 transition-all duration-300 rounded-lg relative',
                           isInComparison
-                            ? 'bg-blue-100 dark:bg-blue-700/50 border-blue-300 dark:border-blue-500 text-blue-600 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-600'
-                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                            ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-600 text-blue-600 dark:text-blue-400'
+                            : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                         )}
                       >
                         <Scale className='h-4 w-4' />
                         {!can('canCompareProperties') &&
                           requiresUpgrade('canCompareProperties') && (
-                            <Lock className='absolute bottom-0.5 right-0.5 h-2.5 w-2.5 text-amber-500' />
+                            <Lock className='absolute -top-1 -right-1 h-3 w-3 text-amber-500 bg-white dark:bg-slate-800 rounded-full p-0.5 border border-amber-300' />
                           )}
                       </Button>
                     </TooltipTrigger>
@@ -598,29 +694,31 @@ export function PropertyCard ({
                           ? 'Retirer de la comparaison'
                           : !can('canCompareProperties') &&
                             requiresUpgrade('canCompareProperties')
-                          ? `Upgrade (${requiresUpgrade(
+                          ? `Upgrade ${requiresUpgrade(
                               'canCompareProperties'
-                            )}) requis`
+                            )} requis`
                           : 'Ajouter à la comparaison'}
                       </p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               )}
-            </div>
-
+            </div>{' '}
+            {/* Lien compte gratuit pour les invités */}
             {userRole === 'guest' && !canActuallyViewDetails && (
-              <div className='w-full text-center pt-1'>
+              <div className='text-center mt-3'>
+                {' '}
                 <Button
-                  variant='link'
+                  variant='ghost'
                   size='sm'
-                  className='text-blue-600 dark:text-blue-400 text-xs px-1 h-auto py-1 whitespace-normal hover:underline focus:ring-0 font-medium'
+                  className='text-blue-600 dark:text-blue-400 text-xs h-auto py-1.5 px-3 font-medium truncate max-w-full hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-full border border-blue-200 dark:border-blue-700/50 transition-all duration-300 hover:shadow-sm flex items-center gap-1.5'
                   onClick={() => {
                     setPricingType('simple')
                     setShowPricingModal(true)
                   }}
                 >
-                  Créer un compte gratuit pour plus de fonctionnalités
+                  <Sparkles className='w-3 h-3' />
+                  Créer un compte gratuit
                 </Button>
               </div>
             )}

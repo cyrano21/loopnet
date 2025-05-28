@@ -163,7 +163,7 @@ export function SearchAlertsCard () {
                   <Input
                     id='alert-name'
                     value={newAlertName}
-                    onChange={e => setNewAlertName(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewAlertName(e.target.value)}
                     placeholder='Ex: Nouveaux bureaux à Paris'
                   />
                 </div>

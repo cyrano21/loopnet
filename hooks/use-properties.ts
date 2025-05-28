@@ -1,48 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-
-interface Property {
-  _id: string
-  title: string
-  description: string
-  propertyType: string
-  transactionType: "sale" | "rent" | "vacation"
-  address: string
-  city: string
-  price: number
-  surface: number
-  rooms?: number
-  bedrooms?: number
-  bathrooms?: number
-  yearBuilt?: number
-  features: string[]
-  images: Array<{
-    url: string
-    publicId: string
-    alt?: string
-    isPrimary?: boolean
-  }>
-  owner: {
-    _id: string
-    name: string
-    email: string
-    company?: string
-    role: string
-  }
-  contactInfo: {
-    name: string
-    email: string
-    phone: string
-  }
-  status: string
-  views: number
-  favorites: number
-  inquiries: number
-  pricePerSqm: number
-  createdAt: string
-  updatedAt: string
-}
+import { Property } from "@/types/property"
 
 interface UsePropertiesOptions {
   page?: number

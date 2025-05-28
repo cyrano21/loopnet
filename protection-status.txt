@@ -1,0 +1,4 @@
+=== RAPPORT DES PAGES PROTÉGÉES ===
+
+Pages protégées avec RoleGuard :
+

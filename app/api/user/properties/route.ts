@@ -56,7 +56,10 @@ export async function GET(request: NextRequest) {
     }
 
     stats.forEach((stat) => {
-      formattedStats[stat._id] = stat.count
+      const status = stat._id
+      if (status && typeof status === 'string' && status in formattedStats && typeof formattedStats[status as keyof typeof formattedStats] === 'number') {
+        (formattedStats as any)[status] = stat.count
+      }
       formattedStats.totalViews += stat.totalViews
       formattedStats.totalFavorites += stat.totalFavorites
       formattedStats.totalInquiries += stat.totalInquiries

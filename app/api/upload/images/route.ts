@@ -1,5 +1,23 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { uploadToCloudinary } from "@/lib/cloudinary"
+import { NextRequest, NextResponse } from "next/server"
+import { v2 as cloudinary } from "cloudinary"
+
+// Configuration Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+})
+
+interface CloudinaryUploadResult {
+  secure_url: string
+  public_id: string
+  width: number
+  height: number
+  format: string
+  resource_type: string
+  created_at: string
+  bytes: number
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,7 +48,24 @@ export async function POST(request: NextRequest) {
       const bytes = await file.arrayBuffer()
       const buffer = Buffer.from(bytes)
 
-      const result = await uploadToCloudinary(buffer, folder)
+      // Upload vers Cloudinary
+      const result = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            resource_type: "image",
+            folder: "loopnet-properties",
+            transformation: [
+              { width: 1200, height: 800, crop: "limit" },
+              { quality: "auto:good" },
+            ],
+          },
+          (error, result) => {
+            if (error) reject(error)
+            else if (result) resolve(result as CloudinaryUploadResult)
+            else reject(new Error("Upload failed"))
+          }
+        ).end(buffer)
+      })
 
       return {
         url: result.secure_url,
@@ -53,5 +88,27 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Image upload error:", error)
     return NextResponse.json({ success: false, error: "Failed to upload images" }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const publicId = searchParams.get("publicId")
+
+    if (!publicId) {
+      return NextResponse.json({ error: "Public ID required" }, { status: 400 })
+    }
+
+    // Supprimer l'image de Cloudinary
+    await cloudinary.uploader.destroy(publicId)
+
+    return NextResponse.json({
+      success: true,
+      message: "Image deleted successfully",
+    })
+  } catch (error) {
+    console.error("Image deletion error:", error)
+    return NextResponse.json({ error: "Failed to delete image" }, { status: 500 })
   }
 }

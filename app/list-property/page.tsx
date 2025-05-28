@@ -23,6 +23,7 @@ import {
   getPropertyTypeByValue,
   getTransactionTypeByValue
 } from '@/lib/property-types'
+import { FreemiumListingGuard } from '@/components/freemium-listing-guard'
 
 interface UploadedImage {
   url: string
@@ -38,6 +39,9 @@ export default function ListPropertyPage () {
   const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [submitting, setSubmitting] = useState(false)
+
+  // Simuler le nombre d'annonces actuelles de l'utilisateur
+  const [currentListingCount] = useState(2) // À remplacer par une vraie requête
 
   const { uploadImages, uploading, progress } = useImageUpload()
 
@@ -188,7 +192,7 @@ export default function ListPropertyPage () {
                     id='title'
                     placeholder='Ex: Bureau moderne avec terrasse'
                     value={formData.title}
-                    onChange={e =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormData({ ...formData, title: e.target.value })
                     }
                   />
@@ -205,7 +209,7 @@ export default function ListPropertyPage () {
                       type='number'
                       placeholder='450000'
                       value={formData.price}
-                      onChange={e =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setFormData({ ...formData, price: e.target.value })
                       }
                     />
@@ -217,7 +221,7 @@ export default function ListPropertyPage () {
                       type='number'
                       placeholder='120'
                       value={formData.surface}
-                      onChange={e =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setFormData({ ...formData, surface: e.target.value })
                       }
                     />
@@ -235,7 +239,7 @@ export default function ListPropertyPage () {
                         type='number'
                         placeholder='4'
                         value={formData.rooms}
-                        onChange={e =>
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormData({ ...formData, rooms: e.target.value })
                         }
                       />
@@ -247,7 +251,7 @@ export default function ListPropertyPage () {
                         type='number'
                         placeholder='2'
                         value={formData.bedrooms}
-                        onChange={e =>
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormData({ ...formData, bedrooms: e.target.value })
                         }
                       />
@@ -259,7 +263,7 @@ export default function ListPropertyPage () {
                         type='number'
                         placeholder='1'
                         value={formData.bathrooms}
-                        onChange={e =>
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormData({
                             ...formData,
                             bathrooms: e.target.value
@@ -279,7 +283,7 @@ export default function ListPropertyPage () {
                         type='number'
                         placeholder='2020'
                         value={formData.yearBuilt}
-                        onChange={e =>
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormData({
                             ...formData,
                             yearBuilt: e.target.value
@@ -293,7 +297,7 @@ export default function ListPropertyPage () {
                         id='parking'
                         placeholder='10 places'
                         value={formData.parking}
-                        onChange={e =>
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormData({ ...formData, parking: e.target.value })
                         }
                       />
@@ -309,7 +313,7 @@ export default function ListPropertyPage () {
                   placeholder='Décrivez votre bien en détail...'
                   rows={8}
                   value={formData.description}
-                  onChange={e =>
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setFormData({ ...formData, description: e.target.value })
                   }
                 />
@@ -331,7 +335,7 @@ export default function ListPropertyPage () {
                     id='address'
                     placeholder='123 Rue de la République'
                     value={formData.address}
-                    onChange={e =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormData({ ...formData, address: e.target.value })
                     }
                   />
@@ -344,7 +348,7 @@ export default function ListPropertyPage () {
                       id='city'
                       placeholder='Paris'
                       value={formData.city}
-                      onChange={e =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setFormData({ ...formData, city: e.target.value })
                       }
                     />
@@ -355,7 +359,7 @@ export default function ListPropertyPage () {
                       id='postalCode'
                       placeholder='75001'
                       value={formData.postalCode}
-                      onChange={e =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         setFormData({ ...formData, postalCode: e.target.value })
                       }
                     />
@@ -474,7 +478,7 @@ export default function ListPropertyPage () {
                     id='contactName'
                     placeholder='Jean Dupont'
                     value={formData.contactInfo.name}
-                    onChange={e =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormData({
                         ...formData,
                         contactInfo: {
@@ -493,7 +497,7 @@ export default function ListPropertyPage () {
                     type='email'
                     placeholder='jean.dupont@email.com'
                     value={formData.contactInfo.email}
-                    onChange={e =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormData({
                         ...formData,
                         contactInfo: {
@@ -511,7 +515,7 @@ export default function ListPropertyPage () {
                     id='contactPhone'
                     placeholder='+33 6 12 34 56 78'
                     value={formData.contactInfo.phone}
-                    onChange={e =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormData({
                         ...formData,
                         contactInfo: {
@@ -529,7 +533,7 @@ export default function ListPropertyPage () {
                     id='availableFrom'
                     type='date'
                     value={formData.availableFrom}
-                    onChange={e =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setFormData({
                         ...formData,
                         availableFrom: e.target.value
@@ -547,7 +551,7 @@ export default function ListPropertyPage () {
                     placeholder='Ex: Du lundi au vendredi, 9h-18h sur rendez-vous'
                     rows={3}
                     value={formData.visitSchedule}
-                    onChange={e =>
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                       setFormData({
                         ...formData,
                         visitSchedule: e.target.value
@@ -701,126 +705,133 @@ export default function ListPropertyPage () {
   }
 
   return (
-    <div className='min-h-screen bg-background'>
-      {/* Header */}
-      <header className='border-b bg-white'>
-        <div className='container mx-auto px-4'>
-          <div className='flex items-center justify-between h-16'>
-            <div className='flex items-center space-x-8'>
-              <Link href='/' className='flex items-center space-x-2'>
-                <Building2 className='h-8 w-8 text-blue-600' />
-                <span className='text-2xl font-bold text-blue-600'>
-                  LoopNet
-                </span>
-              </Link>
-              <nav className='hidden md:flex space-x-6'>
-                <Link
-                  href='/list-property'
-                  className='text-blue-600 font-medium'
-                >
-                  Publier une annonce
+    <FreemiumListingGuard
+      action='create'
+      currentListingCount={currentListingCount}
+    >
+      <div className='min-h-screen bg-background'>
+        {/* Header */}
+        <header className='border-b bg-white'>
+          <div className='container mx-auto px-4'>
+            <div className='flex items-center justify-between h-16'>
+              <div className='flex items-center space-x-8'>
+                <Link href='/' className='flex items-center space-x-2'>
+                  <Building2 className='h-8 w-8 text-blue-600' />
+                  <span className='text-2xl font-bold text-blue-600'>
+                    LoopNet
+                  </span>
                 </Link>
-                <Link
-                  href='/my-properties'
-                  className='text-gray-700 hover:text-blue-600'
-                >
-                  Mes annonces
-                </Link>
-                <Link
-                  href='/properties'
-                  className='text-gray-700 hover:text-blue-600'
-                >
-                  Rechercher
-                </Link>
-              </nav>
-            </div>
-            <div className='flex items-center space-x-4'>
-              <Button variant='ghost'>Aide</Button>
-              <Button variant='outline'>Sauvegarder</Button>
+                <nav className='hidden md:flex space-x-6'>
+                  <Link
+                    href='/list-property'
+                    className='text-blue-600 font-medium'
+                  >
+                    Publier une annonce
+                  </Link>
+                  <Link
+                    href='/my-properties'
+                    className='text-gray-700 hover:text-blue-600'
+                  >
+                    Mes annonces
+                  </Link>
+                  <Link
+                    href='/properties'
+                    className='text-gray-700 hover:text-blue-600'
+                  >
+                    Rechercher
+                  </Link>
+                </nav>
+              </div>
+              <div className='flex items-center space-x-4'>
+                <Button variant='ghost'>Aide</Button>
+                <Button variant='outline'>Sauvegarder</Button>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <div className='container mx-auto px-4 py-8'>
-        {/* Progress Steps */}
-        <div className='mb-8'>
-          <div className='flex items-center justify-between'>
-            {steps.map((step, index) => (
-              <div key={step.id} className='flex items-center'>
-                <div
-                  className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                    currentStep >= step.id
-                      ? 'bg-blue-600 border-blue-600 text-white'
-                      : 'border-gray-300 text-gray-500'
-                  }`}
-                >
-                  {currentStep > step.id ? (
-                    <Check className='w-5 h-5' />
-                  ) : (
-                    step.id
-                  )}
-                </div>
-                <div className='ml-3 hidden md:block'>
+        <div className='container mx-auto px-4 py-8'>
+          {/* Progress Steps */}
+          <div className='mb-8'>
+            <div className='flex items-center justify-between'>
+              {steps.map((step, index) => (
+                <div key={step.id} className='flex items-center'>
                   <div
-                    className={`text-sm font-medium ${
-                      currentStep >= step.id ? 'text-blue-600' : 'text-gray-500'
+                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
+                      currentStep >= step.id
+                        ? 'bg-blue-600 border-blue-600 text-white'
+                        : 'border-gray-300 text-gray-500'
                     }`}
                   >
-                    {step.title}
+                    {currentStep > step.id ? (
+                      <Check className='w-5 h-5' />
+                    ) : (
+                      step.id
+                    )}
                   </div>
-                  <div className='text-xs text-gray-500'>
-                    {step.description}
+                  <div className='ml-3 hidden md:block'>
+                    <div
+                      className={`text-sm font-medium ${
+                        currentStep >= step.id
+                          ? 'text-blue-600'
+                          : 'text-gray-500'
+                      }`}
+                    >
+                      {step.title}
+                    </div>
+                    <div className='text-xs text-gray-500'>
+                      {step.description}
+                    </div>
                   </div>
+                  {index < steps.length - 1 && (
+                    <div
+                      className={`w-12 h-0.5 mx-4 ${
+                        currentStep > step.id ? 'bg-blue-600' : 'bg-gray-300'
+                      }`}
+                    />
+                  )}
                 </div>
-                {index < steps.length - 1 && (
-                  <div
-                    className={`w-12 h-0.5 mx-4 ${
-                      currentStep > step.id ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
-                  />
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Step Content */}
+          <Card className='mb-8'>
+            <CardContent className='p-8'>{renderStep()}</CardContent>
+          </Card>
+
+          {/* Navigation */}
+          <div className='flex justify-between'>
+            <Button
+              variant='outline'
+              onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+              disabled={currentStep === 1}
+            >
+              <ArrowLeft className='w-4 h-4 mr-2' />
+              Précédent
+            </Button>
+
+            {currentStep < steps.length ? (
+              <Button
+                onClick={() =>
+                  setCurrentStep(Math.min(steps.length, currentStep + 1))
+                }
+                disabled={!canProceed()}
+              >
+                Suivant
+                <ArrowRight className='w-4 h-4 ml-2' />
+              </Button>
+            ) : (
+              <Button
+                onClick={handleSubmit}
+                disabled={submitting || !canProceed()}
+              >
+                {submitting ? 'Publication...' : "Publier l'annonce"}
+              </Button>
+            )}
           </div>
         </div>
-
-        {/* Step Content */}
-        <Card className='mb-8'>
-          <CardContent className='p-8'>{renderStep()}</CardContent>
-        </Card>
-
-        {/* Navigation */}
-        <div className='flex justify-between'>
-          <Button
-            variant='outline'
-            onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-            disabled={currentStep === 1}
-          >
-            <ArrowLeft className='w-4 h-4 mr-2' />
-            Précédent
-          </Button>
-
-          {currentStep < steps.length ? (
-            <Button
-              onClick={() =>
-                setCurrentStep(Math.min(steps.length, currentStep + 1))
-              }
-              disabled={!canProceed()}
-            >
-              Suivant
-              <ArrowRight className='w-4 h-4 ml-2' />
-            </Button>
-          ) : (
-            <Button
-              onClick={handleSubmit}
-              disabled={submitting || !canProceed()}
-            >
-              {submitting ? 'Publication...' : "Publier l'annonce"}
-            </Button>
-          )}
-        </div>
       </div>
-    </div>
+    </FreemiumListingGuard>
   )
 }

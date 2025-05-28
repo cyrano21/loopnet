@@ -9,7 +9,7 @@
 ## Solutions implémentées
 
 ### 1. Fichier de définition React temporaire
-- Créé `src/react.d.ts` avec des déclarations complètes pour :
+- Créé `types/react-fixes.d.ts` avec des déclarations complètes pour :
   - Hooks React (useState, useEffect, etc.)
   - Types JSX (IntrinsicElements, SyntheticEvent, etc.)
   - Interfaces d'événements (MouseEvent, ChangeEvent, etc.)

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { SearchBar } from '@/components/ui/SearchBar'
-import { Pagination } from '@/components/ui/Pagination'
+import { Pagination } from '@/components/ui/pagination'
 import { PropertyCard } from '@/components/property-card'
 import { useProperties } from '@/hooks/use-properties'
 import { usePermissions } from '@/hooks/use-permissions'
@@ -163,7 +163,7 @@ export default function PropertiesPage () {
           ) : (
             <>
               {/* Grille des propriétés */}
-              <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8'>
+              <div className='grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 mb-8'>
                 {limitedProperties.map(property => (
                   <PropertyCard
                     key={property._id}

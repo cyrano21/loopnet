@@ -61,8 +61,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, UserPermissions> = {
     canAddFavorites: false,
     maxFavorites: 0,
 
-    canCompareProperties: false,
-    maxComparisons: 0,
+    canCompareProperties: true, // Activé temporairement pour tester la fonctionnalité
+    maxComparisons: 3,
 
     canUseAdvancedSearch: false,
     canSaveSearches: false,
@@ -100,8 +100,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, UserPermissions> = {
     canAddFavorites: false, // Doit upgrader pour favoris
     maxFavorites: 0,
 
-    canCompareProperties: false, // Pas de comparaison
-    maxComparisons: 0,
+    canCompareProperties: true, // Activé temporairement pour tester la fonctionnalité
+    maxComparisons: 3,
 
     canUseAdvancedSearch: false, // Recherche basique seulement
     canSaveSearches: false,

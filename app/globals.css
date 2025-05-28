@@ -2,6 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .article-content {
+    font-size: 1.125rem;
+    line-height: 1.7;
+  }
+
+  .article-content h2 {
+    @apply text-2xl font-bold mt-12 mb-6 text-foreground;
+  }
+
+  .article-content h3 {
+    @apply text-lg font-semibold mb-3;
+  }
+
+  .article-content p {
+    @apply mb-6 leading-relaxed;
+  }
+
+
+  .article-content .lead {
+    @apply text-xl leading-relaxed mb-8 text-muted-foreground;
+  }
+
+  
+  .prose-content p {
+    @apply mb-6 leading-relaxed;
+  }
+  
+  .prose-content h2 {
+    @apply text-2xl font-bold mt-12 mb-6 text-foreground;
+  }
+
+  /* Pattern overlay for premium sections */
+  .pattern-dots {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Ccircle cx='7' cy='7' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
@@ -37,6 +75,47 @@
   }
 }
 
+/* Tools Sidebar Animations */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.sidebar-enter {
+  animation: slideInRight 0.3s ease-out;
+}
+
+.sidebar-exit {
+  animation: slideOutRight 0.3s ease-in;
+}
+
+/* Scroll animation for company logos */
+@keyframes scroll-smooth {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 /* Utility classes */
 .animate-fadeIn {
   animation: fadeIn 0.5s ease-out;
@@ -48,6 +127,14 @@
 
 .animate-bounce-subtle {
   animation: bounce 2s infinite;
+}
+
+.animate-scroll-smooth {
+  animation: scroll-smooth 30s linear infinite;
+}
+
+.animate-scroll-smooth:hover {
+  animation-play-state: paused;
 }
 
 .blur-background {
@@ -151,4 +238,57 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Responsive Tools Sidebar */
+@media (max-width: 1279px) {
+  .tools-sidebar-mobile {
+    transform: translateX(100%);
+    transition: transform 0.3s ease-out;
+  }
+  
+  .tools-sidebar-mobile.open {
+    transform: translateX(0);
+  }
+}
+
+/* Tools Sidebar Custom Scrollbar */
+.tools-sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tools-sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tools-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 3px;
+}
+
+.tools-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Dark mode scrollbar */
+.dark .tools-sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.3);
+}
+
+.dark .tools-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.5);
+}
+
+/* Tools button pulse animation */
+@keyframes pulse-tools {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+}
+
+.tools-button-pulse {
+  animation: pulse-tools 2s infinite;
 }

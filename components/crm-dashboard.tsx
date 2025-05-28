@@ -258,12 +258,15 @@ export function CRMDashboard () {
         </CardHeader>
         <CardContent>
           <div className='flex flex-col sm:flex-row gap-4 mb-6'>
+            {' '}
             <div className='relative flex-1'>
               <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4' />
               <Input
                 placeholder='Rechercher par nom, email ou entreprise...'
                 value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSearchTerm(e.target.value)
+                }
                 className='pl-10'
               />
             </div>
@@ -440,44 +443,46 @@ function CreateContactForm ({
   return (
     <form onSubmit={handleSubmit} className='space-y-4'>
       <div>
-        <Label htmlFor='name'>Nom *</Label>
+        <Label htmlFor='name'>Nom *</Label>{' '}
         <Input
           id='name'
           value={formData.name}
-          onChange={e =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFormData(prev => ({ ...prev, name: e.target.value }))
           }
           required
         />
       </div>
       <div>
-        <Label htmlFor='email'>Email *</Label>
+        <Label htmlFor='email'>Email *</Label>{' '}
         <Input
           id='email'
           type='email'
           value={formData.email}
-          onChange={e =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFormData(prev => ({ ...prev, email: e.target.value }))
           }
           required
         />
       </div>
       <div>
+        {' '}
         <Label htmlFor='phone'>Téléphone</Label>
         <Input
           id='phone'
           value={formData.phone}
-          onChange={e =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFormData(prev => ({ ...prev, phone: e.target.value }))
           }
         />
       </div>
       <div>
+        {' '}
         <Label htmlFor='company'>Entreprise</Label>
         <Input
           id='company'
           value={formData.company}
-          onChange={e =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFormData(prev => ({ ...prev, company: e.target.value }))
           }
         />
@@ -502,11 +507,12 @@ function CreateContactForm ({
         </Select>
       </div>
       <div>
+        {' '}
         <Label htmlFor='notes'>Notes</Label>
         <Textarea
           id='notes'
           value={formData.notes}
-          onChange={e =>
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
             setFormData(prev => ({ ...prev, notes: e.target.value }))
           }
           rows={3}
@@ -545,11 +551,12 @@ function EditContactForm ({
   return (
     <form onSubmit={handleSubmit} className='space-y-4'>
       <div>
+        {' '}
         <Label htmlFor='edit-name'>Nom *</Label>
         <Input
           id='edit-name'
           value={formData.name}
-          onChange={e =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFormData(prev => ({ ...prev, name: e.target.value }))
           }
           required
@@ -561,7 +568,7 @@ function EditContactForm ({
           id='edit-email'
           type='email'
           value={formData.email}
-          onChange={e =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFormData(prev => ({ ...prev, email: e.target.value }))
           }
           required
@@ -572,7 +579,7 @@ function EditContactForm ({
         <Input
           id='edit-phone'
           value={formData.phone}
-          onChange={e =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFormData(prev => ({ ...prev, phone: e.target.value }))
           }
         />
@@ -582,7 +589,7 @@ function EditContactForm ({
         <Input
           id='edit-company'
           value={formData.company}
-          onChange={e =>
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setFormData(prev => ({ ...prev, company: e.target.value }))
           }
         />
@@ -632,7 +639,7 @@ function EditContactForm ({
         <Textarea
           id='edit-notes'
           value={formData.notes}
-          onChange={e =>
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
             setFormData(prev => ({ ...prev, notes: e.target.value }))
           }
           rows={3}
