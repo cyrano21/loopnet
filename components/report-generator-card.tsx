@@ -17,13 +17,13 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  FileText,
-  BarChart3,
+  File,
+  BarChart,
   TrendingUp,
   PieChart,
-  Map,
+  MapPin,
   Lock,
-  Loader2,
+  Loader,
   Download,
 } from "lucide-react";
 import { usePermissions } from "@/hooks/use-permissions";
@@ -68,14 +68,14 @@ export function ReportGeneratorCard() {
       id: "comparative-analysis",
       name: "Analyse Comparative",
       description: "Comparaison détaillée entre plusieurs propriétés",
-      icon: BarChart3,
+      icon: BarChart,
       type: "comparative-analysis",
     },
     {
       id: "location-report",
       name: "Rapport de Localisation",
       description: "Analyse géographique et démographique",
-      icon: Map,
+      icon: MapPin,
       type: "custom",
     },
   ];
@@ -300,7 +300,7 @@ export function ReportGeneratorCard() {
                         >
                           {isGenerating ? (
                             <>
-                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              <Loader className="h-4 w-4 mr-2 animate-spin" />
                               Génération...
                             </>
                           ) : (

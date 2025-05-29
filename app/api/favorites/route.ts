@@ -1,6 +1,6 @@
 // app/api/favorites/route.ts
 import { NextResponse, type NextRequest } from "next/server";
-import { getServerSession } from "next-auth/next";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-config"; // Assurez-vous que le chemin est correct
 
 // --- Types (définissez-les de manière plus globale si utilisé ailleurs) ---

@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth } from '@/hooks/use-auth'
-import { useRouter } from 'next/navigation'
+import { useRouter } from 'next/router'
 import type { ReactNode } from 'react'
 import {
   Card,
@@ -11,7 +11,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Shield, Lock, Crown, Star, RefreshCw } from 'lucide-react'
+import { ShieldCheck, Lock, Crown, Star, RotateCw } from 'lucide-react'
 
 interface RoleGuardProps {
   children: ReactNode
@@ -37,7 +37,7 @@ export function RoleGuard ({
     return (
       <div className='flex items-center justify-center min-h-[400px]'>
         <div className='text-center'>
-          <RefreshCw className='h-8 w-8 animate-spin mx-auto mb-4 text-blue-600' />
+          <RotateCw className='h-8 w-8 animate-spin mx-auto mb-4 text-blue-600' />
           <p className='text-gray-600'>Vérification des permissions...</p>
         </div>
       </div>
@@ -88,7 +88,7 @@ export function RoleGuard ({
       <div className='container mx-auto px-4 py-8'>
         <Card className='max-w-md mx-auto'>
           <CardHeader className='text-center'>
-            <Shield className='h-12 w-12 mx-auto text-red-400 mb-4' />
+            <ShieldCheck className='h-12 w-12 mx-auto text-red-400 mb-4' />
             <CardTitle>Accès Restreint</CardTitle>
             <CardDescription>
               {getRoleMessage(targetRole, userRole)}

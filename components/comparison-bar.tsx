@@ -1,14 +1,15 @@
 'use client'
 
 import {
-  X,
+  XIcon,
   Scale,
   Eye,
   ChevronDown,
   Download,
-  Grid,
+  Grid3X3,
   List,
-  BarChart3
+  BarChart3,
+  ArrowRight
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -20,6 +21,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import Image from 'next/image'
+import Link from 'next/link'
 import { usePermissions } from '@/hooks/use-permissions'
 import { Property } from '@/types/property'
 import { getBestImageUrl } from '@/lib/image-utils'
@@ -63,7 +65,7 @@ export function ComparisonBar ({
   }
 
   return (
-    <div className='fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-50 p-4'>
+    <div className='fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200/50 dark:border-slate-700/50 shadow-2xl z-50 p-4 transition-all duration-300'>
       <div className='container mx-auto'>
         <div className='flex items-center justify-between'>
           <div className='flex items-center gap-4'>
@@ -114,7 +116,7 @@ export function ComparisonBar ({
                     className='absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600'
                     aria-label={`Retirer ${property.title} de la comparaison`}
                   >
-                    <X className='h-3 w-3' />
+                    <XIcon className='h-3 w-3' />
                   </button>
                   <div className='text-xs text-center mt-1 max-w-16 truncate'>
                     {formatPrice(property.price)}
@@ -149,7 +151,7 @@ export function ComparisonBar ({
                 <DropdownMenuItem
                   onClick={() => onCompareMode?.('side-by-side')}
                 >
-                  <Grid className='h-4 w-4 mr-2' />
+                  <Grid3X3 className='h-4 w-4 mr-2' />
                   Vue côte à côte
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onCompareMode?.('table')}>
@@ -180,25 +182,35 @@ export function ComparisonBar ({
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button
-              onClick={onCompare}
-              disabled={!canCompare}
-              className='bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed'
-              title={
-                !hasComparisonAccess
-                  ? 'Outil de comparaison non disponible - Mise à niveau requise'
-                  : properties.length < 2
-                  ? 'Sélectionnez au moins 2 propriétés pour comparer'
-                  : properties.length > maxComparisons
-                  ? `Maximum ${maxComparisons} propriétés autorisées`
-                  : `Comparer ${properties.length} propriétés`
-              }
-            >
-              <Eye className='h-4 w-4 mr-2' />
-              {!hasComparisonAccess
-                ? 'Mise à niveau'
-                : `Comparer (${properties.length})`}
-            </Button>
+            {canCompare ? (
+              <Link href='/compare'>
+                <Button
+                  className='bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105'
+                  title={`Comparer ${properties.length} propriétés`}
+                >
+                  <Eye className='h-4 w-4 mr-2' />
+                  Comparer ({properties.length})
+                  <ArrowRight className='h-4 w-4 ml-2' />
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                disabled
+                className='bg-gray-400 cursor-not-allowed'
+                title={
+                  !hasComparisonAccess
+                    ? 'Outil de comparaison non disponible - Mise à niveau requise'
+                    : properties.length < 2
+                    ? 'Sélectionnez au moins 2 propriétés pour comparer'
+                    : `Maximum ${maxComparisons} propriétés autorisées`
+                }
+              >
+                <Eye className='h-4 w-4 mr-2' />
+                {!hasComparisonAccess
+                  ? 'Mise à niveau'
+                  : `Comparer (${properties.length})`}
+              </Button>
+            )}
           </div>
         </div>
       </div>

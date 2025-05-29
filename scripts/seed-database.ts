@@ -8,6 +8,7 @@ import { connectToDatabase } from "../lib/mongodb"
 import User from "../models/User"
 import Property from "../models/Property"
 import Inquiry from "../models/Inquiry"
+import { propertiesSeedData, generateRandomProperty } from '../lib/seed-data'
 
 const sampleUsers = [
   {
@@ -68,80 +69,70 @@ const sampleUsers = [
   },
 ]
 
-const sampleProperties = [
-  {
-    title: "Bureau moderne avec terrasse - Quartier d'affaires",
-    description: `Magnifique bureau de 120m² situé au cœur du quartier d'affaires de La Défense. 
-    
-    Cet espace de travail moderne offre :
-    - 4 bureaux individuels climatisés
-    - 1 salle de réunion équipée
-    - 1 open space lumineux
-    - 1 terrasse privative de 25m²
-    - 2 places de parking incluses
-    - Accès sécurisé 24h/24
-    
-    Idéal pour une entreprise de 8-12 personnes. Proche métro ligne 1, RER A.
-    Disponible immédiatement.`,
-    propertyType: "Bureau",
-    transactionType: "rent",
-    address: "15 Avenue Charles de Gaulle",
-    city: "Neuilly-sur-Seine",
-    postalCode: "92200",
+// Convertir les données seed en format compatible avec le modèle Property
+function convertSeedToProperty(seedProperty: any) {
+  return {
+    title: seedProperty.title,
+    description: seedProperty.description,
+    propertyType: seedProperty.propertyType,
+    transactionType: seedProperty.transactionType,
+    address: seedProperty.address,
+    city: seedProperty.city,
+    postalCode: seedProperty.postalCode,
     country: "France",
-    coordinates: { lat: 48.8848, lng: 2.2685 },
-    price: 4500,
-    surface: 120,
-    rooms: 6,
-    yearBuilt: 2018,
-    floor: 3,
-    totalFloors: 8,
-    features: [
-      "Climatisation",
-      "Terrasse",
-      "Parking",
-      "Ascenseur",
-      "Sécurité 24h/24",
-      "Fibre optique",
-      "Cuisine équipée",
-    ],
-    energyClass: "B",
-    heating: "Climatisation réversible",
-    parking: "2 places incluses",
-    images: [
-      {
-        url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800",
-        publicId: "office_1_main",
-        alt: "Bureau principal avec vue",
-        isPrimary: true,
-      },
-      {
-        url: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800",
-        publicId: "office_1_meeting",
-        alt: "Salle de réunion moderne",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800",
-        publicId: "office_1_terrace",
-        alt: "Terrasse avec vue",
-      },
-    ],
+    coordinates: seedProperty.lat && seedProperty.lng ? { lat: seedProperty.lat, lng: seedProperty.lng } : undefined,
+    price: seedProperty.price,
+    surface: seedProperty.surface,
+    rooms: seedProperty.bedrooms || 1,
+    bedrooms: seedProperty.bedrooms,
+    bathrooms: seedProperty.bathrooms,
+    yearBuilt: seedProperty.yearBuilt,
+    floor: seedProperty.floor,
+    totalFloors: seedProperty.totalFloors,
+    features: seedProperty.features,
+    energyClass: seedProperty.energyClass,
+    parking: seedProperty.parking ? `${seedProperty.parking} places` : undefined,
+    images: seedProperty.images.map((img: string, index: number) => ({
+      url: `https://images.unsplash.com/photo-1497366216548-37526070297c?w=800`,
+      publicId: `property_${seedProperty.id}_${index}`,
+      alt: `${seedProperty.title} - Image ${index + 1}`,
+      isPrimary: index === 0,
+    })),
     contactInfo: {
-      name: "Jean Dupont",
-      email: "jean.dupont@email.com",
-      phone: "+33 6 12 34 56 78",
+      name: "Agent Commercial",
+      email: `contact@${seedProperty.source.toLowerCase().replace(/\s+/g, '')}.fr`,
+      phone: `+33 1 ${Math.floor(Math.random() * 90) + 10} ${Math.floor(Math.random() * 90) + 10} ${Math.floor(Math.random() * 90) + 10} ${Math.floor(Math.random() * 90) + 10}`,
     },
     status: "active",
-    publishedAt: new Date("2024-01-15"),
-    views: 247,
-    favorites: 18,
-    inquiries: 12,
-    availableFrom: new Date("2024-02-01"),
-    visitSchedule: "Du lundi au vendredi, 9h-18h sur rendez-vous",
-    isPremium: true,
-    premiumUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    isFeatured: true,
-  },
+    publishedAt: new Date(),
+    views: Math.floor(Math.random() * 500),
+    favorites: Math.floor(Math.random() * 50),
+    inquiries: Math.floor(Math.random() * 20),
+    availableFrom: new Date(),
+    visitSchedule: "Sur rendez-vous",
+    isPremium: seedProperty.featured,
+    premiumUntil: seedProperty.featured ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined,
+    isFeatured: seedProperty.featured,
+    furnished: seedProperty.furnished,
+    balcony: seedProperty.balcony,
+    terrace: seedProperty.terrace,
+    garden: seedProperty.garden,
+    elevator: seedProperty.elevator,
+    accessibility: seedProperty.accessibility,
+    tags: seedProperty.tags,
+  }
+}
+
+// Générer les propriétés à partir des données seed
+const sampleProperties = [
+  // Propriétés de base de seed-data
+  ...propertiesSeedData.map(convertSeedToProperty),
+  // Propriétés supplémentaires générées
+  ...Array.from({ length: 20 }, (_, i) => {
+    const randomProperty = generateRandomProperty((propertiesSeedData.length + i + 1).toString())
+    return convertSeedToProperty(randomProperty)
+  }),
+  // Garder quelques propriétés originales pour la diversité
   {
     title: "Local commercial - Centre-ville historique",
     description: `Superbe local commercial de 85m² en rez-de-chaussée, situé dans une rue piétonne très passante du centre historique.

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { Filter, X, ChevronDown, Search } from 'lucide-react'
+import { Filter, XIcon, ChevronDown, Search } from 'lucide-react'
 
 interface PropertyFiltersProps {
   onFilterChange: (key: string, value: any) => void
@@ -397,7 +397,7 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
                 initial={false}
               />
               <span className="relative flex items-center gap-2">
-                <X className="h-4 w-4" />
+                <XIcon className="h-4 w-4" />
                 Effacer les filtres
               </span>
             </Button>

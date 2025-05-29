@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { SearchBar } from '@/components/ui/SearchBar'
 import { CustomPagination } from '@/components/custom-pagination'
 import { PropertyCard } from '@/components/property-card'
@@ -10,6 +11,8 @@ import { PropertyFilters } from '@/components/property-filters'
 import { useComparison } from '@/components/comparison-provider'
 import { UsageLimit } from '@/components/usage-limit'
 import { AccessRestriction } from '@/components/access-restriction'
+import { Button } from '@/components/ui/button'
+import { Grid3X3, List, Map, Filter } from 'lucide-react'
 
 export default function PropertiesPage () {
   const [filters, setFilters] = useState({
@@ -93,7 +96,7 @@ export default function PropertiesPage () {
         <h1 className='text-3xl font-bold mb-2'>Propriétés Commerciales</h1>
         <div className='flex items-center justify-between'>
           <p className='text-gray-600'>
-            {limitedProperties.length} propriétés affichées
+            {limitedProperties.length} propriétés affichées - Vue par défaut
             {maxViewLimit && ` (${viewedProperties}/${maxViewLimit} vues)`}
           </p>
 
@@ -153,6 +156,55 @@ export default function PropertiesPage () {
             />
           </div>
 
+          {/* Barre d'outils avec sélecteur de vue */}
+          <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border'>
+            <div className='flex items-center gap-2'>
+              <Filter className='h-4 w-4 text-gray-500' />
+              <span className='text-sm text-gray-600 dark:text-gray-300'>
+                {properties.length} propriété{properties.length > 1 ? 's' : ''} trouvée{properties.length > 1 ? 's' : ''}
+              </span>
+            </div>
+            
+            <div className='flex items-center gap-2'>
+              <span className='text-sm text-gray-600 dark:text-gray-300 mr-2'>Affichage:</span>
+              <div className='flex rounded-lg border overflow-hidden'>
+                <Button
+                  variant='default'
+                  size='sm'
+                  className='rounded-none border-r'
+                  asChild
+                >
+                  <Link href='/properties/grid-view' className='flex items-center gap-2'>
+                    <Grid3X3 className='h-4 w-4' />
+                    Grille
+                  </Link>
+                </Button>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='rounded-none border-r'
+                  asChild
+                >
+                  <Link href='/properties/list-view' className='flex items-center gap-2'>
+                    <List className='h-4 w-4' />
+                    Liste
+                  </Link>
+                </Button>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='rounded-none'
+                  asChild
+                >
+                  <Link href='/properties/map-view' className='flex items-center gap-2'>
+                    <Map className='h-4 w-4' />
+                    Carte
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+
           {/* Résultats */}
           {limitedProperties.length === 0 && !isAtViewLimit ? (
             <div className='text-center py-12'>
@@ -165,8 +217,8 @@ export default function PropertiesPage () {
             </div>
           ) : (
             <>
-              {/* Grille des propriétés */}
-              <div className='grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 mb-8'>
+              {/* Grille des propriétés - Vue par défaut */}
+              <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 mb-8'>
                 {limitedProperties.map(property => (
                   <PropertyCard
                     key={property._id}
