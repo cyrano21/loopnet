@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import SavedSearch from '@/models/SavedSearch'
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth-config'
 
 // GET /api/saved-searches/[id] - Récupérer une recherche sauvegardée spécifique
 export async function GET(
