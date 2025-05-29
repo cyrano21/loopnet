@@ -156,9 +156,19 @@ export function PropertyCard({
     }
   };
 
-  const { addToComparison, removeFromComparison, comparisonList } =
-    useComparison();
-  const isInComparisonList = comparisonList.some((p) => p._id === property._id);
+  const comparisonHook = useComparison();
+  const {
+    addToComparison: hookAddToComparison,
+    removeFromComparison,
+    comparisonList,
+  } = comparisonHook;
+
+  // Utiliser les props si disponibles, sinon utiliser le hook
+  const finalAddToComparison = onAddToComparison || hookAddToComparison;
+  const isInComparisonList =
+    isInComparison !== undefined
+      ? isInComparison
+      : comparisonList.some((p) => p._id === property._id);
 
   const handleCompare = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -179,7 +189,7 @@ export function PropertyCard({
       removeFromComparison(property._id);
       toast.success("Propriété retirée de la comparaison");
     } else {
-      addToComparison(property as any);
+      finalAddToComparison(property as any);
       toast.success("Propriété ajoutée à la comparaison");
     }
   };
