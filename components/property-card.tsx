@@ -168,7 +168,7 @@ export function PropertyCard({
   const isInComparisonList =
     isInComparison !== undefined
       ? isInComparison
-      : comparisonList.some((p) => p._id === property._id);
+      : comparisonList.some((p: Property) => p._id === property._id);
 
   const handleCompare = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
