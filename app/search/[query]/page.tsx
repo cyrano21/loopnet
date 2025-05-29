@@ -1,124 +1,89 @@
-'use client'
+"use client";
 
-import { useParams } from 'next/navigation'
-import { useState } from 'react'
-import { SearchBar } from '@/components/ui/SearchBar'
-import { PropertyCard } from '@/components/property-card'
-import { useProperties } from '@/hooks/use-properties'
-import { ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { useParams, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PropertyCard } from "@/components/property-card";
+import { useComparison } from "@/components/comparison-provider";
+import { useProperties } from "@/hooks/use-properties";
 
-export default function SearchPage () {
-  const params = useParams()
-  const query = params.query as string
-  const decodedQuery = decodeURIComponent(query)
+export default function SearchPage() {
+  const params = useParams();
+  const query = params.query as string;
+  const decodedQuery = decodeURIComponent(query);
+  const searchParams = useSearchParams();
+  const comparison = useComparison();
 
   const [filters, setFilters] = useState({
     q: decodedQuery,
     page: 1,
-    transactionType: '',
-    propertyType: '',
-    city: '',
+    transactionType: "",
+    propertyType: "",
+    city: "",
     minPrice: undefined as number | undefined,
     maxPrice: undefined as number | undefined,
     minSurface: undefined as number | undefined,
     maxSurface: undefined as number | undefined,
     rooms: undefined as number | undefined,
-    sort: 'newest'
-  })
+    sort: "newest",
+  });
 
-  const { properties, loading, error, pagination } = useProperties(filters)
+  const { properties, loading, error, pagination } = useProperties(filters);
 
   const handleFilterChange = (key: string, value: any) => {
     // Convert string values to numbers for numeric filters
-    let processedValue = value
+    let processedValue = value;
     if (
-      ['minPrice', 'maxPrice', 'minSurface', 'maxSurface', 'rooms'].includes(
+      ["minPrice", "maxPrice", "minSurface", "maxSurface", "rooms"].includes(
         key
       )
     ) {
       processedValue =
-        value === '' || value === null || value === undefined
+        value === "" || value === null || value === undefined
           ? undefined
-          : Number(value)
+          : Number(value);
     }
-    setFilters(prev => ({ ...prev, [key]: processedValue, page: 1 }))
-  }
-
-  if (loading) {
-    return (
-      <div className='container mx-auto px-4 py-8'>
-        <div className='flex justify-center items-center h-64'>
-          <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600'></div>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className='container mx-auto px-4 py-8'>
-        <div className='text-red-600 text-center p-4'>
-          Erreur lors de la recherche: {error}
-        </div>
-      </div>
-    )
-  }
+    setFilters((prev) => ({ ...prev, [key]: processedValue, page: 1 }));
+  };
 
   return (
-    <div className='container mx-auto px-4 py-8'>
-      {/* Header */}
-      <div className='mb-6'>
-        <Link href='/properties'>
-          <Button variant='ghost' className='mb-4'>
-            <ArrowLeft className='w-4 h-4 mr-2' />
-            Retour aux propriétés
-          </Button>
-        </Link>
-        <h1 className='text-3xl font-bold mb-2'>
-          Résultats pour "{decodedQuery}"
-        </h1>
-        <p className='text-gray-600'>
-          {properties.length} propriété{properties.length > 1 ? 's' : ''}{' '}
-          trouvée{properties.length > 1 ? 's' : ''}
-        </p>
-      </div>
+    <div className="container py-8">
+      <h1 className="text-3xl font-bold mb-6">
+        Résultats de recherche pour "{decodedQuery}"
+      </h1>
 
-      {/* Search Bar */}
-      <div className='mb-6'>
-        <SearchBar
-          onSearch={searchFilters => {
-            handleFilterChange('q', searchFilters.query)
-            handleFilterChange('city', searchFilters.location)
-            handleFilterChange('propertyType', searchFilters.propertyType)
-            handleFilterChange('minPrice', searchFilters.minPrice)
-            handleFilterChange('maxPrice', searchFilters.maxPrice)
-          }}
-        />
-      </div>
-
-      {/* Results */}
-      {properties.length === 0 ? (
-        <div className='text-center py-12'>
-          <h3 className='text-xl font-semibold mb-2'>
-            Aucune propriété trouvée
-          </h3>
-          <p className='text-gray-600 mb-6'>
-            Essayez de modifier vos critères de recherche ou explorez toutes nos
-            propriétés
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="flex flex-col space-y-3">
+              <Skeleton className="h-[300px] w-full rounded-xl" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : properties.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-xl text-gray-600 dark:text-gray-400">
+            Aucun résultat trouvé pour votre recherche.
           </p>
-          <Link href='/properties'>
-            <Button>Voir toutes les propriétés</Button>
-          </Link>
         </div>
       ) : (
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {properties.map(property => (
-            <PropertyCard key={property._id} property={property} />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {properties.map((property) => (
+            <PropertyCard
+              key={property._id}
+              property={property}
+              onAddToComparison={comparison.addToComparison}
+              isInComparison={comparison.comparisonList.some(
+                (p: any) => p._id === property._id
+              )}
+            />
           ))}
         </div>
       )}
     </div>
-  )
+  );
 }

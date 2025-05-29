@@ -21,7 +21,7 @@ import {
   Bath,
   Square,
   Heart,
-  Scale,
+  GitCompare,
   Phone,
   Mail,
   Eye,
@@ -346,7 +346,7 @@ export function PropertyCard({
                       : "Ajouter à la comparaison"
                   }
                 >
-                  <Scale
+                  <GitCompare
                     className={cn(
                       "h-4 w-4",
                       isInComparison ? "text-blue-600" : "text-slate-600"
@@ -707,7 +707,7 @@ export function PropertyCard({
                           : "bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                       )}
                     >
-                      <Scale className="h-4 w-4" />
+                      <GitCompare className="h-4 w-4" />
                       {!can("canCompareProperties") &&
                         requiresUpgrade("canCompareProperties") && (
                           <Lock className="absolute -top-1 -right-1 h-3 w-3 text-amber-500 bg-white dark:bg-slate-800 rounded-full p-0.5 border border-amber-300" />

@@ -1,13 +1,20 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Calculator, Euro, TrendingUp, Home, Shield, PiggyBank } from "lucide-react";
+import {
+  Calculator,
+  Euro,
+  TrendingUp,
+  Home,
+  Shield,
+  PiggyBank,
+} from "lucide-react";
 import { PropertySeedData } from "@/lib/seed-data";
 
 interface MortgageCalculatorProps {
@@ -30,12 +37,7 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
   const [loanTerm, setLoanTerm] = useState(25); // Durée en années
   const [result, setResult] = useState<MortgageResult | null>(null);
 
-  // Calcul automatique quand les valeurs changent
-  useEffect(() => {
-    calculateMortgage();
-  }, [loanAmount, interestRate, loanTerm]);
-
-  const calculateMortgage = () => {
+  const calculateMortgage = useCallback(() => {
     if (loanAmount <= 0 || interestRate <= 0 || loanTerm <= 0) {
       setResult(null);
       return;
@@ -44,17 +46,18 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
     // Calcul des mensualités (formule standard)
     const monthlyRate = interestRate / 100 / 12;
     const numberOfPayments = loanTerm * 12;
-    
-    const principalAndInterest = loanAmount * 
-      (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
+
+    const principalAndInterest =
+      (loanAmount *
+        (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments))) /
       (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
 
     // Estimation des taxes foncières (environ 1.2% du prix par an)
     const propertyTaxes = (property.price * 0.012) / 12;
-    
+
     // Estimation de l'assurance habitation (environ 0.3% du prix par an)
     const homeInsurance = (property.price * 0.003) / 12;
-    
+
     const monthlyPayment = principalAndInterest + propertyTaxes + homeInsurance;
     const totalPayment = principalAndInterest * numberOfPayments;
     const totalInterest = totalPayment - loanAmount;
@@ -65,21 +68,26 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
       propertyTaxes,
       homeInsurance,
       totalInterest,
-      totalPayment
+      totalPayment,
     });
-  };
+  }, [loanAmount, interestRate, loanTerm, property.price, setResult]);
+
+  // Calcul automatique quand les valeurs changent
+  useEffect(() => {
+    calculateMortgage();
+  }, [loanAmount, interestRate, loanTerm, calculateMortgage]);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('fr-FR', {
-      style: 'currency',
-      currency: 'EUR',
+    return new Intl.NumberFormat("fr-FR", {
+      style: "currency",
+      currency: "EUR",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 0,
     }).format(amount);
   };
 
   const formatNumber = (num: number) => {
-    return new Intl.NumberFormat('fr-FR').format(num);
+    return new Intl.NumberFormat("fr-FR").format(num);
   };
 
   const handleLoanAmountChange = (value: number) => {
@@ -130,7 +138,9 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
                     id="downPayment"
                     type="number"
                     value={downPayment}
-                    onChange={(e) => handleDownPaymentChange(Number(e.target.value))}
+                    onChange={(e) =>
+                      handleDownPaymentChange(Number(e.target.value))
+                    }
                     className="pr-12"
                     min="0"
                     max={property.price}
@@ -153,7 +163,9 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
                     id="loanAmount"
                     type="number"
                     value={loanAmount}
-                    onChange={(e) => handleLoanAmountChange(Number(e.target.value))}
+                    onChange={(e) =>
+                      handleLoanAmountChange(Number(e.target.value))
+                    }
                     className="pr-12"
                     min="0"
                     max={property.price}
@@ -236,7 +248,9 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
               <>
                 {/* Mensualité principale */}
                 <div className="p-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg">
-                  <h3 className="text-lg font-semibold mb-2">Mensualité totale</h3>
+                  <h3 className="text-lg font-semibold mb-2">
+                    Mensualité totale
+                  </h3>
                   <p className="text-3xl font-bold">
                     {formatCurrency(result.monthlyPayment)}
                   </p>
@@ -247,13 +261,17 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
 
                 {/* Détail des mensualités */}
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-gray-900">Détail mensuel</h4>
-                  
+                  <h4 className="font-semibold text-gray-900">
+                    Détail mensuel
+                  </h4>
+
                   <div className="space-y-2">
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-2">
                         <TrendingUp className="h-4 w-4 text-green-600" />
-                        <span className="text-sm font-medium">Capital + Intérêts</span>
+                        <span className="text-sm font-medium">
+                          Capital + Intérêts
+                        </span>
                       </div>
                       <span className="font-semibold">
                         {formatCurrency(result.principalAndInterest)}
@@ -263,7 +281,9 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-2">
                         <Home className="h-4 w-4 text-blue-600" />
-                        <span className="text-sm font-medium">Taxes foncières</span>
+                        <span className="text-sm font-medium">
+                          Taxes foncières
+                        </span>
                       </div>
                       <span className="font-semibold">
                         {formatCurrency(result.propertyTaxes)}
@@ -273,7 +293,9 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                       <div className="flex items-center gap-2">
                         <Shield className="h-4 w-4 text-purple-600" />
-                        <span className="text-sm font-medium">Assurance habitation</span>
+                        <span className="text-sm font-medium">
+                          Assurance habitation
+                        </span>
                       </div>
                       <span className="font-semibold">
                         {formatCurrency(result.homeInsurance)}
@@ -286,18 +308,24 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
 
                 {/* Résumé du prêt */}
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-gray-900">Résumé du prêt</h4>
-                  
+                  <h4 className="font-semibold text-gray-900">
+                    Résumé du prêt
+                  </h4>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-3 border rounded-lg">
-                      <p className="text-xs text-gray-600 mb-1">Coût total du crédit</p>
+                      <p className="text-xs text-gray-600 mb-1">
+                        Coût total du crédit
+                      </p>
                       <p className="font-bold text-lg text-red-600">
                         {formatCurrency(result.totalInterest)}
                       </p>
                     </div>
-                    
+
                     <div className="text-center p-3 border rounded-lg">
-                      <p className="text-xs text-gray-600 mb-1">Total remboursé</p>
+                      <p className="text-xs text-gray-600 mb-1">
+                        Total remboursé
+                      </p>
                       <p className="font-bold text-lg text-gray-900">
                         {formatCurrency(result.totalPayment)}
                       </p>
@@ -308,15 +336,27 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
                 {/* Indicateurs */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Ratio d'endettement recommandé</span>
-                    <Badge variant={result.monthlyPayment <= 2000 ? "default" : "destructive"}>
+                    <span className="text-gray-600">
+                      Ratio d'endettement recommandé
+                    </span>
+                    <Badge
+                      variant={
+                        result.monthlyPayment <= 2000
+                          ? "default"
+                          : "destructive"
+                      }
+                    >
                       {result.monthlyPayment <= 2000 ? "Acceptable" : "Élevé"}
                     </Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Apport personnel</span>
-                    <Badge variant={downPaymentPercentage >= 20 ? "default" : "secondary"}>
+                    <Badge
+                      variant={
+                        downPaymentPercentage >= 20 ? "default" : "secondary"
+                      }
+                    >
                       {downPaymentPercentage.toFixed(1)}%
                     </Badge>
                   </div>
@@ -331,12 +371,25 @@ export function MortgageCalculator({ property }: MortgageCalculatorProps) {
           <div className="flex items-start gap-3">
             <PiggyBank className="h-5 w-5 text-amber-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-amber-900 mb-1">Informations importantes</h4>
+              <h4 className="font-medium text-amber-900 mb-1">
+                Informations importantes
+              </h4>
               <ul className="text-sm text-amber-700 space-y-1">
-                <li>• Cette simulation est indicative et ne constitue pas une offre de prêt</li>
-                <li>• Les taux d'intérêt varient selon votre profil et l'établissement bancaire</li>
-                <li>• D'autres frais peuvent s'ajouter (notaire, garantie, frais de dossier)</li>
-                <li>• Il est recommandé de ne pas dépasser 33% d'endettement</li>
+                <li>
+                  • Cette simulation est indicative et ne constitue pas une
+                  offre de prêt
+                </li>
+                <li>
+                  • Les taux d'intérêt varient selon votre profil et
+                  l'établissement bancaire
+                </li>
+                <li>
+                  • D'autres frais peuvent s'ajouter (notaire, garantie, frais
+                  de dossier)
+                </li>
+                <li>
+                  • Il est recommandé de ne pas dépasser 33% d'endettement
+                </li>
               </ul>
             </div>
           </div>

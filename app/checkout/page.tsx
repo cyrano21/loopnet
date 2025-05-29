@@ -2,7 +2,7 @@
 
 import type React from 'react'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { CreditCard, Lock, Check, Building2 } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -28,18 +28,18 @@ export default function CheckoutPage () {
   const [selectedPlan, setSelectedPlan] = useState<any>(null)
   const [billingCycle, setBillingCycle] = useState('monthly')
 
-  const plans = {
+  const plans = useMemo(() => ({
     basic: { name: 'Basic', monthlyPrice: 29, annualPrice: 290 },
     professional: { name: 'Professional', monthlyPrice: 99, annualPrice: 990 },
     enterprise: { name: 'Enterprise', monthlyPrice: 299, annualPrice: 2990 }
-  }
+  }), [])
 
   useEffect(() => {
     const plan = searchParams.get('plan') || 'professional'
     const billing = searchParams.get('billing') || 'monthly'
     setSelectedPlan(plans[plan as keyof typeof plans])
     setBillingCycle(billing)
-  }, [searchParams])
+  }, [searchParams, plans])
 
   const [formData, setFormData] = useState({
     // Company Information

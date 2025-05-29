@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import {
   Building2,
   ArrowRight,
@@ -424,12 +425,15 @@ export default function ListPropertyPage () {
                     </h4>
                     <div className='grid grid-cols-3 gap-2'>
                       {formData.images.map((image, index) => (
-                        <img
-                          key={index}
-                          src={image.url || '/placeholder.svg'}
-                          alt={`Photo ${index + 1}`}
-                          className='w-full h-20 object-cover rounded'
-                        />
+                        <div key={index} className='relative w-full h-20'>
+                          <Image
+                            src={image.url || '/placeholder.svg'}
+                            alt={`Photo ${index + 1}`}
+                            fill
+                            sizes="(max-width: 768px) 33vw, 20vw"
+                            className='object-cover rounded'
+                          />
+                        </div>
                       ))}
                     </div>
                   </div>

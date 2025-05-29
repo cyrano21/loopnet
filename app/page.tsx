@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import {
   Search,
   Building2,
@@ -24,7 +25,6 @@ import {
   Shield,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { motion } from "framer-motion";
@@ -120,7 +120,7 @@ export default function HomePage() {
 
   const router = useRouter();
   const { properties, loading, error } = useProperties({ page: 1, limit: 8 }); // VOTRE HOOK
-  const comparison = useComparison && typeof useComparison === 'function' ? useComparison() : {}; // Hook pour la fonctionnalité de comparaison avec vérification
+  const { addToComparison, removeFromComparison, isInComparison, comparisonList } = useComparison(); // Hook pour la fonctionnalité de comparaison
 
   // Refs pour les animations
   const trustSectionRef = useRef<HTMLDivElement | null>(null);
@@ -133,16 +133,16 @@ export default function HomePage() {
   const marketingSectionRef = useRef<HTMLDivElement | null>(null);
   const faqSectionRef = useRef<HTMLDivElement | null>(null);
 
-  // Sécuriser les appels à useOnScreen pour éviter les erreurs avec React 19
-  const isTrustSectionOnScreen = useOnScreen ? useOnScreen(trustSectionRef, "-100px") : false;
-  const isCompanyLogosOnScreen = useOnScreen ? useOnScreen(companyLogosRef, "-100px") : false;
-  const isTrendingSectionOnScreen = useOnScreen ? useOnScreen(trendingSectionRef, "-100px") : false;
-  const isFeaturedSectionOnScreen = useOnScreen ? useOnScreen(featuredSectionRef, "-100px") : false;
-  const isAuctionSectionOnScreen = useOnScreen ? useOnScreen(auctionSectionRef, "-100px") : false;
-  const isCitiesSectionOnScreen = useOnScreen ? useOnScreen(citiesSectionRef, "-100px") : false;
-  const isArticlesSectionOnScreen = useOnScreen ? useOnScreen(articlesSectionRef, "-100px") : false;
-  const isMarketingSectionOnScreen = useOnScreen ? useOnScreen(marketingSectionRef, "-100px") : false;
-  const isFaqSectionOnScreen = useOnScreen ? useOnScreen(faqSectionRef, "-100px") : false;
+  // Utilisation des hooks sans condition
+  const isTrustSectionOnScreen = useOnScreen(trustSectionRef, "-100px");
+  const isCompanyLogosOnScreen = useOnScreen(companyLogosRef, "-100px");
+  const isTrendingSectionOnScreen = useOnScreen(trendingSectionRef, "-100px");
+  const isFeaturedSectionOnScreen = useOnScreen(featuredSectionRef, "-100px");
+  const isAuctionSectionOnScreen = useOnScreen(auctionSectionRef, "-100px");
+  const isCitiesSectionOnScreen = useOnScreen(citiesSectionRef, "-100px");
+  const isArticlesSectionOnScreen = useOnScreen(articlesSectionRef, "-100px");
+  const isMarketingSectionOnScreen = useOnScreen(marketingSectionRef, "-100px");
+  const isFaqSectionOnScreen = useOnScreen(faqSectionRef, "-100px");
 
   // VOTRE useEffect pour le timer
   useEffect(() => {
@@ -1286,8 +1286,8 @@ export default function HomePage() {
                   >
                     <PropertyCard
                       property={propertyData as any}
-                      onAddToComparison={comparison.addToComparison}
-                      isInComparison={comparison.comparisonList.some(
+                      onAddToComparison={addToComparison}
+                      isInComparison={comparisonList.some(
                         (item: { _id: string }) =>
                           item._id === propertyData._id,
                       )}
@@ -1501,10 +1501,12 @@ export default function HomePage() {
                 >
                   <Link href={`/news/mock-article-${index}`} className="h-full flex flex-col">
                       <div className="aspect-[16/9] overflow-hidden relative rounded-t-xl">
-                        <img
+                        <Image
                           src={article.image}
                           alt={article.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       </div>
                       <CardContent className="p-5 sm:p-6 flex-grow flex flex-col">

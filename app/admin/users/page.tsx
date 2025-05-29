@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -68,9 +68,9 @@ export default function UsersManagement() {
 
   useEffect(() => {
     fetchUsers()
-  }, [])
+  }, [fetchUsers])
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/users")
       if (response.ok) {
@@ -86,7 +86,7 @@ export default function UsersManagement() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [toast, setUsers, setLoading])
 
   const handleCreateUser = async () => {
     try {

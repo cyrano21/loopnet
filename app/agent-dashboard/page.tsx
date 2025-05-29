@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import {
   Building2,
   Plus,
@@ -498,11 +499,15 @@ export default function AgentDashboardPage () {
                     {topProperties.map(property => (
                       <div key={property.id} className='border rounded-lg p-4'>
                         <div className='flex items-center gap-4'>
-                          <img
-                            src={property.image || '/placeholder.svg'}
-                            alt={property.title}
-                            className='w-20 h-16 object-cover rounded'
-                          />
+                          <div className='relative w-20 h-16'>
+                            <Image
+                              src={property.image || '/placeholder.svg'}
+                              alt={property.title}
+                              fill
+                              sizes="(max-width: 768px) 33vw, 20vw"
+                              className='object-cover rounded'
+                            />
+                          </div>
                           <div className='flex-1'>
                             <h3 className='font-semibold'>{property.title}</h3>
                             <p className='text-sm text-gray-600 flex items-center gap-1'>

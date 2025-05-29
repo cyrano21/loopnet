@@ -1,206 +1,76 @@
-# LoopNet - Plateforme Immobilière Commerciale
+# Loopnet Clone with NestJS
 
-Une plateforme moderne pour la recherche et la gestion de propriétés commerciales, inspirée des meilleures pratiques de l'industrie immobilière.
+*Automatically synced with your [v0.dev](https://v0.dev) deployments*
 
-## 🚀 Fonctionnalités
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/louis-oliviers-projects/v0-loopnet-clone-with-nest-js)
+[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/M4FDwPJSjL0)
 
-### Vues de Propriétés
-- **Vue Grille** (`/properties/grid-view`) - Affichage en cartes avec filtres avancés
-- **Vue Liste** (`/properties/list-view`) - Affichage détaillé en liste
-- **Vue Carte** (`/properties/map-view`) - Visualisation géographique interactive
+## Overview
 
-### Système de Filtrage
-- Filtres par type de propriété (Bureau, Local commercial, Entrepôt, etc.)
-- Filtres par type de transaction (Vente/Location)
-- Filtres par prix, surface, localisation
-- Recherche textuelle avancée
-- Tri par prix, date, pertinence
+This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
+Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
 
-### Gestion des Utilisateurs
-- Système de rôles (Guest, Basic, Premium, Admin)
-- Limites d'utilisation par rôle
-- Favoris et comparaisons
-- Recherches sauvegardées
+## Deployment
 
-### Données de Test
-- 50+ propriétés commerciales variées
-- Données inspirées de l'application Homez
-- Utilisateurs de test avec différents rôles
-- Géolocalisation et images
+Your project is live at:
 
-## 🛠️ Installation
+**[https://vercel.com/louis-oliviers-projects/v0-loopnet-clone-with-nest-js](https://vercel.com/louis-oliviers-projects/v0-loopnet-clone-with-nest-js)**
 
-1. **Cloner le projet**
-```bash
-git clone <repository-url>
-cd loopnet
+## Solutions aux problèmes de TypeScript avec React 19
+
+Ce projet utilise React 19, qui ne dispose pas encore de définitions de types officielles. Pour contourner les problèmes de typage, les solutions suivantes ont été mises en place :
+
+### 1. Fichier de définition temporaire
+
+Un fichier de définition temporaire a été créé dans `types/react-fixes.d.ts` pour fournir les déclarations de types manquantes. Ce fichier contient :
+- Les déclarations pour les hooks React (useState, useEffect, etc.)
+- Les interfaces JSX.IntrinsicElements nécessaires pour les éléments HTML
+- Les types pour les événements et les props de base
+
+### 2. Configuration temporaire dans .env
+
+Les variables d'environnement suivantes ont été ajoutées au fichier `.env` pour permettre au projet de fonctionner malgré les erreurs de typage :
+```
+TYPESCRIPT_SKIP_VALIDATION=true
+TSC_COMPILE_ON_ERROR=true
 ```
 
-2. **Installer les dépendances**
-```bash
-npm install
-```
+### 3. Composants adaptés pour React 19
 
-3. **Configuration de l'environnement**
-Créer un fichier `.env.local` :
-```env
-MONGODB_URI=mongodb://localhost:27017/loopnet
-DATABASE_NAME=loopnet
-NEXTAUTH_SECRET=your-secret-key
-NEXTAUTH_URL=http://localhost:3000
-```
+#### Badge / ExtendedBadge
 
-4. **Initialiser la base de données**
-```bash
-# Nettoyer et initialiser avec les données de test
-npm run db:reset
+Le composant Badge de shadcn/ui a été adapté pour fonctionner avec React 19 :
+- Une fonction `createBadge` a été ajoutée dans `components/ui/extended-badge.tsx` pour simplifier la création de badges sans problèmes de typage
+- Le composant `ExtendedBadge` a été modifié pour accepter explicitement des enfants
 
-# Ou seulement ajouter les données
-npm run seed
-```
+#### Gestion des props children
 
-5. **Lancer le serveur de développement**
-```bash
-npm run dev
-```
+Pour les composants qui requièrent des enfants, comme `AccessRestriction` ou `TooltipProvider`, nous utilisons maintenant une syntaxe JSX avec une prop children explicite :
 
-L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
-
-## 📊 Scripts Disponibles
-
-- `npm run dev` - Lancer le serveur de développement
-- `npm run build` - Construire l'application pour la production
-- `npm run start` - Lancer l'application en production
-- `npm run seed` - Initialiser la base de données avec les données de test
-- `npm run seed:clean` - Nettoyer la base de données
-- `npm run db:reset` - Nettoyer et réinitialiser complètement
-
-## 🏗️ Structure du Projet
-
-```
-loopnet/
-├── app/
-│   ├── properties/
-│   │   ├── grid-view/          # Vue grille des propriétés
-│   │   ├── list-view/          # Vue liste des propriétés
-│   │   ├── map-view/           # Vue carte des propriétés
-│   │   └── [id]/               # Page détail d'une propriété
-│   ├── dashboard/              # Tableau de bord utilisateur
-│   └── api/                    # API routes
-├── components/
-│   ├── ui/                     # Composants UI de base
-│   ├── property-card.tsx       # Carte de propriété
-│   ├── property-map-card.tsx   # Carte pour vue carte
-│   ├── property-filters.tsx    # Filtres de propriétés
-│   └── ...
-├── lib/
-│   ├── seed-data.ts            # Données de test
-│   ├── mongodb.ts              # Configuration MongoDB
-│   └── utils.ts                # Utilitaires
-├── models/                     # Modèles Mongoose
-├── hooks/                      # Hooks React personnalisés
-└── scripts/
-    └── seed-database.ts        # Script d'initialisation
-```
-
-## 🎨 Composants Principaux
-
-### PropertyCard
-Composant réutilisable pour afficher une propriété :
 ```tsx
-<PropertyCard 
-  property={property} 
-  variant="grid" // ou "list"
-  showActions={true}
-/>
+<AccessRestriction action='canListProperties' children={...} />
+
+// ou
+
+<TooltipProvider children={...} />
 ```
 
-### PropertyMapCard
-Composant spécialisé pour la vue carte :
-```tsx
-<PropertyMapCard 
-  property={property}
-  isSelected={selectedId === property.id}
-  onClick={() => setSelected(property.id)}
-  compact={true}
-/>
-```
+### Migration future
 
-### PropertyFilters
-Système de filtrage avancé :
-```tsx
-<PropertyFilters 
-  onFilterChange={handleFilterChange}
-  initialFilters={filters}
-/>
-```
+Lorsque des définitions de types officielles pour React 19 seront disponibles, ces solutions temporaires pourront être supprimées en :
+1. Supprimant le fichier `types/react-fixes.d.ts`
+2. Supprimant les variables temporaires dans `.env`
+3. Revertant les ajustements de typage dans les composants
 
-## 📱 Vues Disponibles
+## Build your app
 
-### Vue Grille (`/properties/grid-view`)
-- Affichage en cartes responsive
-- Filtres latéraux
-- Pagination
-- Actions rapides (favoris, comparaison)
+Continue building your app on:
 
-### Vue Liste (`/properties/list-view`)
-- Affichage détaillé en lignes
-- Informations complètes visibles
-- Tri et filtrage
-- Actions en ligne
+**[https://v0.dev/chat/projects/M4FDwPJSjL0](https://v0.dev/chat/projects/M4FDwPJSjL0)**
 
-### Vue Carte (`/properties/map-view`)
-- Carte interactive
-- Marqueurs de prix
-- Liste latérale
-- Mode plein écran
-- Sélection de propriétés
+## How It Works
 
-## 🔐 Système de Permissions
-
-Les utilisateurs ont différents niveaux d'accès :
-
-- **Guest** : 10 propriétés vues, 3 favoris, 2 comparaisons
-- **Basic** : 50 propriétés vues, 10 favoris, 3 comparaisons
-- **Premium** : 1000 propriétés vues, 100 favoris, 10 comparaisons
-- **Admin** : Accès illimité
-
-## 🗄️ Base de Données
-
-### Collections MongoDB
-- `properties` - Propriétés commerciales
-- `users` - Utilisateurs et leurs permissions
-- `favorites` - Favoris des utilisateurs
-- `comparisons` - Listes de comparaison
-- `savedSearches` - Recherches sauvegardées
-- `inquiries` - Demandes de renseignements
-
-### Données de Test
-Le script de seed génère :
-- 12 propriétés de base avec descriptions détaillées
-- 38 propriétés générées automatiquement
-- 4 utilisateurs de test avec différents rôles
-- Favoris et comparaisons d'exemple
-- Recherches sauvegardées
-
-## 🌟 Fonctionnalités Inspirées de Homez
-
-- **Structure de données** : Propriétés avec géolocalisation, images multiples, caractéristiques détaillées
-- **Vues multiples** : Grille, liste et carte comme dans Homez
-- **Filtrage avancé** : Système complet de filtres par critères
-- **Composants réutilisables** : Architecture modulaire
-- **Expérience utilisateur** : Navigation fluide entre les vues
-- **Données réalistes** : Propriétés commerciales françaises authentiques
-
-## 🚀 Prochaines Étapes
-
-- [ ] Intégration d'une vraie carte (Mapbox/Google Maps)
-- [ ] Système de notifications en temps réel
-- [ ] Chat intégré avec les agents
-- [ ] Visite virtuelle 360°
-- [ ] API publique pour les partenaires
-- [ ] Application mobile React Native
-
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+1. Create and modify your project using [v0.dev](https://v0.dev)
+2. Deploy your chats from the v0 interface
+3. Changes are automatically pushed to this repository
+4. Vercel deploys the latest version from this repository

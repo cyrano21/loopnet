@@ -25,6 +25,7 @@ import {
   Lock,
   Loader,
   Download,
+  FileText
 } from "lucide-react";
 import { usePermissions } from "@/hooks/use-permissions";
 import { toast } from "sonner";

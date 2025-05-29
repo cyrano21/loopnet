@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import {
   Camera,
   FileText,
@@ -314,11 +315,13 @@ export default function MarketingSuitePage () {
                       className='hover:shadow-md transition-shadow'
                     >
                       <CardContent className='p-4'>
-                        <div className='aspect-video bg-gray-100 rounded-lg mb-4 overflow-hidden'>
-                          <img
+                        <div className='relative aspect-video bg-gray-100 rounded-lg mb-4 overflow-hidden'>
+                          <Image
                             src={material.thumbnail || '/placeholder.svg'}
                             alt={material.name}
-                            className='w-full h-full object-cover'
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            className='object-cover'
                           />
                         </div>
                         <div className='space-y-3'>
