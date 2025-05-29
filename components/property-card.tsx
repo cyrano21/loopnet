@@ -50,43 +50,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-// Interface PropertyCardProps
+// Interface PropertyCardProps utilisant le type Property centralisé
 interface PropertyCardProps {
-  property: {
-    _id: string;
-    title: string;
-    slug?: string;
-    price: number;
-    address: string;
-    city: string;
-    postalCode?: string;
-    country?: string;
-    images: {
-      url: string;
-      publicId?: string;
-      alt?: string;
-      isPrimary?: boolean;
-    }[];
-    propertyType: string;
-    transactionType: string;
-    surface: number;
-    bedrooms?: number;
-    bathrooms?: number;
-    description: string;
-    status: string;
-    views?: number;
-    contactInfo?: {
-      name: string;
-      email: string;
-      phone: string;
-    };
-    owner?: any;
-    isPremium?: boolean;
-    isFeatured?: boolean;
-    publishedAt?: string | Date;
-    tags?: string[];
-  };
-  onAddToComparison?: (property: any) => void;
+  property: Property;
+  onAddToComparison?: (property: Property) => void;
   isInComparison?: boolean;
   className?: string;
 }

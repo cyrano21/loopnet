@@ -4,6 +4,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PropertyCard } from "@/components/property-card";
+import { PropertyFilters } from "@/components/property-filters";
 import { useComparison } from "@/components/comparison-provider";
 import { useProperties } from "@/hooks/use-properties";
 
@@ -51,6 +52,11 @@ export default function SearchPage() {
       <h1 className="text-3xl font-bold mb-6">
         Résultats de recherche pour "{decodedQuery}"
       </h1>
+
+      {/* Filtres de recherche */}
+      <div className="mb-8">
+        <PropertyFilters onFilterChange={handleFilterChange} />
+      </div>
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

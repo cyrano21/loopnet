@@ -16,8 +16,8 @@ import {
   FaLock as Lock,
   FaCrown as Crown,
   FaStar as Star,
-  FaSync as RotateCw,
 } from "react-icons/fa";
+import { RefreshCw } from "lucide-react";
 
 interface RoleGuardProps {
   children: ReactNode;
@@ -43,7 +43,7 @@ export function RoleGuard({
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <RotateCw className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
+          <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
           <p className="text-gray-600">Vérification des permissions...</p>
         </div>
       </div>
