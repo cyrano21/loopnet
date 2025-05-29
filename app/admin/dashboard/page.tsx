@@ -1,129 +1,147 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { RoleSwitcher } from '@/components/role-switcher'
-import Link from 'next/link'
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { RoleSwitcher } from "@/components/role-switcher";
+import Link from "next/link";
 import {
   RotateCcw,
+  RefreshCw,
   Download,
   Plus,
   Users,
   Building,
-  TrendingUp,
-  Activity,
-  BarChart3,
-  FileText,
-  Settings,
+  DollarSign,
   Bell,
+  BarChart3,
+  Settings,
+  Activity,
+  TrendingUp,
+  FileText,
+  ArrowUpRight,
+  ArrowDownRight,
   Search,
   Calendar,
-  DollarSign,
-  ArrowUpRight,
-  ArrowDownRight
-} from 'lucide-react'
+} from "lucide-react";
 
 interface DashboardData {
-  totalUsers: number
-  totalProperties: number
-  totalRevenue: number
-  monthlyGrowth: number
-  activeListings: number
-  pendingApprovals: number
+  totalUsers: number;
+  totalProperties: number;
+  totalRevenue: number;
+  monthlyGrowth: number;
+  activeListings: number;
+  pendingApprovals: number;
   recentActivities: Array<{
-    id: string
-    type: string
-    description: string
-    timestamp: string
-    user: string
-  }>
+    id: string;
+    type: string;
+    description: string;
+    timestamp: string;
+    user: string;
+  }>;
   topPerformers: Array<{
-    id: string
-    name: string
-    revenue: number
-    properties: number
-  }>
+    id: string;
+    name: string;
+    revenue: number;
+    properties: number;
+  }>;
   systemHealth: {
-    uptime: number
-    performance: number
-    errors: number
-  }
+    uptime: number;
+    performance: number;
+    errors: number;
+  };
 }
 
 // Fonction pour récupérer les données du dashboard
 async function fetchDashboardData(): Promise<DashboardData> {
   try {
-    const response = await fetch('/api/admin/dashboard-stats')
+    const response = await fetch("/api/admin/dashboard-stats");
     if (!response.ok) {
-      throw new Error('Erreur lors de la récupération des données')
+      throw new Error("Erreur lors de la récupération des données");
     }
-    
-    const apiData = await response.json()
-    
+
+    const apiData = await response.json();
+
     // Transformer les données de l'API pour correspondre à l'interface DashboardData
     const dashboardData: DashboardData = {
       totalUsers: apiData.users.total,
       totalProperties: apiData.properties.total,
       totalRevenue: apiData.revenue.monthly,
-      monthlyGrowth: ((apiData.activity.newUsersThisMonth / apiData.users.total) * 100),
+      monthlyGrowth:
+        (apiData.activity.newUsersThisMonth / apiData.users.total) * 100,
       activeListings: apiData.properties.active,
       pendingApprovals: apiData.properties.pending,
       recentActivities: [
         {
-          id: '1',
-          type: 'user_registration',
+          id: "1",
+          type: "user_registration",
           description: `${apiData.activity.newUsersThisMonth} nouveaux utilisateurs ce mois`,
           timestamp: new Date().toISOString(),
-          user: 'Système'
+          user: "Système",
         },
         {
-          id: '2',
-          type: 'property_listed',
+          id: "2",
+          type: "property_listed",
           description: `${apiData.activity.propertiesAddedThisMonth} nouvelles propriétés ce mois`,
           timestamp: new Date().toISOString(),
-          user: 'Système'
-        }
+          user: "Système",
+        },
       ],
       topPerformers: [
-        { id: '1', name: 'Agents Premium', revenue: apiData.revenue.monthly * 0.6, properties: Math.floor(apiData.properties.active * 0.3) },
-        { id: '2', name: 'Agents Enterprise', revenue: apiData.revenue.monthly * 0.4, properties: Math.floor(apiData.properties.active * 0.2) }
+        {
+          id: "1",
+          name: "Agents Premium",
+          revenue: apiData.revenue.monthly * 0.6,
+          properties: Math.floor(apiData.properties.active * 0.3),
+        },
+        {
+          id: "2",
+          name: "Agents Enterprise",
+          revenue: apiData.revenue.monthly * 0.4,
+          properties: Math.floor(apiData.properties.active * 0.2),
+        },
       ],
       systemHealth: {
         uptime: 99.8,
         performance: 95.2,
-        errors: apiData.properties.pending
-      }
-    }
-    
-    return dashboardData
+        errors: apiData.properties.pending,
+      },
+    };
+
+    return dashboardData;
   } catch (error) {
-    console.error('Erreur lors de la récupération des données:', error)
-    throw error
+    console.error("Erreur lors de la récupération des données:", error);
+    throw error;
   }
 }
 
 export default function AdminDashboard() {
-  const [data, setData] = useState<DashboardData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadDashboardData()
-  }, [])
+    loadDashboardData();
+  }, []);
 
   const loadDashboardData = async () => {
     try {
-      setLoading(true)
-      const dashboardData = await fetchDashboardData()
-      setData(dashboardData)
+      setLoading(true);
+      const dashboardData = await fetchDashboardData();
+      setData(dashboardData);
     } catch (err) {
-      setError('Erreur lors du chargement des données')
-      console.error(err)
+      setError("Erreur lors du chargement des données");
+      console.error(err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -131,19 +149,19 @@ export default function AdminDashboard() {
         <RotateCcw className="h-8 w-8 animate-spin" />
         <span className="ml-2">Chargement du tableau de bord...</span>
       </div>
-    )
+    );
   }
 
   if (error || !data) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="text-red-500 mb-4">{error || 'Erreur inconnue'}</div>
+        <div className="text-red-500 mb-4">{error || "Erreur inconnue"}</div>
         <Button onClick={loadDashboardData}>
           <RotateCcw className="h-4 w-4 mr-2" />
           Réessayer
         </Button>
       </div>
-    )
+    );
   }
 
   return (
@@ -152,7 +170,9 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Tableau de bord administrateur</h1>
-          <p className="text-gray-600">Vue d'ensemble de la plateforme LoopNet</p>
+          <p className="text-gray-600">
+            Vue d'ensemble de la plateforme LoopNet
+          </p>
         </div>
         <div className="flex items-center gap-4">
           <RoleSwitcher />
@@ -175,14 +195,18 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Utilisateurs totaux</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Utilisateurs totaux
+            </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{data.totalUsers.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {data.totalUsers.toLocaleString()}
+            </div>
             <p className="text-xs text-muted-foreground">
-              <ArrowUpRight className="h-3 w-3 inline mr-1" />
-              +{data.monthlyGrowth}% ce mois
+              <ArrowUpRight className="h-3 w-3 inline mr-1" />+
+              {data.monthlyGrowth}% ce mois
             </p>
           </CardContent>
         </Card>
@@ -193,7 +217,9 @@ export default function AdminDashboard() {
             <Building className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{data.totalProperties.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              {data.totalProperties.toLocaleString()}
+            </div>
             <p className="text-xs text-muted-foreground">
               {data.activeListings} actives
             </p>
@@ -206,10 +232,12 @@ export default function AdminDashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{data.totalRevenue.toLocaleString()} €</div>
+            <div className="text-2xl font-bold">
+              {data.totalRevenue.toLocaleString()} €
+            </div>
             <p className="text-xs text-muted-foreground">
-              <ArrowUpRight className="h-3 w-3 inline mr-1" />
-              +{data.monthlyGrowth}% ce mois
+              <ArrowUpRight className="h-3 w-3 inline mr-1" />+
+              {data.monthlyGrowth}% ce mois
             </p>
           </CardContent>
         </Card>
@@ -233,18 +261,27 @@ export default function AdminDashboard() {
         <Card>
           <CardHeader>
             <CardTitle>Activités récentes</CardTitle>
-            <CardDescription>Dernières actions sur la plateforme</CardDescription>
+            <CardDescription>
+              Dernières actions sur la plateforme
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {data.recentActivities.map((activity) => (
-                <div key={activity.id} className="flex items-center justify-between">
+                <div
+                  key={activity.id}
+                  className="flex items-center justify-between"
+                >
                   <div>
-                    <p className="text-sm font-medium">{activity.description}</p>
-                    <p className="text-xs text-muted-foreground">par {activity.user}</p>
+                    <p className="text-sm font-medium">
+                      {activity.description}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      par {activity.user}
+                    </p>
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    {new Date(activity.timestamp).toLocaleTimeString('fr-FR')}
+                    {new Date(activity.timestamp).toLocaleTimeString("fr-FR")}
                   </div>
                 </div>
               ))}
@@ -260,7 +297,10 @@ export default function AdminDashboard() {
           <CardContent>
             <div className="space-y-4">
               {data.topPerformers.map((performer) => (
-                <div key={performer.id} className="flex items-center justify-between">
+                <div
+                  key={performer.id}
+                  className="flex items-center justify-between"
+                >
                   <div>
                     <p className="text-sm font-medium">{performer.name}</p>
                     <p className="text-xs text-muted-foreground">
@@ -281,7 +321,9 @@ export default function AdminDashboard() {
       <Card>
         <CardHeader>
           <CardTitle>État du système</CardTitle>
-          <CardDescription>Surveillance de la santé de la plateforme</CardDescription>
+          <CardDescription>
+            Surveillance de la santé de la plateforme
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -311,7 +353,9 @@ export default function AdminDashboard() {
       <Card>
         <CardHeader>
           <CardTitle>Actions rapides</CardTitle>
-          <CardDescription>Raccourcis vers les tâches administratives courantes</CardDescription>
+          <CardDescription>
+            Raccourcis vers les tâches administratives courantes
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -343,5 +387,5 @@ export default function AdminDashboard() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
