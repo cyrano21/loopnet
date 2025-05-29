@@ -49,11 +49,11 @@ const roleColors = {
 };
 
 const roleIcons = {
-  guest: FaEye,
-  simple: FaUser,
-  premium: FaStar,
-  agent: FaUsers,
-  admin: FaCrown,
+  guest: Eye,
+  simple: User,
+  premium: Star,
+  agent: Users,
+  admin: Crown,
 };
 
 export default function ActivityMonitoring() {
