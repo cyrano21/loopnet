@@ -242,7 +242,7 @@ export default function DocumentationPage() {
               onClick={() => {
                 fetch("/api/admin/security-test", { method: "POST" })
                   .then((res) => res.json())
-                  .then((data) => {
+                  .then((data: any) => {
                     alert(`Tests de sécurité terminés. Score: ${data.summary?.score}%`)
                   })
                   .catch(() => alert("Erreur lors des tests"))

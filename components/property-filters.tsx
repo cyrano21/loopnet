@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { Filter, XIcon, ChevronDown, Search } from 'lucide-react'
+import { Filter, XIcon, ChevronDown, Search, Users } from 'lucide-react'
 
 interface PropertyFiltersProps {
   onFilterChange: (key: string, value: any) => void
@@ -19,6 +19,7 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
     transactionType: 'all',
     propertyType: 'all',
     source: 'all',
+    agent: 'all',
     city: '',
     minPrice: '',
     maxPrice: '',
@@ -28,6 +29,8 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
     sort: 'newest'
   })
 
+  const [agents, setAgents] = useState<Array<{ _id: string; name: string; company: string }>>([])
+
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }))
     // Convert 'all' back to empty string for the parent component
@@ -35,11 +38,28 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
     onFilterChange(key, processedValue)
   }
 
+  // Charger la liste des agents
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const response = await fetch('/api/professionals?limit=100')
+        if (response.ok) {
+          const data = await response.json()
+          setAgents(data.professionals || [])
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des agents:', error)
+      }
+    }
+    fetchAgents()
+  }, [])
+
   const clearFilters = () => {
     const clearedFilters = {
       transactionType: 'all',
       propertyType: 'all',
       source: 'all',
+      agent: 'all',
       city: '',
       minPrice: '',
       maxPrice: '',
@@ -188,6 +208,47 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
                 <SelectItem value="all">Toutes les sources</SelectItem>
                 <SelectItem value="scraped">Propriétés scrapées</SelectItem>
                 <SelectItem value="manual">Saisie manuelle</SelectItem>
+              </SelectContent>
+            </Select>
+          </motion.div>
+        </motion.div>
+
+        {/* Agent/Professionnel */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.47 }}
+          className="space-y-2"
+        >
+          <Label htmlFor="agent" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+            <motion.div
+              className="w-2 h-2 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.9 }}
+            />
+            Agent/Professionnel
+          </Label>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <Select
+              value={filters.agent}
+              onValueChange={(value) => handleFilterChange('agent', value)}
+            >
+              <SelectTrigger className="border-2 border-gray-200 hover:border-indigo-300 transition-colors duration-200 bg-white/80 backdrop-blur-sm">
+                <SelectValue placeholder="Tous les agents" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous les agents</SelectItem>
+                {agents.map((agent) => (
+                  <SelectItem key={agent._id} value={agent._id}>
+                    <div className="flex items-center gap-2">
+                      <Users className="h-3 w-3 text-indigo-500" />
+                      <span className="font-medium">{agent.name}</span>
+                      {agent.company && (
+                        <span className="text-xs text-gray-500">({agent.company})</span>
+                      )}
+                    </div>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </motion.div>

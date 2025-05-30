@@ -48,6 +48,13 @@ export interface IProperty extends Document {
     email: string
     phone: string
   }
+  agent?: {
+    name: string
+    phone: string
+    email: string
+    company: string
+    image?: string
+  }
 
   // Status
   status: "draft" | "pending" | "active" | "sold" | "rented" | "expired" | "suspended"
@@ -127,6 +134,13 @@ const PropertySchema = new Schema<IProperty>(
       name: { type: String, required: true },
       email: { type: String, required: true },
       phone: { type: String, required: true },
+    },
+    agent: {
+      name: String,
+      phone: String,
+      email: String,
+      company: String,
+      image: String,
     },
 
     // Status

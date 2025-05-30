@@ -189,6 +189,12 @@ const sampleProperties = [
       email: "marie.martin@realty.com",
       phone: "+33 6 98 76 54 32",
     },
+    agent: {
+      name: "Marie Martin",
+      phone: "+33 6 98 76 54 32",
+      email: "marie.martin@realty.com",
+      company: "Martin Immobilier"
+    },
     status: "active",
     publishedAt: new Date("2024-01-20"),
     views: 156,
@@ -254,6 +260,12 @@ const sampleProperties = [
       name: "Pierre Durand",
       email: "pierre.durand@gmail.com",
       phone: "+33 6 55 44 33 22",
+    },
+    agent: {
+      name: "Pierre Durand",
+      phone: "+33 6 55 44 33 22",
+      email: "pierre.durand@gmail.com",
+      company: "Durand Immobilier Industriel"
     },
     status: "active",
     publishedAt: new Date("2024-01-10"),
@@ -322,6 +334,12 @@ const sampleProperties = [
       name: "Marie Martin",
       email: "marie.martin@realty.com",
       phone: "+33 6 98 76 54 32",
+    },
+    agent: {
+      name: "Marie Martin",
+      phone: "+33 6 98 76 54 32",
+      email: "marie.martin@realty.com",
+      company: "Martin Immobilier"
     },
     status: "active",
     publishedAt: new Date("2024-01-05"),

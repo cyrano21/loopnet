@@ -645,3 +645,713 @@ body {
 .gradient-ocean {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
+
+/* Styles Homez pour les widgets d'avis */
+.ps-widget {
+  padding: 30px;
+  margin-bottom: 30px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.bgc-white {
+  background-color: white !important;
+}
+
+.bdrs12 {
+  border-radius: 12px !important;
+}
+
+.default-box-shadow2 {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+.p30 {
+  padding: 30px !important;
+}
+
+.mb30 {
+  margin-bottom: 30px !important;
+}
+
+.overflow-hidden {
+  overflow: hidden !important;
+}
+
+.position-relative {
+  position: relative !important;
+}
+
+.title {
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.fz17 {
+  font-size: 17px !important;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.col-sm-12 {
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Styles Homez pour les widgets d'avis */
+.ps-widget {
+  padding: 30px;
+  margin-bottom: 30px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  position: relative;
+}
+
+.bgc-white {
+  background-color: white !important;
+}
+
+.bdrs12 {
+  border-radius: 12px !important;
+}
+
+.default-box-shadow2 {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08) !important;
+}
+
+.p30 {
+  padding: 30px !important;
+}
+
+.mb30 {
+  margin-bottom: 30px !important;
+}
+
+.overflow-hidden {
+  overflow: hidden !important;
+}
+
+.position-relative {
+  position: relative !important;
+}
+
+.title {
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.fz17 {
+  font-size: 17px !important;
+}
+
+.mb30 {
+  margin-bottom: 30px !important;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.col-sm-12 {
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Styles Homez pour PropertyReviews - Formulaires */
+.comments_form {
+  margin-top: 0;
+}
+
+.comments_form .form-control {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.comments_form .form-control:focus {
+  border-color: #eb6753;
+  box-shadow: 0 0 0 0.2rem rgba(235, 103, 83, 0.25);
+  background-color: white;
+}
+
+.comments_form .form-control::placeholder {
+  color: #6c757d;
+  opacity: 1;
+}
+
+.comments_form .form-control:disabled {
+  background-color: #f8f9fa;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.fw600 {
+  font-weight: 600;
+}
+
+.ff-heading {
+  font-family: inherit;
+}
+
+.widget-wrapper.sideborder-dropdown .custom-react_select {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+
+.widget-wrapper.sideborder-dropdown .custom-react_select:focus-within {
+  border-color: #eb6753;
+  box-shadow: 0 0 0 0.2rem rgba(235, 103, 83, 0.25);
+}
+
+.form-style2.input-group {
+  position: relative;
+}
+
+.ud-btn.btn-white2 {
+  background-color: #eb6753;
+  border: 2px solid #eb6753;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.ud-btn.btn-white2:hover {
+  background-color: #d63746;
+  border-color: #d63746;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(235, 103, 83, 0.3);
+}
+
+.ud-btn.btn-white2:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.ud-btn.btn-white2 i {
+  font-size: 12px;
+}
+
+/* Style pour les étoiles de notation */
+.review-color2 {
+  color: #ffc107;
+}
+
+/* Styles pour les avis */
+.mbp_first {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.ml20 {
+  margin-left: 20px;
+}
+
+.fz14 {
+  font-size: 14px;
+}
+
+.fz10 {
+  font-size: 10px;
+}
+
+.blog-single-review ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 2px;
+}
+
+.blog-single-review li {
+  display: inline-block;
+}
+
+.review_cansel_btns {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid #e9ecef;
+  padding-bottom: 30px;
+}
+
+.review_cansel_btns a {
+  color: #6c757d;
+  text-decoration: none;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.3s ease;
+}
+
+.review_cansel_btns a:hover {
+  color: #eb6753;
+}
+
+.bdrb1 {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.pt30 {
+  padding-top: 30px;
+}
+
+.pb20 {
+  padding-bottom: 20px;
+}
+
+.pb30 {
+  padding-bottom: 30px;
+}
+
+.mt30 {
+  margin-top: 30px;
+}
+
+.mt20 {
+  margin-top: 20px;
+}
+
+.mb20 {
+  margin-bottom: 20px;
+}
+
+.mb15 {
+  margin-bottom: 15px;
+}
+
+.mb5-xs {
+  margin-bottom: 5px;
+}
+
+.bdrs6 {
+  border-radius: 6px;
+}
+
+/* Responsive pour mobile */
+@media (max-width: 576px) {
+  .mb30-sm {
+    margin-bottom: 30px;
+  }
+}
+
+/* Amélioration du style des select */
+.custom-react_select .react-select__control {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  min-height: 44px;
+  transition: all 0.3s ease;
+}
+
+.custom-react_select .react-select__control:hover {
+  border-color: #eb6753;
+}
+
+.custom-react_select .react-select__control--is-focused {
+  border-color: #eb6753;
+  box-shadow: 0 0 0 0.2rem rgba(235, 103, 83, 0.25);
+}
+
+.custom-react_select .react-select__value-container {
+  padding: 0 16px;
+}
+
+.custom-react_select .react-select__placeholder {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.custom-react_select .react-select__single-value {
+  color: #495057;
+  font-size: 14px;
+}
+
+.custom-react_select .react-select__indicator-separator {
+  display: none;
+}
+
+.custom-react_select .react-select__dropdown-indicator {
+  color: #6c757d;
+  padding: 8px;
+}
+
+.custom-react_select .react-select__menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e9ecef;
+  margin-top: 4px;
+}
+
+.custom-react_select .react-select__option {
+  padding: 12px 16px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.custom-react_select .react-select__option--is-selected {
+  background-color: #eb6753;
+  color: white;
+}
+
+.custom-react_select .react-select__option--is-focused {
+  background-color: rgba(235, 103, 83, 0.1);
+  color: #eb6753;
+}
+
+/* =======================================================================
+   Additional Homez Review Styles for PropertyReviews Component
+======================================================================= */
+
+/* Label styles for review form */
+.comments_form label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+/* Icon spacing in labels */
+.comments_form label .lucide {
+  display: inline-block;
+  margin-right: 8px;
+  color: #6b7280;
+}
+
+/* Rating stars container */
+.rating-stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Review card styling */
+.review-item {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.review-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* Review header */
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Review author name */
+.review-author {
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Review meta info */
+.review-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Review comment text */
+.review-comment {
+  color: #374151;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+/* Review actions */
+.review-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Login prompt box */
+.login-prompt {
+  padding: 16px;
+  background: linear-gradient(135deg, #eff6ff 0%, #e0e7ff 100%);
+  border-radius: 8px;
+  border: 1px solid #bfdbfe;
+  margin-top: 16px;
+}
+
+.login-prompt h4 {
+  font-weight: 600;
+  color: #1e3a8a;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.login-prompt p {
+  color: #1d4ed8;
+  font-size: 14px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Rating breakdown styles */
+.rating-breakdown {
+  flex: 1;
+  margin-left: 24px;
+}
+
+.rating-breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.rating-number {
+  font-size: 14px;
+  width: 32px;
+}
+
+.rating-bar {
+  flex: 1;
+  background-color: #e5e7eb;
+  border-radius: 9999px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.rating-bar-fill {
+  background-color: #fbbf24;
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+/* Dynamic width classes for rating bars */
+.rating-bar-fill-0 { width: 0%; }
+.rating-bar-fill-5 { width: 5%; }
+.rating-bar-fill-10 { width: 10%; }
+.rating-bar-fill-15 { width: 15%; }
+.rating-bar-fill-20 { width: 20%; }
+.rating-bar-fill-25 { width: 25%; }
+.rating-bar-fill-30 { width: 30%; }
+.rating-bar-fill-35 { width: 35%; }
+.rating-bar-fill-40 { width: 40%; }
+.rating-bar-fill-45 { width: 45%; }
+.rating-bar-fill-50 { width: 50%; }
+.rating-bar-fill-55 { width: 55%; }
+.rating-bar-fill-60 { width: 60%; }
+.rating-bar-fill-65 { width: 65%; }
+.rating-bar-fill-70 { width: 70%; }
+.rating-bar-fill-75 { width: 75%; }
+.rating-bar-fill-80 { width: 80%; }
+.rating-bar-fill-85 { width: 85%; }
+.rating-bar-fill-90 { width: 90%; }
+.rating-bar-fill-95 { width: 95%; }
+.rating-bar-fill-100 { width: 100%; }
+
+.rating-count {
+  font-size: 14px;
+  color: #6b7280;
+  width: 32px;
+}
+
+/* Overall rating display */
+.overall-rating {
+  text-align: center;
+  margin-right: 24px;
+}
+
+.overall-rating-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+}
+
+.overall-rating-stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.overall-rating-count {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Form disabled state styles */
+.form-control:disabled {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.custom-react_select[disabled] {
+  background-color: #f9fafb;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Hover effects for interactive elements */
+.ud-btn:hover:not(:disabled) {
+  transform: scale(1.02);
+  transition: transform 0.2s ease;
+}
+
+.review-actions button:hover {
+  background-color: #f9fafb;
+  transition: background-color 0.2s ease;
+}
+
+/* Badge styles for verified reviews */
+.verified-badge {
+  background-color: #dcfce7;
+  color: #166534;
+  border-color: #bbf7d0;
+}
+
+/* Avatar fallback improvements */
+.avatar-fallback {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
+/* Button loading state */
+.ud-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ud-btn.loading {
+  opacity: 0.75;
+}
+
+/* Success and error states */
+.form-success {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 16px;
+  color: #166534;
+  margin-top: 16px;
+}
+
+.form-error {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+  color: #dc2626;
+  margin-top: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .rating-breakdown {
+    margin-left: 0;
+    margin-top: 16px;
+  }
+  
+  .overall-rating {
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+  
+  .rating-summary {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .comments_form .row {
+    flex-direction: column;
+  }
+  
+  .comments_form .col-md-6,
+  .comments_form .col-md-12 {
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+    margin-bottom: 16px;
+  }
+}
+
+/* Enhanced spacing for review form */
+.rating-summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* Smooth transitions */
+.rating-bar-fill,
+.ud-btn,
+.form-control,
+.custom-react_select {
+  transition: all 0.2s ease;
+}
+
+/* Focus states */
+.form-control:focus,
+.custom-react_select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Loading spinner for form submission */
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 50%;
+  border-top-color: #3b82f6;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

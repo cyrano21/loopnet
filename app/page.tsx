@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
@@ -48,6 +48,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PropertyCard } from "@/components/property-card";
+import { useProfessionals } from "@/hooks/use-professionals";
 import { CompanyLogoItem } from "@/components/company-logo-item";
 import { useProperties } from "@/hooks/use-properties";
 import { cn } from "@/lib/utils";
@@ -56,12 +57,12 @@ import { cn } from "@/lib/utils";
 function useOnScreen(
   ref: React.RefObject<HTMLDivElement | null>,
   rootMargin = "0px",
-  threshold = 0.1,
+  threshold = 0.1
 ) {
   const [isIntersecting, setIntersecting] = useState(false);
   useEffect(() => {
     const currentRef = ref.current;
-    if (!currentRef || typeof IntersectionObserver === 'undefined') {
+    if (!currentRef || typeof IntersectionObserver === "undefined") {
       return () => {};
     }
 
@@ -80,7 +81,7 @@ function useOnScreen(
             // setIntersecting(false);
           }
         },
-        { rootMargin, threshold },
+        { rootMargin, threshold }
       );
 
       observer.observe(currentRef);
@@ -88,7 +89,7 @@ function useOnScreen(
         observer.unobserve(currentRef);
       };
     } catch (error) {
-      console.error('Error with IntersectionObserver:', error);
+      console.error("Error with IntersectionObserver:", error);
       return () => {};
     }
   }, [ref, rootMargin, threshold]);
@@ -120,7 +121,12 @@ export default function HomePage() {
 
   const router = useRouter();
   const { properties, loading, error } = useProperties({ page: 1, limit: 8 }); // VOTRE HOOK
-  const { addToComparison, removeFromComparison, isInComparison, comparisonList } = useComparison(); // Hook pour la fonctionnalité de comparaison
+  const {
+    addToComparison,
+    removeFromComparison,
+    isInComparison,
+    comparisonList,
+  } = useComparison(); // Hook pour la fonctionnalité de comparaison
 
   // Refs pour les animations
   const trustSectionRef = useRef<HTMLDivElement | null>(null);
@@ -629,7 +635,7 @@ export default function HomePage() {
             />
             {/* Enhanced gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-900/90 via-blue-700/80 to-purple-600/70"></div>
-            
+
             {/* Animated particles background */}
             <div className="absolute inset-0 overflow-hidden">
               {[...Array(20)].map((_, i) => (
@@ -637,8 +643,14 @@ export default function HomePage() {
                   key={i}
                   className="absolute w-2 h-2 bg-white/20 rounded-full"
                   initial={{
-                    x: typeof window !== 'undefined' ? Math.random() * window.innerWidth : Math.random() * 1200,
-                    y: typeof window !== 'undefined' ? Math.random() * window.innerHeight : Math.random() * 800,
+                    x:
+                      typeof window !== "undefined"
+                        ? Math.random() * window.innerWidth
+                        : Math.random() * 1200,
+                    y:
+                      typeof window !== "undefined"
+                        ? Math.random() * window.innerHeight
+                        : Math.random() * 800,
                     opacity: 0,
                   }}
                   animate={{
@@ -653,7 +665,7 @@ export default function HomePage() {
                 />
               ))}
             </div>
-            
+
             {/* Geometric shapes overlay */}
             <div className="absolute inset-0 opacity-10">
               <motion.div
@@ -701,7 +713,7 @@ export default function HomePage() {
                   >
                     The World's #1
                   </motion.span>
-                  <motion.span 
+                  <motion.span
                     className="block relative overflow-hidden mt-2"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -728,7 +740,7 @@ export default function HomePage() {
                   >
                     Marketplace
                   </motion.span>
-                  
+
                   {/* Floating accent elements */}
                   <motion.div
                     className="absolute -top-6 -right-6 w-12 h-12 bg-yellow-400/20 rounded-full blur-md"
@@ -758,7 +770,7 @@ export default function HomePage() {
                   />
                 </h1>
               </motion.div>
-              
+
               {/* Enhanced Description */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -791,7 +803,7 @@ export default function HomePage() {
               >
                 {/* Glowing border effect */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-yellow-400/50 via-blue-500/50 to-purple-600/50 rounded-2xl blur-sm opacity-75"></div>
-                
+
                 <Card className="relative bg-white/98 dark:bg-slate-800/98 backdrop-blur-xl text-slate-900 dark:text-slate-100 p-5 md:p-8 shadow-2xl rounded-xl border border-white/20 overflow-hidden">
                   {/* Subtle animated background pattern */}
                   <div className="absolute inset-0 opacity-5 pointer-events-none">
@@ -818,134 +830,136 @@ export default function HomePage() {
                       />
                     ))}
                   </div>
-                <CardContent className="p-0">
-                  <div className="flex flex-wrap justify-center mb-6 border-b border-slate-200 dark:border-slate-700">
-                    {[
-                      {
-                        key: "forLease",
-                        label: "For Lease",
-                        icon: <Briefcase className="w-4 h-4 mr-1.5" />,
-                      },
-                      {
-                        key: "forSale",
-                        label: "For Sale",
-                        icon: <TrendingUp className="w-4 h-4 mr-1.5" />,
-                      },
-                      {
-                        key: "auctions",
-                        label: "Auctions",
-                        icon: <Clock className="w-4 h-4 mr-1.5" />,
-                      },
-                      {
-                        key: "businesses",
-                        label: "Businesses For Sale",
-                        icon: <Store className="w-4 h-4 mr-1.5" />,
-                      },
-                    ].map((tab) => (
-                      <button
-                        key={tab.key}
-                        onClick={() => {
-                          setSearchType(tab.key);
-                          router.push(`/properties?type=${tab.key}`);
-                        }}
-                        className={cn(
-                          "flex items-center px-3 sm:px-4 py-2.5 font-medium text-sm sm:text-base transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 rounded-t-md",
-                          searchType === tab.key
-                            ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-slate-50 dark:bg-slate-700/50"
-                            : "text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700/30",
-                        )}
-                      >
-                        {tab.icon}
-                        {tab.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="flex overflow-x-auto space-x-2.5 sm:space-x-3 mb-6 pb-2 -mx-2 px-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
-                    {propertyTypesData.map((type) => (
-                      <button
-                        key={type.id}
-                        onClick={() => {
-                          setSelectedPropertyType(type.id.toString());
-                          router.push(
-                            `/properties?propertyType=${
-                              type.id
-                            }&name=${encodeURIComponent(type.name)}`,
-                          );
-                        }}
-                        className={cn(
-                          "flex-shrink-0 group flex flex-col items-center p-2.5 w-20 h-20 sm:w-24 sm:h-24 justify-center rounded-lg transition-all duration-200 transform hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-800",
-                          selectedPropertyType === type.id.toString()
-                            ? "bg-blue-100 dark:bg-blue-600/40 text-blue-700 dark:text-blue-300 shadow-md ring-1 ring-blue-300 dark:ring-blue-500"
-                            : "bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600",
-                        )}
-                      >
-                        <span className="text-2xl sm:text-3xl mb-1 transition-transform duration-200 group-hover:scale-110">
-                          {type.icon}
-                        </span>
-                        <span className="text-xs font-medium">
-                          {type.name}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 mb-4">
-                    <div className="flex-1 relative">
-                      <MapPin className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500 pointer-events-none" />
-                      <Input
-                        placeholder="Enter location, address, city, or ZIP code"
-                        className="h-12 text-base pl-11 focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 rounded-md"
-                        value={searchQuery}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                          setSearchQuery(e.target.value)
-                        }
-                        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
-                          e.key === "Enter" && handleSearch()
-                        }
-                      />
+                  <CardContent className="p-0">
+                    <div className="flex flex-wrap justify-center mb-6 border-b border-slate-200 dark:border-slate-700">
+                      {[
+                        {
+                          key: "forLease",
+                          label: "For Lease",
+                          icon: <Briefcase className="w-4 h-4 mr-1.5" />,
+                        },
+                        {
+                          key: "forSale",
+                          label: "For Sale",
+                          icon: <TrendingUp className="w-4 h-4 mr-1.5" />,
+                        },
+                        {
+                          key: "auctions",
+                          label: "Auctions",
+                          icon: <Clock className="w-4 h-4 mr-1.5" />,
+                        },
+                        {
+                          key: "businesses",
+                          label: "Businesses For Sale",
+                          icon: <Store className="w-4 h-4 mr-1.5" />,
+                        },
+                      ].map((tab) => (
+                        <button
+                          key={tab.key}
+                          onClick={() => {
+                            setSearchType(tab.key);
+                            router.push(`/properties?type=${tab.key}`);
+                          }}
+                          className={cn(
+                            "flex items-center px-3 sm:px-4 py-2.5 font-medium text-sm sm:text-base transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800 rounded-t-md",
+                            searchType === tab.key
+                              ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 bg-slate-50 dark:bg-slate-700/50"
+                              : "text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-100 dark:hover:bg-slate-700/30"
+                          )}
+                        >
+                          {tab.icon}
+                          {tab.label}
+                        </button>
+                      ))}
                     </div>
-                    <Button
-                      onClick={handleSearch}
-                      size="lg"
-                      className="h-12 px-6 sm:px-8 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 rounded-md text-base"
-                    >
-                      <Search className="w-5 h-5 mr-2" />
-                      Search
-                    </Button>
-                  </div>
 
-                  <div className="flex flex-wrap gap-2.5 sm:gap-3 text-sm">
-                    <Select>
-                      <SelectTrigger className="w-full sm:w-auto sm:flex-1 md:w-44 h-10 dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 rounded-md text-slate-700 dark:text-slate-300">
-                        <SelectValue placeholder="Price Range" />
-                      </SelectTrigger>
-                      <SelectContent className="dark:bg-slate-700 dark:text-slate-100 border-slate-600">
-                        <SelectItem value="0-500k">$0 - $500K</SelectItem>
-                        <SelectItem value="500k-1m">$500K - $1M</SelectItem>
-                        <SelectItem value="1m-5m">$1M - $5M</SelectItem>
-                        <SelectItem value="5m+">$5M+</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select>
-                      <SelectTrigger className="w-full sm:w-auto sm:flex-1 md:w-44 h-10 dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 rounded-md text-slate-700 dark:text-slate-300">
-                        <SelectValue placeholder="Size (sq ft)" />
-                      </SelectTrigger>
-                      <SelectContent className="dark:bg-slate-700 dark:text-slate-100 border-slate-600">
-                        <SelectItem value="0-5k">0 - 5,000</SelectItem>
-                        <SelectItem value="5k-10k">5,000 - 10,000</SelectItem>
-                        <SelectItem value="10k-25k">10,000 - 25,000</SelectItem>
-                        <SelectItem value="25k+">25,000+</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      variant="link"
-                      className="text-blue-600 dark:text-blue-400 hover:underline p-0 h-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm text-sm"
-                    >
-                      More Filters <ChevronDown className="w-4 h-4 ml-1" />
-                    </Button>
-                  </div>
-                </CardContent>
+                    <div className="flex overflow-x-auto space-x-2.5 sm:space-x-3 mb-6 pb-2 -mx-2 px-2 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent">
+                      {propertyTypesData.map((type) => (
+                        <button
+                          key={type.id}
+                          onClick={() => {
+                            setSelectedPropertyType(type.id.toString());
+                            router.push(
+                              `/properties?propertyType=${
+                                type.id
+                              }&name=${encodeURIComponent(type.name)}`
+                            );
+                          }}
+                          className={cn(
+                            "flex-shrink-0 group flex flex-col items-center p-2.5 w-20 h-20 sm:w-24 sm:h-24 justify-center rounded-lg transition-all duration-200 transform hover:-translate-y-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 dark:focus-visible:ring-offset-slate-800",
+                            selectedPropertyType === type.id.toString()
+                              ? "bg-blue-100 dark:bg-blue-600/40 text-blue-700 dark:text-blue-300 shadow-md ring-1 ring-blue-300 dark:ring-blue-500"
+                              : "bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600"
+                          )}
+                        >
+                          <span className="text-2xl sm:text-3xl mb-1 transition-transform duration-200 group-hover:scale-110">
+                            {type.icon}
+                          </span>
+                          <span className="text-xs font-medium">
+                            {type.name}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3 mb-4">
+                      <div className="flex-1 relative">
+                        <MapPin className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500 pointer-events-none" />
+                        <Input
+                          placeholder="Enter location, address, city, or ZIP code"
+                          className="h-12 text-base pl-11 focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:placeholder-slate-400 rounded-md"
+                          value={searchQuery}
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setSearchQuery(e.target.value)
+                          }
+                          onKeyDown={(
+                            e: React.KeyboardEvent<HTMLInputElement>
+                          ) => e.key === "Enter" && handleSearch()}
+                        />
+                      </div>
+                      <Button
+                        onClick={handleSearch}
+                        size="lg"
+                        className="h-12 px-6 sm:px-8 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 rounded-md text-base"
+                      >
+                        <Search className="w-5 h-5 mr-2" />
+                        Search
+                      </Button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2.5 sm:gap-3 text-sm">
+                      <Select>
+                        <SelectTrigger className="w-full sm:w-auto sm:flex-1 md:w-44 h-10 dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 rounded-md text-slate-700 dark:text-slate-300">
+                          <SelectValue placeholder="Price Range" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:bg-slate-700 dark:text-slate-100 border-slate-600">
+                          <SelectItem value="0-500k">$0 - $500K</SelectItem>
+                          <SelectItem value="500k-1m">$500K - $1M</SelectItem>
+                          <SelectItem value="1m-5m">$1M - $5M</SelectItem>
+                          <SelectItem value="5m+">$5M+</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select>
+                        <SelectTrigger className="w-full sm:w-auto sm:flex-1 md:w-44 h-10 dark:bg-slate-700 dark:border-slate-600 focus:ring-2 focus:ring-blue-500 rounded-md text-slate-700 dark:text-slate-300">
+                          <SelectValue placeholder="Size (sq ft)" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:bg-slate-700 dark:text-slate-100 border-slate-600">
+                          <SelectItem value="0-5k">0 - 5,000</SelectItem>
+                          <SelectItem value="5k-10k">5,000 - 10,000</SelectItem>
+                          <SelectItem value="10k-25k">
+                            10,000 - 25,000
+                          </SelectItem>
+                          <SelectItem value="25k+">25,000+</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        variant="link"
+                        className="text-blue-600 dark:text-blue-400 hover:underline p-0 h-10 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-sm text-sm"
+                      >
+                        More Filters <ChevronDown className="w-4 h-4 ml-1" />
+                      </Button>
+                    </div>
+                  </CardContent>
                 </Card>
               </motion.div>
             </div>
@@ -959,7 +973,7 @@ export default function HomePage() {
             "py-16 bg-white dark:bg-slate-800 transition-all duration-1000 ease-out",
             isTrustSectionOnScreen
               ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-12",
+              : "opacity-0 translate-y-12"
           )}
         >
           <div className="container mx-auto px-4 text-center">
@@ -997,7 +1011,7 @@ export default function HomePage() {
                     "p-6 bg-slate-100 dark:bg-slate-700/70 rounded-xl shadow-lg transition-all duration-500 ease-out hover:shadow-xl hover:scale-105",
                     isTrustSectionOnScreen
                       ? `opacity-100 scale-100 animation-delay-${index * 150}`
-                      : "opacity-0 scale-90",
+                      : "opacity-0 scale-90"
                   )}
                 >
                   {stat.icon}
@@ -1018,7 +1032,7 @@ export default function HomePage() {
           ref={companyLogosRef}
           className={cn(
             "py-16 relative overflow-hidden transition-all duration-1000 ease-out",
-            isCompanyLogosOnScreen ? "opacity-100" : "opacity-0",
+            isCompanyLogosOnScreen ? "opacity-100" : "opacity-0"
           )}
         >
           {/* Premium gradient background */}
@@ -1062,12 +1076,13 @@ export default function HomePage() {
                       key={`first-${index}`}
                       src={company.logo}
                       name={company.name}
+                      alt={`${company.name} logo`}
                       width={140}
                       height={70}
                       className={cn(
                         isCompanyLogosOnScreen
                           ? `animation-delay-${index * 50}`
-                          : "",
+                          : ""
                       )}
                     />
                   ))}
@@ -1077,6 +1092,7 @@ export default function HomePage() {
                       key={`second-${index}`}
                       src={company.logo}
                       name={company.name}
+                      alt={`${company.name} logo`}
                       width={140}
                       height={70}
                     />
@@ -1112,7 +1128,7 @@ export default function HomePage() {
             "py-16 bg-white dark:bg-slate-800 transition-all duration-1000 ease-out",
             isTrendingSectionOnScreen
               ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-12",
+              : "opacity-0 translate-y-12"
           )}
         >
           <div className="container mx-auto px-4">
@@ -1146,31 +1162,32 @@ export default function HomePage() {
                 ))}
               </TabsList>
 
-              {Object.entries(trendingPropertiesData).map(([key, trendProps]) => (
-                <TabsContent
-                  key={key}
-                  value={key}
-                  className="mt-8 focus:outline-none"
-                >
-                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-                    {trendProps.map((property, idx) => (
-                      <div
-                        key={property.id}
-                        className={cn(
-                          "transition-all duration-500 ease-out",
-                          isTrendingSectionOnScreen
-                            ? `opacity-100 translate-y-0 animation-delay-${
-                                idx * 100
-                              }`
-                            : "opacity-0 translate-y-8",
-                        )}
-                      >
-                        <Card className="overflow-hidden group hover:shadow-2xl dark:bg-slate-700/80 dark:border-slate-600 transition-all duration-300 transform hover:-translate-y-1.5 rounded-xl">
-                          <CardHeader className="p-0 relative">
-                            <Link
-                              href={`/mock-property/${property.id}`}
-                              className="block aspect-[4/3] relative overflow-hidden rounded-t-xl"
-                            >
+              {Object.entries(trendingPropertiesData).map(
+                ([key, trendProps]) => (
+                  <TabsContent
+                    key={key}
+                    value={key}
+                    className="mt-8 focus:outline-none"
+                  >
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                      {trendProps.map((property, idx) => (
+                        <div
+                          key={property.id}
+                          className={cn(
+                            "transition-all duration-500 ease-out",
+                            isTrendingSectionOnScreen
+                              ? `opacity-100 translate-y-0 animation-delay-${
+                                  idx * 100
+                                }`
+                              : "opacity-0 translate-y-8"
+                          )}
+                        >
+                          <Card className="overflow-hidden group hover:shadow-2xl dark:bg-slate-700/80 dark:border-slate-600 transition-all duration-300 transform hover:-translate-y-1.5 rounded-xl">
+                            <CardHeader className="p-0 relative">
+                              <Link
+                                href={`/mock-property/${property.id}`}
+                                className="block aspect-[4/3] relative overflow-hidden rounded-t-xl"
+                              >
                                 <Image
                                   src={property.image}
                                   alt={property.type}
@@ -1200,13 +1217,13 @@ export default function HomePage() {
                                     </button>
                                   </Button>
                                 </div>
-                            </Link>
-                          </CardHeader>
-                          <CardContent className="p-4">
-                            <Link
-                              href={`/mock-property/${property.id}`}
-                              className="block"
-                            >
+                              </Link>
+                            </CardHeader>
+                            <CardContent className="p-4">
+                              <Link
+                                href={`/mock-property/${property.id}`}
+                                className="block"
+                              >
                                 <h3 className="font-semibold text-blue-700 dark:text-blue-400 text-md mb-1 hover:underline leading-tight">
                                   {property.price}
                                 </h3>
@@ -1219,14 +1236,15 @@ export default function HomePage() {
                                 <p className="text-xs text-slate-500 dark:text-slate-400">
                                   {property.size}
                                 </p>
-                            </Link>
-                          </CardContent>
-                        </Card>
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
-              ))}
+                              </Link>
+                            </CardContent>
+                          </Card>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                )
+              )}
             </Tabs>
           </div>
         </section>
@@ -1236,7 +1254,7 @@ export default function HomePage() {
           ref={featuredSectionRef}
           className={cn(
             "py-16 bg-slate-100 dark:bg-slate-800/50 transition-all duration-1000 ease-out",
-            isFeaturedSectionOnScreen ? "opacity-100" : "opacity-0",
+            isFeaturedSectionOnScreen ? "opacity-100" : "opacity-0"
           )}
         >
           <div className="container mx-auto px-4">
@@ -1281,15 +1299,14 @@ export default function HomePage() {
                         ? `opacity-100 translate-y-0 animation-delay-${
                             idx * 100
                           }`
-                        : "opacity-0 translate-y-10",
+                        : "opacity-0 translate-y-10"
                     )}
                   >
                     <PropertyCard
                       property={propertyData as any}
                       onAddToComparison={addToComparison}
                       isInComparison={comparisonList.some(
-                        (item: { _id: string }) =>
-                          item._id === propertyData._id,
+                        (item: { _id: string }) => item._id === propertyData._id
                       )}
                     />
                   </div>
@@ -1306,7 +1323,7 @@ export default function HomePage() {
             "py-20 bg-gradient-to-br from-purple-700 via-purple-600 to-indigo-600 text-white transition-all duration-1000 ease-out",
             isAuctionSectionOnScreen
               ? "opacity-100 scale-100"
-              : "opacity-0 scale-95",
+              : "opacity-0 scale-95"
           )}
         >
           <div className="container mx-auto px-4">
@@ -1316,7 +1333,7 @@ export default function HomePage() {
                   "bg-white/10 dark:bg-black/20 backdrop-blur-md p-6 sm:p-8 rounded-xl shadow-2xl transition-all duration-500 ease-out",
                   isAuctionSectionOnScreen
                     ? "translate-x-0 opacity-100"
-                    : "-translate-x-10 opacity-0",
+                    : "-translate-x-10 opacity-0"
                 )}
               >
                 <div className="flex items-center space-x-3 mb-6">
@@ -1360,7 +1377,7 @@ export default function HomePage() {
                             className="text-xl sm:text-2xl md:text-3xl opacity-50 pt-1"
                           >
                             :
-                          </div>,
+                          </div>
                         );
                       }
                       return prev;
@@ -1373,7 +1390,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 <Button
-                  size="xl"
+                  size="lg"
                   className="w-full mt-8 bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold text-lg transition-transform transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-300 focus-visible:ring-offset-2 focus-visible:ring-offset-purple-700 rounded-lg py-3.5"
                 >
                   Place Your Bid
@@ -1384,7 +1401,7 @@ export default function HomePage() {
                   "transition-all duration-500 ease-out delay-200",
                   isAuctionSectionOnScreen
                     ? "translate-x-0 opacity-100"
-                    : "translate-x-10 opacity-0",
+                    : "translate-x-10 opacity-0"
                 )}
               >
                 <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -1398,14 +1415,14 @@ export default function HomePage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button
-                    size="xl"
+                    size="lg"
                     variant="secondary"
                     className="bg-white/90 hover:bg-white text-purple-700 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-purple-600 transition-transform transform hover:scale-105 rounded-lg px-8 py-3.5 text-base"
                   >
                     Learn More About Auctions
                   </Button>
                   <Button
-                    size="xl"
+                    size="lg"
                     variant="outline"
                     className="border-white/50 text-white hover:bg-white/10 dark:border-slate-400 dark:hover:bg-slate-700/50 transition-transform transform hover:scale-105 rounded-lg px-8 py-3.5 text-base"
                   >
@@ -1422,7 +1439,7 @@ export default function HomePage() {
           ref={citiesSectionRef}
           className={cn(
             "py-16 bg-slate-100 dark:bg-slate-800/50 transition-all duration-1000 ease-out",
-            isCitiesSectionOnScreen ? "opacity-100" : "opacity-0",
+            isCitiesSectionOnScreen ? "opacity-100" : "opacity-0"
           )}
         >
           <div className="container mx-auto px-4">
@@ -1433,14 +1450,12 @@ export default function HomePage() {
               {popularCitiesData.map((city, index) => (
                 <Link
                   key={index}
-                  href={`/search/${city.name
-                    .toLowerCase()
-                    .replace(" ", "-")}`}
+                  href={`/search/${city.name.toLowerCase().replace(" ", "-")}`}
                   className={cn(
                     "block group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transform transition-all duration-300 hover:-translate-y-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-800",
                     isCitiesSectionOnScreen
                       ? `opacity-100 scale-100 animation-delay-${index * 100}`
-                      : "opacity-0 scale-90",
+                      : "opacity-0 scale-90"
                   )}
                 >
                   <div className="relative aspect-[3/4]">
@@ -1470,7 +1485,7 @@ export default function HomePage() {
           ref={articlesSectionRef}
           className={cn(
             "py-16 bg-white dark:bg-slate-800 transition-all duration-1000 ease-out",
-            isArticlesSectionOnScreen ? "opacity-100" : "opacity-0",
+            isArticlesSectionOnScreen ? "opacity-100" : "opacity-0"
           )}
         >
           <div className="container mx-auto px-4">
@@ -1496,31 +1511,34 @@ export default function HomePage() {
                       ? `opacity-100 translate-y-0 animation-delay-${
                           index * 150
                         }`
-                      : "opacity-0 translate-y-8",
+                      : "opacity-0 translate-y-8"
                   )}
                 >
-                  <Link href={`/news/mock-article-${index}`} className="h-full flex flex-col">
-                      <div className="aspect-[16/9] overflow-hidden relative rounded-t-xl">
-                        <Image
-                          src={article.image}
-                          alt={article.title}
-                          fill
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
-                      <CardContent className="p-5 sm:p-6 flex-grow flex flex-col">
-                        <h3 className="font-semibold text-lg text-slate-800 dark:text-slate-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
-                          {article.title}
-                        </h3>
-                        <p className="text-slate-600 dark:text-slate-300 text-sm line-clamp-3 mb-3 leading-relaxed flex-grow">
-                          {article.description}
-                        </p>
-                        <span className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 group-hover:underline mt-auto pt-2">
-                          Read article{" "}
-                          <ChevronDown className="w-4 h-4 ml-1 transform rotate-[-90deg] transition-transform" />
-                        </span>
-                      </CardContent>
+                  <Link
+                    href={`/news/mock-article-${index}`}
+                    className="h-full flex flex-col"
+                  >
+                    <div className="aspect-[16/9] overflow-hidden relative rounded-t-xl">
+                      <Image
+                        src={article.image}
+                        alt={article.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <CardContent className="p-5 sm:p-6 flex-grow flex flex-col">
+                      <h3 className="font-semibold text-lg text-slate-800 dark:text-slate-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-tight">
+                        {article.title}
+                      </h3>
+                      <p className="text-slate-600 dark:text-slate-300 text-sm line-clamp-3 mb-3 leading-relaxed flex-grow">
+                        {article.description}
+                      </p>
+                      <span className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 group-hover:underline mt-auto pt-2">
+                        Read article{" "}
+                        <ChevronDown className="w-4 h-4 ml-1 transform rotate-[-90deg] transition-transform" />
+                      </span>
+                    </CardContent>
                   </Link>
                 </Card>
               ))}
@@ -1533,7 +1551,7 @@ export default function HomePage() {
           ref={marketingSectionRef}
           className={cn(
             "py-20 bg-blue-600 dark:bg-blue-700 text-white transition-all duration-1000 ease-out",
-            isMarketingSectionOnScreen ? "opacity-100" : "opacity-0",
+            isMarketingSectionOnScreen ? "opacity-100" : "opacity-0"
           )}
         >
           <div className="container mx-auto px-4">
@@ -1573,7 +1591,7 @@ export default function HomePage() {
                       ? `opacity-100 translate-y-0 animation-delay-${
                           index * 100
                         }`
-                      : "opacity-0 translate-y-5",
+                      : "opacity-0 translate-y-5"
                   )}
                 >
                   <div className="w-20 h-20 bg-white/20 dark:bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md ring-1 ring-white/20">
@@ -1588,7 +1606,7 @@ export default function HomePage() {
             </div>
             <div className="text-center">
               <Button
-                size="xl"
+                size="lg"
                 variant="secondary"
                 className="bg-white/90 hover:bg-white text-blue-700 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-blue-600 transition-transform transform hover:scale-105 rounded-lg px-10 py-3.5 text-base sm:text-lg"
               >
@@ -1602,12 +1620,175 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Featured Professionals Section */}
+        <section className="py-16 bg-slate-50 dark:bg-slate-900/50">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+                Professionnels en vedette
+              </h2>
+              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+                Découvrez nos agents immobiliers experts qui vous accompagneront dans vos projets
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {/* Utilisation du hook useProfessionals pour récupérer les vrais professionnels */}
+              {(() => {
+                const { professionals, loading, error } = useProfessionals({ sortBy: "rating", page: 1 });
+                 const displayedProfessionals = professionals.slice(0, 3);
+                
+                if (loading) return [
+                  <div key="skeleton-1" className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                    <div className="animate-pulse flex items-center gap-4 mb-4">
+                      <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+                      <div className="flex-1">
+                        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2 mb-2"></div>
+                        <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-2/3"></div>
+                      </div>
+                    </div>
+                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/3 mb-3"></div>
+                    <div className="flex gap-2 mb-4">
+                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                    </div>
+                    <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded w-full mt-4"></div>
+                  </div>,
+                  <div key="skeleton-2" className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                    <div className="animate-pulse flex items-center gap-4 mb-4">
+                      <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+                      <div className="flex-1">
+                        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2 mb-2"></div>
+                        <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-2/3"></div>
+                      </div>
+                    </div>
+                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/3 mb-3"></div>
+                    <div className="flex gap-2 mb-4">
+                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                    </div>
+                    <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded w-full mt-4"></div>
+                  </div>,
+                  <div key="skeleton-3" className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6">
+                    <div className="animate-pulse flex items-center gap-4 mb-4">
+                      <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-full"></div>
+                      <div className="flex-1">
+                        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2 mb-2"></div>
+                        <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-2/3"></div>
+                      </div>
+                    </div>
+                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/3 mb-3"></div>
+                    <div className="flex gap-2 mb-4">
+                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                      <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded w-1/4"></div>
+                    </div>
+                    <div className="h-10 bg-slate-200 dark:bg-slate-700 rounded w-full mt-4"></div>
+                  </div>
+                ];
+                
+                if (error) return (
+                  <div className="col-span-3 p-6 text-center">
+                    <p className="text-red-500">Erreur lors du chargement des professionnels</p>
+                  </div>
+                );
+                
+                if (displayedProfessionals.length === 0) return (
+                   <div className="col-span-3 p-6 text-center">
+                     <p>Aucun professionnel trouvé</p>
+                   </div>
+                 );
+                 
+                 return displayedProfessionals.map((professional, index) => (
+              
+                <motion.div
+                  key={professional._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
+                >
+                  <div className="p-6">
+                    {/* Avatar et infos principales */}
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                        <span className="text-white font-bold text-xl">
+                          {professional.name.split(" ").map(n => n[0]).join("")}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg text-slate-800 dark:text-slate-100">
+                          {professional.name}
+                        </h3>
+                        <p className="text-slate-600 dark:text-slate-300 text-sm">
+                          {professional.title}
+                        </p>
+                        <p className="text-slate-500 dark:text-slate-400 text-xs">
+                          {professional.company}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Localisation */}
+                    <div className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300 mb-3">
+                      <MapPin className="w-4 h-4" />
+                      <span>{professional.location.city}, {professional.location.state}</span>
+                    </div>
+
+                    {/* Spécialités */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {professional.specialties.map((specialty, idx) => (
+                        <Badge key={idx} variant="secondary" className="text-xs">
+                          {specialty}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    {/* Statistiques */}
+                    <div className="flex items-center justify-between mb-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                      <div className="flex items-center gap-1">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        <span className="font-medium text-sm">{professional.rating}</span>
+                        <span className="text-slate-500 text-xs">({professional.reviews})</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-slate-800 dark:text-slate-100">
+                          {professional.totalTransactions} transactions
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bouton de contact */}
+                    <Link href={`/agents/${professional._id}`} className="block w-full">
+                      <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                        Voir le profil
+                      </Button>
+                    </Link>
+                  </div>
+                </motion.div>
+                ));
+              })()}
+            </div>
+
+            <div className="text-center">
+              <Link href="/professionals">
+                <Button size="lg" variant="outline" className="group">
+                  Voir tous les professionnels
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* FAQ Section */}
         <section
           ref={faqSectionRef}
           className={cn(
             "py-16 bg-slate-100 dark:bg-slate-800/50 transition-all duration-1000 ease-out",
-            isFaqSectionOnScreen ? "opacity-100" : "opacity-0",
+            isFaqSectionOnScreen ? "opacity-100" : "opacity-0"
           )}
         >
           <div className="container mx-auto px-4">
@@ -1644,7 +1825,7 @@ export default function HomePage() {
                       ? `opacity-100 translate-x-0 animation-delay-${
                           index * 100
                         }`
-                      : "opacity-0 -translate-x-5",
+                      : "opacity-0 -translate-x-5"
                   )}
                 >
                   <CardContent className="p-0">
@@ -1738,8 +1919,7 @@ export default function HomePage() {
             </div>
             <div className="border-t border-slate-800 dark:border-slate-700 mt-10 pt-10 text-center text-sm">
               <p>
-                © {new Date().getFullYear()} LoopNet Clone. All rights
-                reserved.
+                © {new Date().getFullYear()} LoopNet Clone. All rights reserved.
               </p>
               <p className="mt-2">
                 <Link href="/terms" className="hover:underline mx-2">
@@ -1753,8 +1933,6 @@ export default function HomePage() {
             </div>
           </div>
         </footer>
-
-
       </div>
     </div>
   );

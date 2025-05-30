@@ -230,7 +230,7 @@ export default function ListViewPage() {
                           {/* Image */}
                           <div className='md:w-1/3 relative h-48 md:h-auto'>
                             <Image
-                              src={getBestImageUrl(property.images) || '/placeholder-property.jpg'}
+                              src={getBestImageUrl(property.images)?.url || '/placeholder-property.jpg'}
                               alt={property.title}
                               fill
                               className='object-cover'

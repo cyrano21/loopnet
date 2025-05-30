@@ -1,111 +1,118 @@
-import { NextRequest, NextResponse } from "next/server"
-import { connectDB } from "@/lib/mongodb"
-import Property from "@/models/Property"
+import { NextRequest, NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongodb";
+import Property from "@/models/Property";
 
 export async function GET(request: NextRequest) {
   try {
-    await connectDB()
+    await connectDB();
 
-    const { searchParams } = new URL(request.url)
-    const limit = parseInt(searchParams.get("limit") || "10")
-    const page = parseInt(searchParams.get("page") || "1")
-    const skip = (page - 1) * limit
+    const { searchParams } = new URL(request.url);
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const page = parseInt(searchParams.get("page") || "1");
+    const skip = (page - 1) * limit;
 
     // Construction des filtres
-    const filters: any = {}
-    
+    const filters: any = {};
+
     // Filtre par type de transaction
-    const transactionType = searchParams.get("transactionType")
+    const transactionType = searchParams.get("transactionType");
     if (transactionType && transactionType !== "all") {
-      filters.transactionType = transactionType
+      filters.transactionType = transactionType;
     }
-    
+
     // Filtre par type de propriété
-    const propertyType = searchParams.get("propertyType")
+    const propertyType = searchParams.get("propertyType");
     if (propertyType && propertyType !== "all") {
-      filters.propertyType = propertyType
+      filters.propertyType = propertyType;
     }
-    
+
     // Filtre par source
-    const source = searchParams.get("source")
+    const source = searchParams.get("source");
     if (source && source !== "all") {
       if (source === "scraped") {
-        filters["contactInfo.email"] = "scraped@system.com"
+        filters["contactInfo.email"] = "scraped@system.com";
       } else if (source === "manual") {
-        filters["contactInfo.email"] = { $ne: "scraped@system.com" }
+        filters["contactInfo.email"] = { $ne: "scraped@system.com" };
       }
     }
-    
+
+    // Filtre par agent/propriétaire
+    const agent = searchParams.get("agent");
+    if (agent) {
+      filters.owner = agent;
+    }
+
     // Filtre par ville
-    const city = searchParams.get("city")
+    const city = searchParams.get("city");
     if (city) {
-      filters.city = { $regex: city, $options: "i" }
+      filters.city = { $regex: city, $options: "i" };
     }
-    
+
     // Filtre par prix
-    const minPrice = searchParams.get("minPrice")
-    const maxPrice = searchParams.get("maxPrice")
+    const minPrice = searchParams.get("minPrice");
+    const maxPrice = searchParams.get("maxPrice");
     if (minPrice || maxPrice) {
-      filters.price = {}
-      if (minPrice) filters.price.$gte = parseInt(minPrice)
-      if (maxPrice) filters.price.$lte = parseInt(maxPrice)
+      filters.price = {};
+      if (minPrice) filters.price.$gte = parseInt(minPrice);
+      if (maxPrice) filters.price.$lte = parseInt(maxPrice);
     }
-    
+
     // Filtre par surface
-    const minSurface = searchParams.get("minSurface")
-    const maxSurface = searchParams.get("maxSurface")
+    const minSurface = searchParams.get("minSurface");
+    const maxSurface = searchParams.get("maxSurface");
     if (minSurface || maxSurface) {
-      filters.surface = {}
-      if (minSurface) filters.surface.$gte = parseInt(minSurface)
-      if (maxSurface) filters.surface.$lte = parseInt(maxSurface)
+      filters.surface = {};
+      if (minSurface) filters.surface.$gte = parseInt(minSurface);
+      if (maxSurface) filters.surface.$lte = parseInt(maxSurface);
     }
-    
+
     // Filtre par nombre de pièces
-    const rooms = searchParams.get("rooms")
+    const rooms = searchParams.get("rooms");
     if (rooms) {
-      filters.rooms = parseInt(rooms)
+      filters.rooms = parseInt(rooms);
     }
-    
+
     // Recherche textuelle
-    const q = searchParams.get("q")
+    const q = searchParams.get("q");
     if (q) {
       filters.$or = [
         { title: { $regex: q, $options: "i" } },
         { description: { $regex: q, $options: "i" } },
-        { address: { $regex: q, $options: "i" } }
-      ]
+        { address: { $regex: q, $options: "i" } },
+      ];
     }
-    
+
     // Tri
-    const sort = searchParams.get("sort") || "newest"
-    let sortOptions: any = { createdAt: -1 }
+    const sort = searchParams.get("sort") || "newest";
+    let sortOptions: any = { createdAt: -1 };
     switch (sort) {
       case "oldest":
-        sortOptions = { createdAt: 1 }
-        break
+        sortOptions = { createdAt: 1 };
+        break;
       case "price_asc":
-        sortOptions = { price: 1 }
-        break
+        sortOptions = { price: 1 };
+        break;
       case "price_desc":
-        sortOptions = { price: -1 }
-        break
+        sortOptions = { price: -1 };
+        break;
       case "surface_asc":
-        sortOptions = { surface: 1 }
-        break
+        sortOptions = { surface: 1 };
+        break;
       case "surface_desc":
-        sortOptions = { surface: -1 }
-        break
+        sortOptions = { surface: -1 };
+        break;
       default:
-        sortOptions = { createdAt: -1 }
+        sortOptions = { createdAt: -1 };
     }
 
     const properties = await Property.find(filters)
       .sort(sortOptions)
       .limit(limit)
       .skip(skip)
-      .lean()
+      .populate("owner", "name email company role avatar phone")
+      .lean();
 
-    const total = await Property.countDocuments(filters)
+    const total = await Property.countDocuments(filters);
 
     return NextResponse.json({
       success: true,
@@ -118,45 +125,45 @@ export async function GET(request: NextRequest) {
           pages: Math.ceil(total / limit),
         },
       },
-    })
+    });
   } catch (error) {
-    console.error("Erreur récupération propriétés:", error)
+    console.error("Erreur récupération propriétés:", error);
     return NextResponse.json(
       { error: "Erreur lors de la récupération des propriétés" },
-      { status: 500 },
-    )
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    await connectDB()
+    await connectDB();
 
-    const body = await request.json()
+    const body = await request.json();
 
     // Validation des données
     if (!body.title || !body.price || !body.location) {
       return NextResponse.json(
         { error: "Données manquantes (title, price, location requis)" },
-        { status: 400 },
-      )
+        { status: 400 }
+      );
     }
 
-    const property = new Property(body)
-    await property.save()
+    const property = new Property(body);
+    await property.save();
 
     return NextResponse.json(
       {
         success: true,
         data: property,
       },
-      { status: 201 },
-    )
+      { status: 201 }
+    );
   } catch (error) {
-    console.error("Erreur création propriété:", error)
+    console.error("Erreur création propriété:", error);
     return NextResponse.json(
       { error: "Erreur lors de la création de la propriété" },
-      { status: 500 },
-    )
+      { status: 500 }
+    );
   }
 }

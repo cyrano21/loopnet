@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed": "tsx -r dotenv/config scripts/seed-database.ts",
+    "seed:all": "tsx -r dotenv/config scripts/seed-all.ts"
   },
   "dependencies": {
     "@auth/core": "latest",
@@ -91,6 +93,7 @@
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.0",
+    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }
 }

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Maximize2, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PropertySeedData } from "@/lib/seed-data";
+import { getBestImageUrl, isUnsplashImage } from "@/lib/image-utils";
 
 interface PropertyGalleryProps {
   property: PropertySeedData;
@@ -13,7 +14,21 @@ export function PropertyGallery({ property }: PropertyGalleryProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const images = (property.images || []).filter(img => img && typeof img === 'string' && img.trim() !== '');
+  
+  // Filtrer les images valides et vérifier si elles sont illustratives
+  const processedImages = (property.images || []).map((img, index) => {
+    if (img && typeof img === 'string' && img.trim() !== '') {
+      // Vérifier si c'est une image Unsplash ou un placeholder
+      const isIllustrative = isUnsplashImage(img) || img.includes('placeholder');
+      return { url: img, isIllustrative };
+    }
+    // Si l'image n'est pas valide, utiliser une image Unsplash
+    const imageResult = getBestImageUrl([], property.propertyType);
+    return imageResult;
+  }).filter(img => img.url && img.url.trim() !== '');
+  
+  // Extraire les URLs des images pour la compatibilité avec le code existant
+  const images = processedImages.map(img => img.url);
 
   const nextImage = () => {
     if (isTransitioning) return;
@@ -34,10 +49,22 @@ export function PropertyGallery({ property }: PropertyGalleryProps) {
   };
 
   if (images.length === 0) {
+    // Utiliser une image Unsplash par défaut si aucune image n'est disponible
+    const defaultImage = getBestImageUrl([], property.propertyType);
+    
     return (
       <Card className="p-6 mb-6">
-        <div className="bg-gray-200 rounded-lg h-96 flex items-center justify-center">
-          <span className="text-gray-500">Aucune image disponible</span>
+        <div className="relative rounded-lg h-96 overflow-hidden">
+          <Image
+            src={defaultImage.url}
+            alt={property.title || "Propriété"}
+            fill
+            className="object-cover"
+          />
+          <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-2 flex items-center justify-center">
+            <Info className="h-4 w-4 mr-2" />
+            <span className="text-sm">Image illustrative Unsplash</span>
+          </div>
         </div>
       </Card>
     );
@@ -64,6 +91,14 @@ export function PropertyGallery({ property }: PropertyGalleryProps) {
               } ${isZoomed ? 'object-contain max-h-screen' : 'object-cover'}`}
               priority
             />
+            
+            {/* Indicateur d'image illustrative */}
+            {processedImages[selectedImageIndex]?.isIllustrative && (
+              <div className="absolute bottom-12 left-0 right-0 bg-black/70 text-white p-2 flex items-center justify-center z-10">
+                <Info className="h-4 w-4 mr-2" />
+                <span className="text-sm">Image illustrative Unsplash</span>
+              </div>
+            )}
             
             {/* Contrôles de navigation */}
             {images.length > 1 && (
@@ -130,6 +165,14 @@ export function PropertyGallery({ property }: PropertyGalleryProps) {
                     index === selectedImageIndex ? 'filter-none' : 'filter brightness-90'
                   } transition-all duration-300`}
                 />
+                
+                {/* Indicateur d'image illustrative sur les miniatures */}
+                {processedImages[index]?.isIllustrative && (
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-1 flex items-center justify-center">
+                    <Info className="h-3 w-3 mr-1" />
+                    <span className="text-xs">Illustrative</span>
+                  </div>
+                )}
                 
                 {/* Overlay pour les images supplémentaires avec animation */}
                 {index === 7 && images.length > 8 && (

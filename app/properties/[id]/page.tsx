@@ -1,22 +1,25 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import { use } from 'react'
 
 /**
  * Page de redirection pour maintenir la compatibilité avec les anciennes URLs
  * Redirige /properties/[id] vers /property/[id]
  */
-export default function PropertiesRedirectPage() {
-  const params = useParams()
+export default function PropertiesRedirectPage({ params }) {
   const router = useRouter()
+  
+  // Unwrap the params object using React.use()
+  const unwrappedParams = use(params)
 
   useEffect(() => {
-    if (params.id) {
+    if (unwrappedParams.id) {
       // Redirection immédiate vers la nouvelle route
-      router.replace(`/property/${params.id}`)
+      router.replace(`/property/${unwrappedParams.id}`)
     }
-  }, [params.id, router])
+  }, [unwrappedParams.id, router])
 
   // Affichage de chargement pendant la redirection
   return (

@@ -17,6 +17,7 @@ interface UsePropertiesOptions {
   rooms?: number
   sort?: string
   q?: string
+  agent?: string
 }
 
 interface UsePropertiesReturn {

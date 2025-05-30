@@ -57,7 +57,7 @@ export function PropertyComparisonModal ({
               {/* Image */}
               <div className='relative h-48'>
                 <Image
-                  src={getBestImageUrl(property.images, property.propertyType)}
+                  src={getBestImageUrl(property.images, property.propertyType)?.url || '/placeholder-property.jpg'}
                   alt={property.title}
                   fill
                   className='object-cover'

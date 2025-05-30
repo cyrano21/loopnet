@@ -1,14 +1,20 @@
-// Export all property components
-export { PropertyHeader } from './PropertyHeader';
-export { PropertyGallery } from './PropertyGallery';
-export { PropertyOverview } from './PropertyOverview';
-export { PropertyDetails } from './PropertyDetails';
-export { PropertyFeatures } from './PropertyFeatures';
-export { PropertyReviews } from './PropertyReviews';
-export { PropertySidebar } from './PropertySidebar';
-export { PropertyAddress } from './PropertyAddress';
-export { PropertyVideo } from './PropertyVideo';
-export { PropertyNearby } from './PropertyNearby';
-export { VirtualTour360 } from './VirtualTour360';
-export { WalkScore } from './WalkScore';
-export { MortgageCalculator } from './MortgageCalculator';
+export * from "./MortgageCalculator";
+export * from "./PropertyAddress";
+export * from "./PropertyDetails";
+export * from "./PropertyFeatures";
+export * from "./PropertyGallery";
+export * from "./PropertyHeader";
+export * from "./PropertyNearby";
+export * from "./PropertyOverview";
+export * from "./PropertyReviews";
+export * from "./PropertySidebar";
+export * from "./PropertyVideo";
+export * from "./VirtualTour360";
+export * from "./WalkScore";
+
+// Nouveaux composants
+export * from "./EnergyClass";
+export * from "./FloorPlans";
+export * from "./HomeValueChart";
+export * from "./NearbySimilarProperty";
+export * from "./ScheduleTour";

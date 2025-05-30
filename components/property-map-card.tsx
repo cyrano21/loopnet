@@ -53,7 +53,8 @@ export function PropertyMapCard({ property, isSelected = false, onClick, compact
     }
   }
 
-  const imageUrl = getBestImageUrl(property.images) || '/placeholder-property.jpg'
+  const imageResult = getBestImageUrl(property.images);
+  const imageUrl = imageResult?.url || '/placeholder-property.jpg'
   const isInComparison = comparison.comparisonList.some((p: any) => p._id === property._id)
   const isFav = isFavorite(property._id)
 
@@ -129,7 +130,7 @@ export function PropertyMapCard({ property, isSelected = false, onClick, compact
 
           {/* Actions sur l'image */}
           <div className='absolute top-3 right-3 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity'>
-            {can('addToFavorites') && (
+            {can('canAddFavorites') && (
               <Button
                 variant='secondary'
                 size='sm'

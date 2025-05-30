@@ -32,6 +32,13 @@ export interface PropertySeedData {
   elevator?: boolean;
   accessibility?: boolean;
   tags: string[];
+  agent?: {
+    name: string;
+    phone: string;
+    email: string;
+    company: string;
+    image?: string;
+  };
 }
 
 export const propertiesSeedData: PropertySeedData[] = [
@@ -67,6 +74,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     elevator: true,
     accessibility: true,
     tags: ["Neuf", "Haut de gamme", "Vue"],
+    agent: {
+      name: "Sophie Martin",
+      phone: "06 12 34 56 78",
+      email: "sophie.martin@century21.fr",
+      company: "Century 21 Entreprise",
+    },
   },
   {
     id: "2",
@@ -98,6 +111,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     totalFloors: 1,
     accessibility: true,
     tags: ["Centre-ville", "Vitrine", "Commerce"],
+    agent: {
+      name: "Thomas Dubois",
+      phone: "06 23 45 67 89",
+      email: "thomas.dubois@orpi.com",
+      company: "Orpi Commercial",
+    },
   },
   {
     id: "3",
@@ -127,6 +146,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     energyClass: "D",
     parking: 10,
     tags: ["Logistique", "Quai", "Moderne"],
+    agent: {
+      name: "Philippe Leroy",
+      phone: "06 34 56 78 90",
+      email: "philippe.leroy@bnpparibas.com",
+      company: "BNP Paribas Real Estate",
+    },
   },
   {
     id: "4",
@@ -157,6 +182,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     terrace: true,
     accessibility: true,
     tags: ["Équipé", "Terrasse", "Centre-ville"],
+    agent: {
+      name: "Marie Rousseau",
+      phone: "06 45 67 89 01",
+      email: "marie.rousseau@foncia.com",
+      company: "Foncia Versailles",
+    },
   },
   {
     id: "5",
@@ -188,6 +219,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     totalFloors: 4,
     elevator: true,
     tags: ["Rénovation", "Investissement", "Potentiel"],
+    agent: {
+      name: "Jean-Pierre Moreau",
+      phone: "06 56 78 90 12",
+      email: "jp.moreau@cushwake.com",
+      company: "Cushman & Wakefield",
+    },
   },
   {
     id: "6",
@@ -216,6 +253,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     lng: 2.4431,
     energyClass: "E",
     tags: ["Cachet", "Verrière", "Artiste"],
+    agent: {
+      name: "Isabelle Petit",
+      phone: "06 67 89 01 23",
+      email: "isabelle.petit@guyhoquet.com",
+      company: "Guy Hoquet Montreuil",
+    },
   },
   {
     id: "7",
@@ -246,6 +289,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     parking: 5,
     accessibility: true,
     tags: ["Prestige", "Automobile", "Champs-Élysées"],
+    agent: {
+      name: "Alexandre Dupont",
+      phone: "06 78 90 12 34",
+      email: "alexandre.dupont@jll.com",
+      company: "JLL Luxury",
+    },
   },
   {
     id: "8",
@@ -276,6 +325,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     elevator: true,
     accessibility: true,
     tags: ["Équipé", "Moderne", "Coworking"],
+    agent: {
+      name: "Céline Bernard",
+      phone: "06 89 01 23 45",
+      email: "celine.bernard@nexity.fr",
+      company: "Nexity Lyon",
+    },
   },
   {
     id: "9",
@@ -306,6 +361,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     parking: 4,
     garden: true,
     tags: ["Prestige", "Cachet", "Jardin"],
+    agent: {
+      name: "François Delacroix",
+      phone: "06 90 12 34 56",
+      email: "francois.delacroix@danielfeau.fr",
+      company: "Daniel Féau Prestige",
+    },
   },
   {
     id: "10",
@@ -336,6 +397,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     accessibility: true,
     parking: 2,
     tags: ["Médical", "Équipé", "PMR"],
+    agent: {
+      name: "Nathalie Laurent",
+      phone: "06 01 23 45 67",
+      email: "nathalie.laurent@laforet.com",
+      company: "Laforêt Immobilier Pro",
+    },
   },
   {
     id: "11",
@@ -365,6 +432,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     energyClass: "C",
     parking: 15,
     tags: ["Agroalimentaire", "Production", "HACCP"],
+    agent: {
+      name: "Michel Garnier",
+      phone: "06 12 34 56 78",
+      email: "michel.garnier@arthurloyd.fr",
+      company: "Arthur Loyd Industrie",
+    },
   },
   {
     id: "12",
@@ -394,6 +467,12 @@ export const propertiesSeedData: PropertySeedData[] = [
     energyClass: "A",
     accessibility: true,
     tags: ["Luxe", "Prestige", "Champs-Élysées"],
+    agent: {
+      name: "Isabelle Moreau",
+      phone: "06 98 76 54 32",
+      email: "isabelle.moreau@savills.fr",
+      company: "Savills France",
+    },
   },
 ];
 

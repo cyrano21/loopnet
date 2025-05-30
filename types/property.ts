@@ -59,9 +59,24 @@ export interface Property {
   images: PropertyImage[]
 
   // Owner/Agent
-  owner: string // ID de l'utilisateur
+  owner: string | {
+    _id: string
+    name: string
+    email: string
+    company?: string
+    role: string
+    avatar?: string
+    phone?: string
+  } // ID de l'utilisateur ou objet populé
   ownerType: "individual" | "agent" | "agency"
   contactInfo: PropertyContact
+  agent?: {
+    name: string
+    phone?: string
+    email: string
+    company?: string
+    image?: string
+  }
 
   // Status
   status: "draft" | "pending" | "active" | "sold" | "rented" | "expired" | "suspended"

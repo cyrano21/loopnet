@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
 import { useProfessionals } from '@/hooks/use-professionals'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -9,7 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Search, MapPin, Star, Phone, Mail, Building, Award, TrendingUp, Users, Filter, Sparkles } from 'lucide-react'
+import { Search, MapPin, Star, Phone, Mail, Building, Award, TrendingUp, Users, Filter, Sparkles, Eye } from 'lucide-react'
 import { Pagination } from '@/components/ui/pagination'
 
 interface SearchFilters {
@@ -56,16 +57,16 @@ const ProfessionalsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 overflow-hidden"
+        className="relative bg-gradient-to-r from-primary via-primary/90 to-primary/80 overflow-hidden"
       >
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-transparent to-indigo-600/20"></div>
+        <div className="absolute inset-0 bg-black/10 dark:bg-black/20"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-primary/20"></div>
         
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -108,7 +109,7 @@ const ProfessionalsPage = () => {
               initial={{ scale: 0.9 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/90 text-sm font-medium mb-6 border border-white/20"
+              className="inline-flex items-center px-4 py-2 bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-full text-primary-foreground text-sm font-medium mb-6 border border-white/20 dark:border-white/10"
             >
               <Sparkles className="h-4 w-4 mr-2" />
               Plateforme Premium
@@ -118,7 +119,7 @@ const ProfessionalsPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight"
+              className="text-5xl md:text-6xl font-bold text-primary-foreground mb-6 leading-tight"
             >
               Professionnels de l'Immobilier
               <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
@@ -130,7 +131,7 @@ const ProfessionalsPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed"
+              className="text-xl text-primary-foreground/80 max-w-3xl mx-auto leading-relaxed"
             >
               Découvrez les meilleurs agents et courtiers certifiés pour vos projets immobiliers commerciaux. 
               Expertise garantie, résultats exceptionnels.
@@ -140,7 +141,7 @@ const ProfessionalsPage = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.8 }}
-              className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-blue-100"
+              className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-primary-foreground/80"
             >
               <div className="flex items-center">
                 <Award className="h-4 w-4 mr-2" />
@@ -165,11 +166,11 @@ const ProfessionalsPage = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8 mb-8 relative overflow-hidden"
+          className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-xl border border-border p-8 mb-8 relative overflow-hidden"
         >
           {/* Decorative elements */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full blur-3xl opacity-30 -translate-y-16 translate-x-16"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-100 to-pink-100 rounded-full blur-2xl opacity-40 translate-y-12 -translate-x-12"></div>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full blur-3xl opacity-30 -translate-y-16 translate-x-16"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-secondary/20 to-accent/10 rounded-full blur-2xl opacity-40 translate-y-12 -translate-x-12"></div>
           
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -181,11 +182,11 @@ const ProfessionalsPage = () => {
               <motion.div
                 whileHover={{ rotate: 360 }}
                 transition={{ duration: 0.5 }}
-                className="p-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg mr-3"
+                className="p-2 bg-gradient-to-r from-primary to-primary/80 rounded-lg mr-3"
               >
-                <Filter className="h-5 w-5 text-white" />
+                <Filter className="h-5 w-5 text-primary-foreground" />
               </motion.div>
-              <h2 className="text-xl font-semibold text-gray-800">Filtres de Recherche</h2>
+              <h2 className="text-xl font-semibold text-foreground">Filtres de Recherche</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
@@ -193,30 +194,30 @@ const ProfessionalsPage = () => {
                 whileHover={{ scale: 1.02 }}
                 className="relative group"
               >
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 group-hover:text-blue-500 transition-colors" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 group-hover:text-primary transition-colors" />
                 <Input
                   placeholder="Rechercher par nom..."
                   value={filters.search}
                   onChange={(e) => handleFilterChange('search', e.target.value)}
-                  className="pl-12 h-12 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200 bg-white/50"
+                  className="pl-12 h-12 border-2 border-border rounded-xl focus:border-primary focus:ring-primary/20 transition-all duration-200 bg-background/50"
                 />
               </motion.div>
               
               <motion.div whileHover={{ scale: 1.02 }}>
                 <div className="relative">
-                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 z-10" />
+                  <MapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10" />
                   <Input
                     placeholder="Ville ou région"
                     value={filters.location}
                     onChange={(e) => handleFilterChange('location', e.target.value)}
-                    className="pl-12 h-12 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-blue-500/20 transition-all duration-200 bg-white/50"
+                    className="pl-12 h-12 border-2 border-border rounded-xl focus:border-primary focus:ring-primary/20 transition-all duration-200 bg-background/50"
                   />
                 </div>
               </motion.div>
               
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Select value={filters.specialty} onValueChange={(value) => handleFilterChange('specialty', value)}>
-                  <SelectTrigger className="h-12 border-2 border-gray-200 rounded-xl focus:border-blue-500 bg-white/50 hover:bg-white/70 transition-all duration-200">
+                  <SelectTrigger className="h-12 border-2 border-border rounded-xl focus:border-primary bg-background/50 hover:bg-background/70 transition-all duration-200">
                     <SelectValue placeholder="🏢 Spécialité" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl border-2">
@@ -232,7 +233,7 @@ const ProfessionalsPage = () => {
               
               <motion.div whileHover={{ scale: 1.02 }}>
                 <Select value={filters.sortBy} onValueChange={(value) => handleFilterChange('sortBy', value)}>
-                  <SelectTrigger className="h-12 border-2 border-gray-200 rounded-xl focus:border-blue-500 bg-white/50 hover:bg-white/70 transition-all duration-200">
+                  <SelectTrigger className="h-12 border-2 border-border rounded-xl focus:border-primary bg-background/50 hover:bg-background/70 transition-all duration-200">
                     <SelectValue placeholder="📊 Trier par" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl border-2">
@@ -252,7 +253,7 @@ const ProfessionalsPage = () => {
               >
                 <Button 
                   onClick={handleSearch}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 group"
+                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 group"
                 >
                   <Search className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform" />
                   Rechercher
@@ -263,10 +264,10 @@ const ProfessionalsPage = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.7 }}
-                className="flex items-center px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200"
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-muted to-muted/80 rounded-xl border border-border"
               >
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                <p className="text-sm font-medium text-green-700">
+                <div className="w-2 h-2 bg-primary rounded-full mr-2 animate-pulse"></div>
+                <p className="text-sm font-medium text-foreground">
                   {total} professionnel{total > 1 ? 's' : ''} trouvé{total > 1 ? 's' : ''}
                 </p>
               </motion.div>
@@ -286,8 +287,8 @@ const ProfessionalsPage = () => {
               transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               className="relative mb-6"
             >
-              <div className="w-16 h-16 border-4 border-blue-200 rounded-full"></div>
-              <div className="absolute top-0 left-0 w-16 h-16 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+              <div className="w-16 h-16 border-4 border-muted rounded-full"></div>
+              <div className="absolute top-0 left-0 w-16 h-16 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
             </motion.div>
             
             <motion.div
@@ -296,8 +297,8 @@ const ProfessionalsPage = () => {
               transition={{ delay: 0.2 }}
               className="text-center"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Recherche en cours...</h3>
-              <p className="text-gray-600">Nous trouvons les meilleurs professionnels pour vous</p>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Recherche en cours...</h3>
+              <p className="text-muted-foreground">Nous trouvons les meilleurs professionnels pour vous</p>
             </motion.div>
             
             <motion.div
@@ -311,7 +312,7 @@ const ProfessionalsPage = () => {
                   key={i}
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.2 }}
-                  className="w-2 h-2 bg-blue-500 rounded-full"
+                  className="w-2 h-2 bg-primary rounded-full"
                 />
               ))}
             </motion.div>
@@ -344,7 +345,7 @@ const ProfessionalsPage = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-2xl font-bold text-gray-900 mb-3"
+              className="text-2xl font-bold text-foreground mb-3"
             >
               Oups ! Une erreur s'est produite
             </motion.h3>
@@ -353,9 +354,9 @@ const ProfessionalsPage = () => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 max-w-md mx-auto"
+              className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 mb-6 max-w-md mx-auto"
             >
-              <p className="text-red-700 font-medium">{error}</p>
+              <p className="text-destructive font-medium">{error}</p>
             </motion.div>
             
             <motion.div
@@ -367,7 +368,7 @@ const ProfessionalsPage = () => {
             >
               <Button 
                 onClick={() => window.location.reload()} 
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
               >
                 <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -406,9 +407,9 @@ const ProfessionalsPage = () => {
                     }}
                     className="group"
                   >
-                    <Card className="h-full bg-white/70 backdrop-blur-sm border-2 border-gray-100 hover:border-blue-200 hover:shadow-2xl transition-all duration-300 overflow-hidden relative">
+                    <Card className="h-full bg-card/70 backdrop-blur-sm border-2 border-border hover:border-primary/50 hover:shadow-2xl transition-all duration-300 overflow-hidden relative">
                       {/* Gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-indigo-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       
                       <CardHeader className="pb-4 relative z-10">
                         <div className="flex items-start space-x-4">
@@ -425,7 +426,7 @@ const ProfessionalsPage = () => {
                           </motion.div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-2 mb-1">
-                              <h3 className="font-bold text-lg text-gray-900 truncate group-hover:text-blue-700 transition-colors">
+                              <h3 className="font-bold text-lg text-foreground truncate group-hover:text-primary transition-colors">
                                 {professional.name}
                               </h3>
                               {professional.isVerified && (
@@ -441,8 +442,8 @@ const ProfessionalsPage = () => {
                                 </motion.div>
                               )}
                             </div>
-                            <p className="text-sm text-gray-600 mb-1">{professional.title}</p>
-                            <p className="text-sm font-medium text-blue-600 flex items-center">
+                            <p className="text-sm text-muted-foreground mb-1">{professional.title}</p>
+                            <p className="text-sm font-medium text-primary flex items-center">
                               <Building className="h-3 w-3 mr-1" />
                               {professional.company}
                             </p>
@@ -452,7 +453,7 @@ const ProfessionalsPage = () => {
 
                       <CardContent className="pt-0 relative z-10">
                         {/* Rating and Reviews */}
-                        <div className="flex items-center justify-between mb-4 bg-gradient-to-r from-gray-50 to-blue-50/30 rounded-lg p-3">
+                        <div className="flex items-center justify-between mb-4 bg-gradient-to-r from-muted/50 to-muted/30 rounded-lg p-3">
                           <div className="flex items-center space-x-2">
                             <div className="flex items-center">
                               {[...Array(5)].map((_, i) => (
@@ -461,19 +462,19 @@ const ProfessionalsPage = () => {
                                   className={`h-4 w-4 ${
                                     i < Math.floor(professional.rating) 
                                       ? 'text-yellow-400 fill-current' 
-                                      : 'text-gray-300'
+                                      : 'text-muted-foreground/30'
                                   }`} 
                                 />
                               ))}
                             </div>
-                            <span className="font-semibold text-gray-900">{professional.rating}</span>
-                            <span className="text-gray-500 text-sm">({professional.reviews} avis)</span>
+                            <span className="font-semibold text-foreground">{professional.rating}</span>
+                            <span className="text-muted-foreground text-sm">({professional.reviews} avis)</span>
                           </div>
                         </div>
 
                         {/* Location */}
-                        <div className="flex items-center text-sm text-gray-600 mb-3 bg-gray-50 rounded-lg p-2">
-                          <MapPin className="h-4 w-4 mr-2 text-blue-500" />
+                        <div className="flex items-center text-sm text-muted-foreground mb-3 bg-muted/50 rounded-lg p-2">
+                          <MapPin className="h-4 w-4 mr-2 text-primary" />
                           {professional.location.city}, {professional.location.state}
                         </div>
 
@@ -487,13 +488,13 @@ const ProfessionalsPage = () => {
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 0.5 + specIndex * 0.1 }}
                               >
-                                <Badge variant="outline" className="text-xs bg-white/80 border-blue-200 text-blue-700 hover:bg-blue-50 transition-colors">
+                                <Badge variant="outline" className="text-xs bg-card/80 border-primary/30 text-primary hover:bg-primary/10 transition-colors">
                                   {specialty}
                                 </Badge>
                               </motion.div>
                             ))}
                             {professional.specialties.length > 3 && (
-                              <Badge variant="outline" className="text-xs bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 text-purple-700">
+                              <Badge variant="outline" className="text-xs bg-gradient-to-r from-secondary/50 to-secondary/30 border-secondary/50 text-secondary-foreground">
                                 +{professional.specialties.length - 3}
                               </Badge>
                             )}
@@ -501,26 +502,26 @@ const ProfessionalsPage = () => {
                         </div>
 
                         {/* Stats */}
-                        <div className="grid grid-cols-2 gap-4 mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4">
+                        <div className="grid grid-cols-2 gap-4 mb-4 bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-4">
                           <motion.div 
                             whileHover={{ scale: 1.05 }}
                             className="text-center"
                           >
-                            <div className="font-bold text-blue-600 text-lg">{professional.yearsExperience}</div>
-                            <div className="text-gray-600 text-xs font-medium">Années d'exp.</div>
+                            <div className="font-bold text-primary text-lg">{professional.yearsExperience}</div>
+                            <div className="text-muted-foreground text-xs font-medium">Années d'exp.</div>
                           </motion.div>
                           <motion.div 
                             whileHover={{ scale: 1.05 }}
                             className="text-center"
                           >
                             <div className="font-bold text-green-600 text-lg">{professional.totalTransactions}</div>
-                            <div className="text-gray-600 text-xs font-medium">Transactions</div>
+                            <div className="text-muted-foreground text-xs font-medium">Transactions</div>
                           </motion.div>
                         </div>
 
                         {/* Volume */}
                         {professional.totalVolume > 0 && (
-                          <div className="flex items-center text-sm text-gray-600 mb-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3">
+                          <div className="flex items-center text-sm text-muted-foreground mb-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 rounded-lg p-3">
                             <TrendingUp className="h-4 w-4 mr-2 text-green-500" />
                             <span className="font-semibold">Volume: {formatCurrency(professional.totalVolume)}</span>
                           </div>
@@ -528,42 +529,61 @@ const ProfessionalsPage = () => {
 
                         {/* Bio */}
                         {professional.bio && (
-                          <p className="text-sm text-gray-600 mb-4 line-clamp-2 bg-gray-50/50 rounded-lg p-3 italic">
+                          <p className="text-sm text-muted-foreground mb-4 line-clamp-2 bg-muted/30 rounded-lg p-3 italic">
                             "{professional.bio}"
                           </p>
                         )}
 
                         {/* Contact Buttons */}
-                        <div className="flex space-x-3 pt-4">
+                        <div className="space-y-3 pt-4">
+                          {/* Voir le profil - bouton principal */}
                           <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex-1"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
                           >
-                            <Button 
-                              size="sm" 
-                              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg hover:shadow-xl transition-all duration-200"
-                              onClick={() => window.open(`tel:${professional.phone}`)}
-                            >
-                              <Phone className="h-4 w-4 mr-2" />
-                              Appeler
-                            </Button>
+                            <Link href={`/agents/${professional._id}`} className="block w-full">
+                              <Button 
+                                size="sm" 
+                                className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200"
+                              >
+                                <Eye className="h-4 w-4 mr-2" />
+                                Voir le profil
+                              </Button>
+                            </Link>
                           </motion.div>
-                          <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex-1"
-                          >
-                            <Button 
-                              size="sm" 
-                              variant="outline" 
-                              className="w-full border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
-                              onClick={() => window.open(`mailto:${professional.email}`)}
+                          
+                          {/* Boutons de contact */}
+                          <div className="flex space-x-3">
+                            <motion.div
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex-1"
                             >
-                              <Mail className="h-4 w-4 mr-2" />
-                              Email
-                            </Button>
-                          </motion.div>
+                              <Button 
+                                size="sm" 
+                                className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-200"
+                                onClick={() => window.open(`tel:${professional.phone}`)}
+                              >
+                                <Phone className="h-4 w-4 mr-2" />
+                                Appeler
+                              </Button>
+                            </motion.div>
+                            <motion.div
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex-1"
+                            >
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="w-full border-2 border-border hover:border-primary/50 hover:bg-primary/10 transition-all duration-200"
+                                onClick={() => window.open(`mailto:${professional.email}`)}
+                              >
+                                <Mail className="h-4 w-4 mr-2" />
+                                Email
+                              </Button>
+                            </motion.div>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -586,9 +606,9 @@ const ProfessionalsPage = () => {
                   transition={{ duration: 0.5, delay: 0.2 }}
                   className="relative inline-block mb-6"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-full blur-xl opacity-50"></div>
-                  <div className="relative bg-gradient-to-r from-blue-500 to-indigo-600 p-6 rounded-full">
-                    <Users className="h-12 w-12 text-white" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/10 rounded-full blur-xl opacity-50"></div>
+                  <div className="relative bg-gradient-to-r from-primary to-primary/80 p-6 rounded-full">
+                    <Users className="h-12 w-12 text-primary-foreground" />
                   </div>
                 </motion.div>
                 
@@ -596,7 +616,7 @@ const ProfessionalsPage = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.4 }}
-                  className="text-2xl font-bold text-gray-900 mb-3"
+                  className="text-2xl font-bold text-foreground mb-3"
                 >
                   Aucun professionnel trouvé
                 </motion.h3>
@@ -605,7 +625,7 @@ const ProfessionalsPage = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.6 }}
-                  className="text-gray-600 text-lg mb-6"
+                  className="text-muted-foreground text-lg mb-6"
                 >
                   Essayez de modifier vos critères de recherche pour découvrir nos professionnels.
                 </motion.p>
@@ -614,18 +634,18 @@ const ProfessionalsPage = () => {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5, delay: 0.8 }}
-                  className="flex flex-wrap justify-center gap-4 text-sm text-gray-500 mb-6"
+                  className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground mb-6"
                 >
-                  <div className="flex items-center px-4 py-2 bg-blue-50 rounded-full">
-                    <Search className="h-4 w-4 mr-2 text-blue-500" />
+                  <div className="flex items-center px-4 py-2 bg-primary/10 rounded-full">
+                    <Search className="h-4 w-4 mr-2 text-primary" />
                     Élargissez votre recherche
                   </div>
-                  <div className="flex items-center px-4 py-2 bg-green-50 rounded-full">
+                  <div className="flex items-center px-4 py-2 bg-green-500/10 rounded-full">
                     <MapPin className="h-4 w-4 mr-2 text-green-500" />
                     Changez de localisation
                   </div>
-                  <div className="flex items-center px-4 py-2 bg-purple-50 rounded-full">
-                    <Building className="h-4 w-4 mr-2 text-purple-500" />
+                  <div className="flex items-center px-4 py-2 bg-secondary/20 rounded-full">
+                    <Building className="h-4 w-4 mr-2 text-secondary-foreground" />
                     Modifiez la spécialité
                   </div>
                 </motion.div>
@@ -640,7 +660,7 @@ const ProfessionalsPage = () => {
                       setFilters({ search: '', specialty: 'all', location: '', sortBy: 'rating' })
                       setCurrentPage(1)
                     }}
-                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground px-8 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                     Réinitialiser les filtres
                   </Button>
@@ -656,7 +676,7 @@ const ProfessionalsPage = () => {
                 transition={{ duration: 0.6, delay: 0.5 }}
                 className="flex justify-center mt-12"
               >
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-4">
+                <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg border border-border p-4">
                   <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}

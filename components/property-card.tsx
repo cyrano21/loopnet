@@ -207,12 +207,16 @@ export function PropertyCard({
       return;
     }
 
-    if (type === "phone" && property.contactInfo?.phone) {
-      window.open(`tel:${property.contactInfo.phone}`);
-    } else if (type === "email" && property.contactInfo?.email) {
-      window.open(
-        `mailto:${property.contactInfo.email}?subject=Info: ${property.title}`
-      );
+    // Priorité aux données d'agent populées, puis contactInfo
+    const agentData =
+      typeof property.owner === "object" ? property.owner : null;
+    const phone = agentData?.phone || property.contactInfo?.phone;
+    const email = agentData?.email || property.contactInfo?.email;
+
+    if (type === "phone" && phone) {
+      window.open(`tel:${phone}`);
+    } else if (type === "email" && email) {
+      window.open(`mailto:${email}?subject=Info: ${property.title}`);
     } else {
       toast.error(`Contact (${type}) non disponible.`);
     }
@@ -237,9 +241,9 @@ export function PropertyCard({
 
     window.location.href = `/property/${property.slug || property._id}`;
   };
-
+  const imageResult = getBestImageUrl(property.images, property.propertyType);
   const imageUrl =
-    getBestImageUrl(property.images, property.propertyType) ||
+    imageResult?.url ||
     `https://via.placeholder.com/400x300/e0e0e0/757575?text=${encodeURIComponent(
       property.propertyType
     )}`;
@@ -526,14 +530,25 @@ export function PropertyCard({
                 )}
               </div>
             )}
-          {/* Contact vendeur */}
-          {can("canViewSellerInfo") && property.contactInfo ? (
+          {/* Contact vendeur/agent */}
+          {can("canViewSellerInfo") &&
+          (property.contactInfo ||
+            (typeof property.owner === "object" && property.owner)) ? (
             <div className="bg-slate-50 dark:bg-slate-700/60 p-3 rounded-md mb-1 mt-auto border border-slate-200 dark:border-slate-600 text-xs">
               <h4 className="font-medium text-slate-600 dark:text-slate-300 mb-1.5">
-                Contact: {property.contactInfo.name}
+                {typeof property.owner === "object" && property.owner ? (
+                  <span>
+                    Agent: {property.owner.name}{" "}
+                    {property.owner.company && `(${property.owner.company})`}
+                  </span>
+                ) : (
+                  <span>Contact: {property.contactInfo?.name}</span>
+                )}
               </h4>
               <div className="flex gap-2">
-                {property.contactInfo.phone && (
+                {((typeof property.owner === "object" &&
+                  property.owner?.phone) ||
+                  property.contactInfo?.phone) && (
                   <Button
                     size="sm"
                     variant="outline"
@@ -543,7 +558,9 @@ export function PropertyCard({
                     <Phone className="h-3 w-3 mr-1.5" /> Appeler
                   </Button>
                 )}
-                {property.contactInfo.email && (
+                {((typeof property.owner === "object" &&
+                  property.owner?.email) ||
+                  property.contactInfo?.email) && (
                   <Button
                     size="sm"
                     variant="outline"

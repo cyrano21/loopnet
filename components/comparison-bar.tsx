@@ -104,7 +104,7 @@ export function ComparisonBar({
                       src={getBestImageUrl(
                         property.images,
                         property.propertyType
-                      )}
+                      )?.url || '/placeholder-property.jpg'}
                       alt={property.title}
                       width={64}
                       height={64}

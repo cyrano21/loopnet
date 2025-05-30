@@ -7,6 +7,15 @@ import User from "@/models/User"
 import { connectToDatabase } from "@/lib/mongodb"
 import type { NextAuthOptions } from "next-auth"
 
+// Vérifier les variables d'environnement requises
+if (!process.env.MONGODB_URI) {
+  throw new Error('MONGODB_URI environment variable is not set')
+}
+
+if (!process.env.NEXTAUTH_SECRET) {
+  throw new Error('NEXTAUTH_SECRET environment variable is not set')
+}
+
 const client = new MongoClient(process.env.MONGODB_URI!)
 
 // List of admin emails
@@ -16,8 +25,8 @@ export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(client),
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       allowDangerousEmailAccountLinking: true, // Permet la liaison de comptes avec la même adresse email
     }),
     CredentialsProvider({
@@ -60,11 +69,12 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 jours
   },
   callbacks: {
     async signIn({ user, account, profile }) {
-      if (user.email && ADMIN_EMAILS.includes(user.email)) {
-        try {
+      try {
+        if (user.email && ADMIN_EMAILS.includes(user.email)) {
           await connectToDatabase()
           await User.findOneAndUpdate(
             { email: user.email },
@@ -74,11 +84,12 @@ export const authOptions: NextAuthOptions = {
             },
             { upsert: true },
           )
-        } catch (error) {
-          console.error("Error updating user role:", error)
         }
+        return true
+      } catch (error) {
+        console.error("Error in signIn callback:", error)
+        return true // Ne pas bloquer la connexion à cause d'une erreur DB
       }
-      return true
     },
     async jwt({ token, user }) {
       if (user) {
@@ -109,8 +120,20 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/auth/signin",
-    // Note: 'signUp' is not a standard page in NextAuth.js
-    // You can handle the sign-up flow in the sign-in page
     error: "/auth/error",
+  },
+  debug: process.env.NODE_ENV === "development",
+  logger: {
+    error(code, metadata) {
+      console.error("NextAuth Error:", code, metadata)
+    },
+    warn(code) {
+      console.warn("NextAuth Warning:", code)
+    },
+    debug(code, metadata) {
+      if (process.env.NODE_ENV === "development") {
+        console.log("NextAuth Debug:", code, metadata)
+      }
+    },
   },
 }

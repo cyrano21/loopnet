@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { SearchBar } from '@/components/ui/SearchBar'
 import { CustomPagination } from '@/components/custom-pagination'
@@ -15,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Grid3X3, List, Map, Filter } from 'lucide-react'
 
 export default function PropertiesPage () {
+  const searchParams = useSearchParams()
   const [filters, setFilters] = useState({
     transactionType: '',
     propertyType: '',
@@ -27,8 +29,17 @@ export default function PropertiesPage () {
     rooms: undefined as number | undefined,
     sort: 'newest',
     q: '',
+    agent: '',
     page: 1
   })
+
+  // Initialiser les filtres depuis les paramètres URL
+  useEffect(() => {
+    const agentParam = searchParams.get('agent')
+    if (agentParam) {
+      setFilters(prev => ({ ...prev, agent: agentParam }))
+    }
+  }, [searchParams])
 
   const [viewedProperties, setViewedProperties] = useState(0)
   const { properties, loading, error, pagination } = useProperties(filters)

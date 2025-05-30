@@ -317,7 +317,7 @@ export default function MapViewPage() {
                           <div className='flex space-x-3'>
                             <div className='w-16 h-16 relative flex-shrink-0'>
                               <Image
-                                src={getBestImageUrl(property.images) || '/placeholder-property.jpg'}
+                                src={getBestImageUrl(property.images)?.url || '/placeholder-property.jpg'}
                                 alt={property.title}
                                 fill
                                 className='object-cover rounded'

@@ -80,6 +80,9 @@ export async function GET(
       );
     }
 
+    // Log pour debugging
+    console.log("Property agent data:", property.agent);
+
     return NextResponse.json({
       success: true,
       property: property,

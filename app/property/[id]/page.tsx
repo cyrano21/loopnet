@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { use } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,11 @@ import { PropertyNearby } from "@/components/property/PropertyNearby";
 import { VirtualTour360 } from "@/components/property/VirtualTour360";
 import { WalkScore } from "@/components/property/WalkScore";
 import { MortgageCalculator } from "@/components/property/MortgageCalculator";
+import { EnergyClass } from "@/components/property/EnergyClass";
+import { FloorPlans } from "@/components/property/FloorPlans";
+import { HomeValueChart } from "@/components/property/HomeValueChart";
+import { NearbySimilarProperty } from "@/components/property/NearbySimilarProperty";
+import { PropertyViews } from "@/components/property/PropertyViews";
 
 interface Property {
   _id: string;
@@ -68,8 +74,18 @@ interface Property {
   updatedAt: string;
 }
 
-export default function PropertyDetailPage() {
-  const params = useParams();
+interface PropertyDetailPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function PropertyDetailPage({
+  params,
+}: PropertyDetailPageProps) {
+  const router = useRouter();
+
+  // Unwrap the params object using React.use()
+  const unwrappedParams = use(params) as { id: string };
+
   const [property, setProperty] = useState<PropertySeedData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -77,10 +93,10 @@ export default function PropertyDetailPage() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    if (params.id) {
-      fetchProperty(params.id as string);
+    if (unwrappedParams.id) {
+      fetchProperty(unwrappedParams.id as string);
     }
-  }, [params.id]);
+  }, [unwrappedParams.id]);
 
   const fetchProperty = async (id: string) => {
     try {
@@ -145,7 +161,7 @@ export default function PropertyDetailPage() {
   }
 
   const primaryImage =
-    property.images?.find((img) => img.isPrimary) || property.images?.[0];
+    property.images?.find((img: any) => img.isPrimary) || property.images?.[0];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -165,12 +181,14 @@ export default function PropertyDetailPage() {
 
             {/* Contenu avec onglets */}
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-6">
+              <TabsList className="grid w-full grid-cols-8">
                 <TabsTrigger value="overview">Aperçu</TabsTrigger>
                 <TabsTrigger value="details">Détails</TabsTrigger>
                 <TabsTrigger value="features">Équipements</TabsTrigger>
                 <TabsTrigger value="location">Localisation</TabsTrigger>
                 <TabsTrigger value="media">Médias</TabsTrigger>
+                <TabsTrigger value="energy">Énergie</TabsTrigger>
+                <TabsTrigger value="stats">Statistiques</TabsTrigger>
                 <TabsTrigger value="reviews">Avis</TabsTrigger>
               </TabsList>
 
@@ -179,7 +197,10 @@ export default function PropertyDetailPage() {
               </TabsContent>
 
               <TabsContent value="details">
-                <PropertyDetails property={property} />
+                <div className="space-y-6">
+                  <PropertyDetails property={property} />
+                  <FloorPlans property={property} />
+                </div>
               </TabsContent>
 
               <TabsContent value="features">
@@ -201,14 +222,32 @@ export default function PropertyDetailPage() {
                 </div>
               </TabsContent>
 
+              <TabsContent value="energy">
+                <EnergyClass property={property} />
+              </TabsContent>
+
+              <TabsContent value="stats">
+                <PropertyViews property={property} />
+              </TabsContent>
+
               <TabsContent value="reviews">
                 <PropertyReviews property={property} />
               </TabsContent>
             </Tabs>
-            
+
             {/* Mortgage Calculator Section */}
             <div className="mt-8">
               <MortgageCalculator property={property} />
+            </div>
+
+            {/* Home Value Chart Section */}
+            <div className="mt-8">
+              <HomeValueChart property={property} />
+            </div>
+
+            {/* Nearby Similar Properties Section */}
+            <div className="mt-8">
+              <NearbySimilarProperty property={property} />
             </div>
           </div>
 

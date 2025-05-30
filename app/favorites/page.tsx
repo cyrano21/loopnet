@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useComparison } from "@/components/comparison-provider";
+import { PropertyCard } from "@/components/property-card";
 
 export default function FavoritesPage() {
   const [favorites, setFavorites] = useState([]);
@@ -75,82 +76,6 @@ export default function FavoritesPage() {
       setSelectedItems(favorites.map((fav: any) => fav.id));
     }
   };
-
-  const PropertyCard = ({ property }: { property: any }) => (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="relative">
-        <Image
-          src={property.image || "/placeholder.svg"}
-          alt={property.title}
-          width={400}
-          height={200}
-          className="w-full h-48 object-cover"
-        />
-        <div className="absolute top-2 left-2">
-          <Checkbox
-            checked={selectedItems.includes(property.id)}
-            onCheckedChange={(checked: boolean) => {
-              if (checked) {
-                setSelectedItems([...selectedItems, property.id]);
-              } else {
-                setSelectedItems(
-                  selectedItems.filter((id) => id !== property.id)
-                );
-              }
-            }}
-            className="bg-white"
-          />
-        </div>
-        <div className="absolute top-2 right-2 flex gap-2">
-          <Badge
-            className={
-              property.status === "For Sale" ? "bg-green-600" : "bg-blue-600"
-            }
-          >
-            {property.status}
-          </Badge>
-        </div>
-        <div className="absolute bottom-2 right-2">
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => removeFavorite(property.id)}
-            className="bg-white/90 hover:bg-white"
-          >
-            <Heart className="w-4 h-4 text-red-500 fill-current" />
-          </Button>
-        </div>
-      </div>
-      <CardContent className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <Badge variant="outline">{property.type}</Badge>
-          <span className="text-lg font-bold text-blue-600">
-            {property.price}
-          </span>
-        </div>
-        <h3 className="font-semibold mb-2 line-clamp-2">{property.title}</h3>
-        <div className="flex items-center text-gray-600 text-sm mb-3">
-          <MapPin className="w-4 h-4 mr-1" />
-          {property.address}
-        </div>
-        <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
-          <div>Size: {property.sqft} sq ft</div>
-          <div>Added: {new Date(property.dateAdded).toLocaleDateString()}</div>
-        </div>
-        <div className="flex gap-2">
-          <Button size="sm" className="flex-1" asChild>
-            <Link href={`/property/${property.id}`}>
-              <Eye className="w-4 h-4 mr-1" />
-              View Details
-            </Link>
-          </Button>
-          <Button size="sm" variant="outline">
-            <Share className="w-4 h-4" />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
 
   if (loading) {
     return (
