@@ -434,7 +434,7 @@ export default function OutilsPage() {
               <div
                 key={tool.href}
                 className="opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]"
-                style={{ animationDelay: `${index * 200}ms` }}
+                style={{ '--animation-delay': `${index * 200}ms`, animationDelay: 'var(--animation-delay)' } as React.CSSProperties}
               >
                 <ToolCard tool={tool} />
               </div>
@@ -466,7 +466,7 @@ export default function OutilsPage() {
               <div
                 key={tool.href}
                 className="opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]"
-                style={{ animationDelay: `${index * 200 + 400}ms` }}
+                style={{ '--animation-delay': `${index * 200 + 400}ms`, animationDelay: 'var(--animation-delay)' } as React.CSSProperties}
               >
                 <ToolCard
                   tool={tool}
@@ -501,7 +501,7 @@ export default function OutilsPage() {
               <div
                 key={tool.href}
                 className="opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]"
-                style={{ animationDelay: `${index * 200 + 800}ms` }}
+                style={{ '--animation-delay': `${index * 200 + 800}ms`, animationDelay: 'var(--animation-delay)' } as React.CSSProperties}
               >
                 <ToolCard
                   tool={tool}
@@ -536,7 +536,7 @@ export default function OutilsPage() {
               <div
                 key={tool.href}
                 className="opacity-0 animate-[fadeInUp_0.6s_ease-out_forwards]"
-                style={{ animationDelay: `${index * 200 + 1200}ms` }}
+                style={{ '--animation-delay': `${index * 200 + 1200}ms`, animationDelay: 'var(--animation-delay)' } as React.CSSProperties}
               >
                 <ToolCard
                   tool={tool}

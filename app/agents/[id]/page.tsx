@@ -459,7 +459,7 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                                   alt={property.title}
                                   fill
                                   className="object-cover"
-                                  sizes="(max-width: 768px) 100vw, 50vw"
+                                  sizes="(max-inline-size: 768px) 100vw, 50vw"
                                 />
                               ) : (
                                 <div className="flex items-center justify-center h-full">

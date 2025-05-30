@@ -726,8 +726,8 @@ export default function HomePage() {
                       {/* Animated underline */}
                       <motion.div
                         className="absolute bottom-0 left-0 h-1.5 bg-gradient-to-r from-yellow-400 to-amber-400 rounded-full"
-                        initial={{ width: 0 }}
-                        animate={{ width: "100%" }}
+                        initial={{ inlineSize: 0 }}
+                        animate={{ inlineSize: "100%" }}
                         transition={{ duration: 1.2, delay: 1 }}
                       />
                     </span>
@@ -813,8 +813,8 @@ export default function HomePage() {
                         key={i}
                         className="absolute w-32 h-32 bg-gradient-to-r from-yellow-400/20 to-blue-500/20 rounded-full blur-xl pointer-events-none"
                         style={{
-                          left: `${20 + i * 30}%`,
-                          top: `${10 + i * 20}%`,
+                          insetInlineStart: `${20 + i * 30}%`,
+                          insetBlockStart: `${10 + i * 20}%`,
                         }}
                         animate={{
                           x: [0, 20, 0],
@@ -1193,7 +1193,7 @@ export default function HomePage() {
                                   alt={property.type}
                                   fill
                                   className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                                  sizes="(max-inline-size: 640px) 100vw, (max-inline-size: 1024px) 50vw, 25vw"
                                   quality={70}
                                 />
                                 <Badge
@@ -1464,7 +1464,7 @@ export default function HomePage() {
                       alt={city.name}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                      sizes="(max-inline-size: 640px) 50vw, (max-inline-size: 1024px) 33vw, 16vw"
                       quality={70}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
@@ -1523,7 +1523,7 @@ export default function HomePage() {
                         src={article.image}
                         alt={article.title}
                         fill
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        sizes="(max-inline-size: 768px) 100vw, (max-inline-size: 1200px) 50vw, 33vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
