@@ -43,9 +43,9 @@ export async function POST() {
     ]
 
     const results = {
-      created: [],
-      skipped: [],
-      errors: [],
+      created: [] as any[],
+      skipped: [] as any[],
+      errors: [] as any[],
     }
 
     // Traiter chaque utilisateur individuellement
