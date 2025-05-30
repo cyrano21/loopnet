@@ -429,7 +429,7 @@ export default function OutilsPage() {
               engagement. Parfait pour débuter votre journey immobilier.
             </p>
           </div>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+          <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
             {freeTools.map((tool, index) => (
               <div
                 key={tool.href}
@@ -461,7 +461,7 @@ export default function OutilsPage() {
               complète.
             </p>
           </div>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+          <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
             {premiumTools.map((tool, index) => (
               <div
                 key={tool.href}
@@ -496,7 +496,7 @@ export default function OutilsPage() {
               vos décisions stratégiques.
             </p>
           </div>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+          <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
             {proTools.map((tool, index) => (
               <div
                 key={tool.href}
@@ -531,7 +531,7 @@ export default function OutilsPage() {
               client complète.
             </p>
           </div>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
+          <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
             {agentTools.map((tool, index) => (
               <div
                 key={tool.href}

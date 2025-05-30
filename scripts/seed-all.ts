@@ -8,7 +8,7 @@ import { connectDB } from "../lib/mongodb";
 import { seedUsers } from "./seed-users";
 import { seedProperties } from "./seed-properties";
 import { seedProfessionals } from "./seed-professionals";
-import { seedNews } from "./seed-news";
+import seedNews from "./seed-news";
 import { seedInquiries } from "./seed-inquiries";
 import { seedSavedSearches } from "./seed-saved-searches";
 import { seedSearchAlerts } from "./seed-search-alerts";

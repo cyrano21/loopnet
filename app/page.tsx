@@ -704,7 +704,7 @@ export default function HomePage() {
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="relative mb-6"
               >
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight relative">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold leading-tight relative">
                   <motion.span
                     className="block relative"
                     initial={{ opacity: 0, x: -20 }}
@@ -778,14 +778,14 @@ export default function HomePage() {
                 transition={{ duration: 0.8, delay: 0.8 }}
                 className="mb-10"
               >
-                <p className="text-lg md:text-xl lg:text-2xl text-slate-100 leading-relaxed font-light max-w-3xl mx-auto">
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-slate-100 leading-relaxed font-light max-w-3xl mx-auto">
                   Find, Lease, or Buy Your Next Commercial Property With Us.
                   <span className="block mt-2 text-yellow-200/90 font-medium">
                     Explore Thousands of Premium Listings
                   </span>
                 </p>
                 <motion.div
-                  className="mt-4 text-sm md:text-base text-blue-200/80"
+                  className="mt-4 text-xs sm:text-sm text-blue-200/80"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.8, delay: 1.4 }}
@@ -981,7 +981,7 @@ export default function HomePage() {
               For over 30 years, LoopNet has been the trusted brand for
               Commercial Real Estate
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
               {[
                 {
                   value: "300K+",
@@ -1015,7 +1015,7 @@ export default function HomePage() {
                   )}
                 >
                   {stat.icon}
-                  <div className="text-4xl font-extrabold text-blue-600 dark:text-blue-400 mb-2">
+                  <div className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-blue-600 dark:text-blue-400 mb-2">
                     {stat.value}
                   </div>
                   <div className="text-slate-600 dark:text-slate-400">
@@ -1052,7 +1052,7 @@ export default function HomePage() {
                 </Badge>
                 <div className="h-px w-16 bg-gradient-to-l from-transparent to-blue-300 dark:to-blue-600"></div>
               </div>
-              <h3 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 dark:from-slate-100 dark:via-slate-200 dark:to-slate-100 bg-clip-text text-transparent mb-3">
+              <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 dark:from-slate-100 dark:via-slate-200 dark:to-slate-100 bg-clip-text text-transparent mb-3">
                 Entreprises qui font confiance à LoopNet
               </h3>
               <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
@@ -1169,7 +1169,7 @@ export default function HomePage() {
                     value={key}
                     className="mt-8 focus:outline-none"
                   >
-                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                       {trendProps.map((property, idx) => (
                         <div
                           key={property.id}
@@ -1260,7 +1260,7 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="flex flex-col sm:flex-row items-center justify-between mb-12">
               <div>
-                <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-2">
                   Featured Properties
                 </h2>
                 <p className="text-slate-600 dark:text-slate-400">
@@ -1280,7 +1280,7 @@ export default function HomePage() {
             </div>
 
             {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                 {[...Array(8)].map((_, i) => (
                   <div
                     key={i}
@@ -1289,7 +1289,7 @@ export default function HomePage() {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
                 {properties.slice(0, 8).map((propertyData, idx) => (
                   <div
                     key={propertyData._id}
@@ -1347,7 +1347,7 @@ export default function HomePage() {
                     Auction Ending Soon
                   </span>
                 </div>
-                <h3 className="text-3xl font-bold mb-2">Health Care</h3>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">Health Care</h3>
                 <p className="text-lg mb-6 opacity-80 flex items-center">
                   <MapPin className="w-5 h-5 mr-2 opacity-70" /> Boynton Beach,
                   FL
@@ -1501,7 +1501,7 @@ export default function HomePage() {
                 <ChevronDown className="w-5 h-5 ml-1 transform rotate-[-90deg] group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
               {educationalArticlesData.map((article, index) => (
                 <Card
                   key={index}
@@ -1556,7 +1556,7 @@ export default function HomePage() {
         >
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
                 LoopNet Listings Lease or Sell 14% Faster*
               </h2>
               <p className="text-lg opacity-90 max-w-2xl mx-auto">
@@ -1565,7 +1565,7 @@ export default function HomePage() {
                 quickly.
               </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-12">
               {[
                 {
                   icon: <Users className="w-10 h-10" />,
@@ -1597,7 +1597,7 @@ export default function HomePage() {
                   <div className="w-20 h-20 bg-white/20 dark:bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 shadow-md ring-1 ring-white/20">
                     {item.icon}
                   </div>
-                  <h3 className="text-2xl font-semibold mb-3">{item.title}</h3>
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3">{item.title}</h3>
                   <p className="opacity-80 text-sm leading-relaxed">
                     {item.desc}
                   </p>
@@ -1624,7 +1624,7 @@ export default function HomePage() {
         <section className="py-16 bg-slate-50 dark:bg-slate-900/50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">
                 Professionnels en vedette
               </h2>
               <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
@@ -1632,7 +1632,7 @@ export default function HomePage() {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 mb-12">
               {/* Utilisation du hook useProfessionals pour récupérer les vrais professionnels */}
               {(() => {
                 const { professionals, loading, error } = useProfessionals({ sortBy: "rating", page: 1 });
@@ -1852,8 +1852,8 @@ export default function HomePage() {
         {/* Footer */}
         <footer className="bg-slate-900 dark:bg-black text-slate-300 dark:text-slate-400 py-16">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 mb-10">
-              <div className="col-span-2 md:col-span-4 lg:col-span-2 pr-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 mb-10">
+              <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-2 pr-0 sm:pr-8">
                 <Link
                   href="/"
                   className="flex items-center space-x-2 mb-4 group"

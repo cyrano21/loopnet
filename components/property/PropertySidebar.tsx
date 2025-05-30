@@ -56,9 +56,12 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
               </div>
               <div className="flex-1">
                 <Link
-                  href={`/agents/${property.agent.id || encodeURIComponent(
-                    property.agent.name.toLowerCase().replace(/\s+/g, "-")
-                  )}`}
+                  href={`/agents/${
+                    property.agent.id ||
+                    encodeURIComponent(
+                      property.agent.name.toLowerCase().replace(/\s+/g, "-")
+                    )
+                  }`}
                 >
                   <h3 className="font-semibold text-lg mb-1 hover:text-blue-600 transition-colors">
                     {property.agent.name}
@@ -140,7 +143,11 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
                     placeholder="Votre téléphone"
                     className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <select className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    aria-label="Type de profil"
+                    title="Sélectionnez votre type de profil"
+                  >
                     <option value="">Je suis</option>
                     <option value="buyer">Acheteur</option>
                     <option value="renter">Locataire</option>
@@ -205,21 +212,21 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
               <Eye className="w-5 h-5 text-blue-600" />
               <span className="font-medium">Views</span>
             </div>
-            <span className="font-bold text-lg">{property.views}</span>
+            <span className="font-bold text-lg">{property.views || 0}</span>
           </div>
           <div className="flex items-center justify-between py-2 border-b">
             <div className="flex items-center gap-2">
               <Heart className="w-5 h-5 text-red-500" />
               <span className="font-medium">Favorites</span>
             </div>
-            <span className="font-bold text-lg">{property.favorites}</span>
+            <span className="font-bold text-lg">{property.favorites || 0}</span>
           </div>
           <div className="flex items-center justify-between py-2">
             <div className="flex items-center gap-2">
               <MessageSquare className="w-5 h-5 text-green-600" />
               <span className="font-medium">Inquiries</span>
             </div>
-            <span className="font-bold text-lg">{property.inquiries}</span>
+            <span className="font-bold text-lg">{property.inquiries || 0}</span>
           </div>
         </CardContent>
       </Card>
@@ -240,6 +247,8 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
                 value={formatPrice(property.price * 0.8, "sale")}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 readOnly
+                aria-label="Montant du prêt"
+                title="Montant du prêt calculé automatiquement"
               />
             </div>
             <div>
@@ -251,6 +260,8 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
                 defaultValue="3.5"
                 step="0.1"
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Taux d'intérêt"
+                title="Entrez le taux d'intérêt en pourcentage"
               />
             </div>
             <div>
@@ -260,6 +271,8 @@ export function PropertySidebar({ property }: PropertySidebarProps) {
               <select
                 defaultValue="25"
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Durée du prêt"
+                title="Sélectionnez la durée du prêt en années"
               >
                 <option value="15">15 years</option>
                 <option value="20">20 years</option>

@@ -33,12 +33,16 @@ export interface PropertySeedData {
   accessibility?: boolean;
   tags: string[];
   agent?: {
+    id?: string;
     name: string;
     phone: string;
     email: string;
     company: string;
     image?: string;
   };
+  views?: number;
+  favorites?: number;
+  inquiries?: number;
 }
 
 export const propertiesSeedData: PropertySeedData[] = [

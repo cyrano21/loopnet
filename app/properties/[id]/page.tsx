@@ -8,7 +8,11 @@ import { use } from 'react'
  * Page de redirection pour maintenir la compatibilité avec les anciennes URLs
  * Redirige /properties/[id] vers /property/[id]
  */
-export default function PropertiesRedirectPage({ params }) {
+interface PropertiesRedirectPageProps {
+  params: Promise<{ id: string }>;
+}
+
+export default function PropertiesRedirectPage({ params }: PropertiesRedirectPageProps) {
   const router = useRouter()
   
   // Unwrap the params object using React.use()

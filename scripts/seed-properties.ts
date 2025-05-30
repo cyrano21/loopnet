@@ -36,17 +36,17 @@ const sampleProperties = [
       "Parking",
       "Ascenseur",
       "Sécurité 24h/24",
-      "Fibre optique"
+      "Fibre optique",
     ],
     images: [
       "/images/properties/bureau-moderne-1.jpg",
       "/images/properties/bureau-moderne-2.jpg",
-      "/images/properties/bureau-moderne-3.jpg"
+      "/images/properties/bureau-moderne-3.jpg",
     ],
     contactInfo: {
       name: "Marie Martin",
       email: "marie.martin@realty.com",
-      phone: "+33 6 98 76 54 32"
+      phone: "+33 6 98 76 54 32",
     },
     status: "active",
     publishedAt: new Date("2024-01-15"),
@@ -56,7 +56,7 @@ const sampleProperties = [
     availableFrom: new Date("2024-02-01"),
     visitSchedule: "Lundi au vendredi 9h-18h",
     isPremium: true,
-    isFeatured: true
+    isFeatured: true,
   },
   {
     title: "Local commercial - Centre-ville historique",
@@ -77,7 +77,7 @@ const sampleProperties = [
     city: "Lyon",
     postalCode: "69002",
     country: "France",
-    coordinates: { lat: 45.7640, lng: 4.8357 },
+    coordinates: { lat: 45.764, lng: 4.8357 },
     price: 2800,
     surface: 80,
     rooms: 3,
@@ -89,16 +89,16 @@ const sampleProperties = [
       "Chauffage gaz",
       "Point d'eau",
       "Centre-ville",
-      "Transport"
+      "Transport",
     ],
     images: [
       "/images/properties/local-commercial-1.jpg",
-      "/images/properties/local-commercial-2.jpg"
+      "/images/properties/local-commercial-2.jpg",
     ],
     contactInfo: {
       name: "Jean Dupont",
       email: "jean.dupont@email.com",
-      phone: "+33 6 12 34 56 78"
+      phone: "+33 6 12 34 56 78",
     },
     status: "active",
     publishedAt: new Date("2024-01-20"),
@@ -108,7 +108,7 @@ const sampleProperties = [
     availableFrom: new Date("2024-03-01"),
     visitSchedule: "Sur rendez-vous",
     isPremium: false,
-    isFeatured: false
+    isFeatured: false,
   },
   {
     title: "Entrepôt logistique - Zone industrielle",
@@ -141,17 +141,17 @@ const sampleProperties = [
       "Hauteur 8m",
       "Parking PL",
       "Bureau intégré",
-      "Accès autoroute"
+      "Accès autoroute",
     ],
     images: [
       "/images/properties/entrepot-1.jpg",
       "/images/properties/entrepot-2.jpg",
-      "/images/properties/entrepot-3.jpg"
+      "/images/properties/entrepot-3.jpg",
     ],
     contactInfo: {
       name: "Pierre Durand",
       email: "pierre.durand@gmail.com",
-      phone: "+33 6 55 44 33 22"
+      phone: "+33 6 55 44 33 22",
     },
     status: "active",
     publishedAt: new Date("2024-01-25"),
@@ -161,8 +161,8 @@ const sampleProperties = [
     availableFrom: new Date("2024-02-15"),
     visitSchedule: "Lundi au vendredi 8h-17h",
     isPremium: false,
-    isFeatured: false
-  }
+    isFeatured: false,
+  },
 ];
 
 export async function seedProperties() {
@@ -171,25 +171,29 @@ export async function seedProperties() {
 
     // Get existing users to assign as owners
     const existingUsers = await User.find({});
-    
+
     if (existingUsers.length === 0) {
-      console.log("⚠️  Aucun utilisateur trouvé. Veuillez d'abord exécuter le seed des utilisateurs.");
+      console.log(
+        "⚠️  Aucun utilisateur trouvé. Veuillez d'abord exécuter le seed des utilisateurs."
+      );
       return { created: [], skipped: [], errors: [] };
     }
 
     const results = {
       created: [] as any[],
       skipped: [] as any[],
-      errors: [] as any[]
+      errors: [] as any[],
     };
 
     for (let i = 0; i < sampleProperties.length; i++) {
       const propertyData = sampleProperties[i];
-      
+
       try {
         // Check if property already exists
-        const existingProperty = await Property.findOne({ title: propertyData.title });
-        
+        const existingProperty = await Property.findOne({
+          title: propertyData.title,
+        });
+
         if (existingProperty) {
           console.log(`⚠️  Propriété "${propertyData.title}" existe déjà`);
           results.skipped.push(propertyData.title);
@@ -197,10 +201,15 @@ export async function seedProperties() {
         }
 
         // Generate slug
-        const slug = propertyData.title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, "") + "-" + Date.now() + "-" + i;
+        const slug =
+          propertyData.title
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/(^-|-$)/g, "") +
+          "-" +
+          Date.now() +
+          "-" +
+          i;
 
         // Assign owner and owner type
         const owner = existingUsers[i % existingUsers.length];
@@ -210,15 +219,21 @@ export async function seedProperties() {
           ...propertyData,
           slug,
           owner: owner._id,
-          ownerType
+          ownerType,
         });
 
         await property.save();
         console.log(`✅ Propriété créée: ${propertyData.title}`);
         results.created.push(propertyData.title);
       } catch (error) {
-        console.error(`❌ Erreur lors de la création de "${propertyData.title}":`, error);
-        results.errors.push({ title: propertyData.title, error: error.message });
+        console.error(
+          `❌ Erreur lors de la création de "${propertyData.title}":`,
+          error
+        );
+        results.errors.push({
+          title: propertyData.title,
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
 
@@ -229,7 +244,7 @@ export async function seedProperties() {
 
     if (results.errors.length > 0) {
       console.log(`\n❌ Erreurs détaillées:`);
-      results.errors.forEach(err => {
+      results.errors.forEach((err) => {
         console.log(`   - ${err.title}: ${err.error}`);
       });
     }

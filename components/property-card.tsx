@@ -420,7 +420,7 @@ export function PropertyCard({
           >
             <CardTitle
               className={cn(
-                "text-sm sm:text-lg md:text-xl lg:text-2xl font-bold transition-all duration-300 leading-tight",
+                "text-sm sm:text-base md:text-lg font-bold transition-all duration-300 leading-tight",
                 "bg-gradient-to-r bg-clip-text",
                 "from-slate-800 to-slate-700 dark:from-slate-100 dark:to-slate-200",
                 "group-hover/titleblock:from-blue-600 group-hover/titleblock:to-blue-500",
@@ -432,7 +432,7 @@ export function PropertyCard({
               </span>
             </CardTitle>
           </div>{" "}
-          <div className="flex items-center text-muted-foreground text-xs sm:text-sm mb-3 sm:mb-4 group/location">
+          <div className="flex items-center text-muted-foreground text-xs mb-3 sm:mb-4 group/location">
             <MapPin className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 flex-shrink-0 text-blue-500 dark:text-blue-400 group-hover/location:animate-pulse" />
             <div
               className={cn(
@@ -452,7 +452,7 @@ export function PropertyCard({
             </div>
           </div>{" "}
           {/* Informations clés avec design premium */}
-          <div className="grid grid-cols-2 gap-x-2 sm:gap-x-4 gap-y-2 sm:gap-y-3 text-xs sm:text-sm text-slate-700 dark:text-slate-300 mb-3 sm:mb-5 bg-gradient-to-br from-slate-50/80 to-slate-100/80 dark:from-slate-800/50 dark:to-slate-700/50 backdrop-blur-sm rounded-lg sm:rounded-xl border border-slate-200/50 dark:border-slate-700/50 p-2.5 sm:p-4 shadow-sm">
+          <div className="grid grid-cols-2 gap-x-2 sm:gap-x-4 gap-y-2 sm:gap-y-3 text-xs text-slate-700 dark:text-slate-300 mb-3 sm:mb-5 bg-gradient-to-br from-slate-50/80 to-slate-100/80 dark:from-slate-800/50 dark:to-slate-700/50 backdrop-blur-sm rounded-lg sm:rounded-xl border border-slate-200/50 dark:border-slate-700/50 p-2.5 sm:p-4 shadow-sm">
             <div
               className="flex items-center gap-2 truncate group/info hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300"
               title={property.propertyType}
@@ -545,7 +545,7 @@ export function PropertyCard({
                   <span>Contact: {property.contactInfo?.name}</span>
                 )}
               </h4>
-              <div className="flex gap-2">
+              <div className="flex gap-1 sm:gap-2">
                 {((typeof property.owner === "object" &&
                   property.owner?.phone) ||
                   property.contactInfo?.phone) && (
@@ -603,7 +603,7 @@ export function PropertyCard({
               >
                 <div
                   className={cn(
-                    "text-base sm:text-xl md:text-2xl font-bold transition-all duration-500 cursor-default flex-shrink-0 break-words max-w-full",
+                    "text-sm sm:text-lg md:text-xl font-bold transition-all duration-500 cursor-default flex-shrink-0 break-words max-w-full",
                     isHovered
                       ? "bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent scale-110"
                       : "bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent"

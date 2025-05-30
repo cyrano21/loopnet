@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Star,
   MapPin,
@@ -36,12 +37,13 @@ import { useRouter } from "next/navigation";
 import { use } from "react";
 
 interface AgentSinglePageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function AgentSinglePage({ params }: AgentSinglePageProps) {
+  const resolvedParams = use(params);
   const router = useRouter();
   const [agent, setAgent] = useState<any>(null);
   const [agentProperties, setAgentProperties] = useState<any[]>([]);
@@ -59,12 +61,9 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
     budget: "",
   });
 
-  // Unwrap the params object using React.use()
-  const unwrappedParams = use(params);
-
   useEffect(() => {
     fetchAgent();
-  }, [unwrappedParams.id]);
+  }, [resolvedParams.id]);
 
   useEffect(() => {
     if (agent?._id) {
@@ -75,7 +74,7 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
   const fetchAgent = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/professionals/${unwrappedParams.id}`);
+      const response = await fetch(`/api/professionals/${resolvedParams.id}`);
       if (!response.ok) {
         throw new Error("Agent non trouvé");
       }
@@ -118,7 +117,7 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
         },
         body: JSON.stringify({
           ...contactForm,
-          agentId: unwrappedParams.id,
+          agentId: resolvedParams.id,
           agentName: agent?.name,
         }),
       });
@@ -226,11 +225,15 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                 </div>
 
                 <div className="flex-1 text-center md:text-left">
-                  <h1 className="text-3xl font-bold mb-2 dark:text-white">{agent.name}</h1>
+                  <h1 className="text-3xl font-bold mb-2 dark:text-white">
+                    {agent.name}
+                  </h1>
                   <p className="text-xl text-blue-600 dark:text-blue-400 font-medium mb-1">
                     {agent.title}
                   </p>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">{agent.company}</p>
+                  <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
+                    {agent.company}
+                  </p>
 
                   <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
                     <div className="flex items-center gap-2">
@@ -261,7 +264,9 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                       <div className="font-bold text-2xl text-green-600 dark:text-green-400">
                         {agent.totalTransactions}
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Transactions</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        Transactions
+                      </div>
                     </div>
                     <div className="text-center">
                       <div className="font-bold text-2xl text-purple-600 dark:text-purple-400">
@@ -269,7 +274,9 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                           ? `€${(agent.totalVolume / 1000000).toFixed(1)}M`
                           : "N/A"}
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Volume total</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        Volume total
+                      </div>
                     </div>
                     <div className="text-center">
                       <div className="font-bold text-2xl text-orange-600 dark:text-orange-400">
@@ -413,7 +420,9 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                         <TrendingUp className="h-8 w-8 text-green-600" />
                         <div>
                           <p className="font-medium">Top Performer</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">2024</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            2024
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -610,67 +619,77 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                     <label className="text-sm font-medium text-gray-700 mb-1 block">
                       Sujet
                     </label>
-                    <select
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                    <Select
                       value={contactForm.subject}
-                      onChange={(e) =>
-                        handleInputChange("subject", e.target.value)
+                      onValueChange={(value) =>
+                        handleInputChange("subject", value)
                       }
                     >
-                      <option value="Demande d'information">
-                        Demande d'information
-                      </option>
-                      <option value="Vente de propriété">
-                        Vente de propriété
-                      </option>
-                      <option value="Achat de propriété">
-                        Achat de propriété
-                      </option>
-                      <option value="Location">Location</option>
-                      <option value="Évaluation">Évaluation</option>
-                      <option value="Consultation">Consultation</option>
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Sélectionner un sujet" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Demande d'information">
+                          Demande d'information
+                        </SelectItem>
+                        <SelectItem value="Vente de propriété">
+                          Vente de propriété
+                        </SelectItem>
+                        <SelectItem value="Achat de propriété">
+                          Achat de propriété
+                        </SelectItem>
+                        <SelectItem value="Location">Location</SelectItem>
+                        <SelectItem value="Évaluation">Évaluation</SelectItem>
+                        <SelectItem value="Consultation">Consultation</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-1 block">
                       Type de propriété
                     </label>
-                    <select
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                    <Select
                       value={contactForm.propertyType}
-                      onChange={(e) =>
-                        handleInputChange("propertyType", e.target.value)
+                      onValueChange={(value) =>
+                        handleInputChange("propertyType", value)
                       }
                     >
-                      <option value="">Sélectionner un type</option>
-                      <option value="Bureau">Bureau</option>
-                      <option value="Commerce">Commerce</option>
-                      <option value="Entrepôt">Entrepôt</option>
-                      <option value="Industriel">Industriel</option>
-                      <option value="Terrain">Terrain</option>
-                      <option value="Hôtel">Hôtel</option>
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Sélectionner un type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Bureau">Bureau</SelectItem>
+                        <SelectItem value="Commerce">Commerce</SelectItem>
+                        <SelectItem value="Entrepôt">Entrepôt</SelectItem>
+                        <SelectItem value="Industriel">Industriel</SelectItem>
+                        <SelectItem value="Terrain">Terrain</SelectItem>
+                        <SelectItem value="Hôtel">Hôtel</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-1 block">
                       Budget
                     </label>
-                    <select
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                    <Select
                       value={contactForm.budget}
-                      onChange={(e) =>
-                        handleInputChange("budget", e.target.value)
+                      onValueChange={(value) =>
+                        handleInputChange("budget", value)
                       }
                     >
-                      <option value="">Sélectionner un budget</option>
-                      <option value="< 500k€">Moins de 500k€</option>
-                      <option value="500k€ - 1M€">500k€ - 1M€</option>
-                      <option value="1M€ - 5M€">1M€ - 5M€</option>
-                      <option value="5M€ - 10M€">5M€ - 10M€</option>
-                      <option value="> 10M€">Plus de 10M€</option>
-                    </select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Sélectionner un budget" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="< 500k€">Moins de 500k€</SelectItem>
+                        <SelectItem value="500k€ - 1M€">500k€ - 1M€</SelectItem>
+                        <SelectItem value="1M€ - 5M€">1M€ - 5M€</SelectItem>
+                        <SelectItem value="5M€ - 10M€">5M€ - 10M€</SelectItem>
+                        <SelectItem value="> 10M€">Plus de 10M€</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
