@@ -109,7 +109,7 @@ export default function CalendarPage() {
   ]
 
   // Fonction pour obtenir les événements d'un jour spécifique
-  const getEventsForDay = (day) => {
+  const getEventsForDay = (day: number) => {
     const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
     return events.filter(event => {
       const eventDate = new Date(event.date)
@@ -120,12 +120,12 @@ export default function CalendarPage() {
   }
 
   // Fonction pour formater l'heure
-  const formatTime = (date) => {
+  const formatTime = (date: Date) => {
     return date.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })
   }
 
   // Fonction pour obtenir la couleur du badge en fonction du type d'événement
-  const getEventColor = (type) => {
+  const getEventColor = (type: string) => {
     switch (type) {
       case "visit":
         return "bg-blue-500 hover:bg-blue-600"
@@ -143,7 +143,7 @@ export default function CalendarPage() {
   }
 
   // Fonction pour obtenir l'icône en fonction du type d'événement
-  const getEventIcon = (type) => {
+  const getEventIcon = (type: string) => {
     switch (type) {
       case "visit":
         return <Building2 className="h-4 w-4" />
