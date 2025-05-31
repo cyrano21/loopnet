@@ -35,14 +35,12 @@ const statusColors = {
   cancelled: 'bg-gray-100 text-gray-800'
 }
 
-const categoryLabels = {
-  'property-management': 'Gestion immobilière',
-  'client-relations': 'Relations client',
-  'administration': 'Administration',
-  'maintenance': 'Maintenance',
-  'legal': 'Juridique',
-  'marketing': 'Marketing',
-  'finance': 'Finance',
+const categoryLabels: Record<Task['category'], string> = {
+  'viewing': 'Visite',
+  'follow-up': 'Suivi',
+  'documentation': 'Documentation',
+  'negotiation': 'Négociation',
+  'inspection': 'Inspection',
   'other': 'Autre'
 }
 
@@ -54,11 +52,11 @@ export function TasksManager({ className }: TasksManagerProps) {
   const permissions = usePermissions()
   const {
     tasks,
-    isLoading,
-    isCreating,
+    loading,
     createTask,
-    updateTaskStatus,
-    deleteTask
+    updateTask,
+    deleteTask,
+    canManageTasks
   } = useTasks()
 
   const [filters, setFilters] = useState<TaskFilters>({
@@ -78,8 +76,17 @@ export function TasksManager({ className }: TasksManagerProps) {
     propertyTitle: '',
     notes: ''
   })
+
+  const handleUpdateTaskStatus = async (taskId: string, status: Task['status']) => {
+    try {
+      await updateTask(taskId, { status })
+      toast.success('Statut de la tâche mis à jour')
+    } catch (error) {
+      toast.error('Erreur lors de la mise à jour du statut')
+    }
+  }
   
-  if (!permissions.canManageTasks) {
+  if (!canManageTasks) {
     return (
       <div className={`p-6 text-center ${className}`}>
         <div className="max-w-md mx-auto">
@@ -125,6 +132,8 @@ export function TasksManager({ className }: TasksManagerProps) {
         dueDate: newTask.dueDate || undefined,
         propertyTitle: newTask.propertyTitle.trim() || undefined,
         notes: newTask.notes.trim() || undefined,
+        status: 'pending',
+        tags: []
       })
       
       setIsCreateModalOpen(false)

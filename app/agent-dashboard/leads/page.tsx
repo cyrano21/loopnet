@@ -72,7 +72,7 @@ export default function LeadsPage() {
   ]
 
   // Fonction pour obtenir la couleur du badge en fonction du statut
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case "hot":
         return <Badge className="bg-red-500 hover:bg-red-600">Chaud</Badge>

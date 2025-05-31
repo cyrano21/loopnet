@@ -22,7 +22,6 @@ export const authOptions: NextAuthOptions = {
   },
   pages: {
     signIn: "/auth/signin",
-    signUp: "/auth/signup",
   },
 }
 
@@ -42,7 +41,7 @@ export async function requireAuth() {
 
 export async function requireAdmin() {
   const session = await requireAuth()
-  if (session.user.role !== "admin") {
+  if ((session as any)?.user?.role !== "admin") {
     throw new Error("Admin access required")
   }
   return session

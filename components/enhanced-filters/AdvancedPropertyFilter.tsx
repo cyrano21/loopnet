@@ -12,7 +12,8 @@ import {
   SquareM, 
   Car, 
   Star,
-  Eye
+  Eye,
+  X
 } from "lucide-react"
 import { Input } from "../ui/input"
 

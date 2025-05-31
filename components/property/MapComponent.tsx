@@ -375,7 +375,7 @@ const PropertyMarker = ({
             ? 'bg-blue-600 text-white' 
             : 'bg-white text-gray-900 border'
         }`}>
-          {formatPrice(property.price, true)}
+          {formatPrice(property.price, property.transactionType)}
         </div>
 
         {/* Badge featured */}

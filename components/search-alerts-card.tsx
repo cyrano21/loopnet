@@ -234,11 +234,10 @@ export function SearchAlertsCard () {
                     <Switch
                       checked={alert.enabled}
                       onCheckedChange={() => toggleAlert(alert.id)}
-                      size='sm'
                     />
                     <Button
                       variant='ghost'
-                      size='sm'
+
                       onClick={() => deleteAlert(alert.id)}
                       className='text-red-600 hover:text-red-700'
                     >

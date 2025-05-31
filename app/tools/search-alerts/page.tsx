@@ -96,7 +96,7 @@ export default function SearchAlertsPage() {
     surfaceMax: '',
     city: '',
     zipCode: '',
-    frequency: 'daily' as const,
+    frequency: 'daily' as 'realtime' | 'daily' | 'weekly',
     channels: {
       email: true,
       sms: false,

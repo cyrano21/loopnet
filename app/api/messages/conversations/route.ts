@@ -132,10 +132,17 @@ export async function POST(request: NextRequest) {
       })
       .lean()
 
+    if (!populatedConversation) {
+      return NextResponse.json(
+        { error: "Conversation non trouvée" },
+        { status: 404 }
+      )
+    }
+
     return NextResponse.json({
       conversation: {
         ...populatedConversation,
-        unreadCount: populatedConversation.unreadCount?.[session.user.id] || 0,
+        unreadCount: (populatedConversation as any).unreadCount?.[session.user.id] || 0,
       },
     }, { status: 201 })
   } catch (error) {

@@ -352,7 +352,7 @@ export function PropertyCardMobile({
                   compact ? "text-xs" : "text-sm"
                 )}>
                   {property.price ? `${priceDisplay}` : 'Prix sur demande'}
-                  {property.transactionType === 'forLease' && (
+                  {property.transactionType === 'rent' && (
                     <span className="text-xs font-normal text-slate-500 dark:text-slate-400">/mois</span>
                   )}
                 </div>
@@ -422,12 +422,12 @@ export function PropertyCardMobile({
               
               {/* Badges de statut */}
               <div className="flex gap-1">
-                {property.featured && (
+                {property.features?.includes('featured') && (
                   <Badge className="bg-yellow-100 text-yellow-800 text-xs px-1 py-0.5">
                     <Star className="h-2 w-2" />
                   </Badge>
                 )}
-                {property.verified && (
+                {property.features?.includes('verified') && (
                   <Badge className="bg-green-100 text-green-800 text-xs px-1 py-0.5">
                     ✓
                   </Badge>
@@ -442,7 +442,7 @@ export function PropertyCardMobile({
         <PricingModal
           isOpen={showPricingModal}
           onClose={() => setShowPricingModal(false)}
-          planType={pricingType}
+          userType={pricingType}
         />
       )}
     </>

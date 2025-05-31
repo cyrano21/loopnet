@@ -92,8 +92,8 @@ export function PropertyFeatures({ property }: PropertyFeaturesProps) {
       icon: <Car className="h-5 w-5" />,
       color: "text-indigo-600",
       features: [
-        { name: "Garage", available: property.parking > 0, icon: <Car className="h-4 w-4" /> },
-        { name: "Place de parking", available: property.parking > 0, icon: <Car className="h-4 w-4" /> },
+        { name: "Garage", available: (property.parking || 0) > 0, icon: <Car className="h-4 w-4" /> },
+        { name: "Place de parking", available: (property.parking || 0) > 0, icon: <Car className="h-4 w-4" /> },
         { name: "Jardin privatif", available: property.features?.includes('garden') || false, icon: <Leaf className="h-4 w-4" /> },
         { name: "Piscine", available: property.features?.includes('pool') || false, icon: <Droplets className="h-4 w-4" /> },
         { name: "Barbecue", available: false, icon: <Sun className="h-4 w-4" /> },

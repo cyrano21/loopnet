@@ -142,7 +142,7 @@ export default function PropertyFiltering({ listings }: PropertyFilteringProps) 
       return true;
     });
 
-    let filteredArrays = [];
+    let filteredArrays: PropertySeedData[][] = [];
 
     if (propertyTypes.length > 0) {
       const filtered = refItems.filter((elm) =>
@@ -153,7 +153,7 @@ export default function PropertyFiltering({ listings }: PropertyFilteringProps) 
 
     filteredArrays = [
       ...filteredArrays,
-      refItems.filter((el) => (el.rooms || 0) >= bedrooms),
+      refItems.filter((el) => (el.bedrooms || 0) >= bedrooms),
     ];
 
     filteredArrays = [
@@ -235,7 +235,7 @@ export default function PropertyFiltering({ listings }: PropertyFilteringProps) 
     setPageNumber(1);
     if (currentSortingOption === "Newest") {
       const sorted = [...filteredData].sort(
-        (a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+        (a, b) => new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime()
       );
       setSortedFilteredData(sorted);
     } else if (currentSortingOption.trim() === "Price Low") {
@@ -291,15 +291,16 @@ export default function PropertyFiltering({ listings }: PropertyFilteringProps) 
             </div>
 
             <div className="row mt15">
-              <FeaturedListings colstyle={colstyle} data={pageItems} />
+              <FeaturedListings properties={pageItems} viewType={colstyle ? 'grid' : 'list'} gridCols={3} />
             </div>
 
             <div className="row">
               <PaginationTwo
-                pageCapacity={8}
-                data={sortedFilteredData}
-                pageNumber={pageNumber}
-                setPageNumber={setPageNumber}
+                currentPage={pageNumber}
+                totalPages={Math.ceil(sortedFilteredData.length / 8)}
+                onPageChange={setPageNumber}
+                totalItems={sortedFilteredData.length}
+                itemsPerPage={8}
               />
             </div>
           </div>

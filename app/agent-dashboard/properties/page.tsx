@@ -261,7 +261,7 @@ export default function AgentPropertiesPage() {
             <div className="flex justify-center mt-8">
               <CustomPagination
                 currentPage={currentPage}
-                totalPages={pagination.pages}
+                totalPages={pagination.totalPages}
                 onPageChange={(page) => handleFilterChange('page', page)}
               />
             </div>

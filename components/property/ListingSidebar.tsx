@@ -45,59 +45,70 @@ const ListingSidebar: React.FC<ListingSidebarProps> = ({ filterFunctions }) => {
     <div className="list-sidebar-style1">
       <div className="widget-wrapper">
         <h6 className="list-title">Find your home</h6>
-        <SearchBox filterFunctions={filterFunctions} />
+        <SearchBox onSearchChange={(searchTerm) => console.log('Search:', searchTerm)} />
       </div>
 
       <div className="widget-wrapper">
         <h6 className="list-title">Listing Status</h6>
         <div className="radio-element">
-          <ListingStatus filterFunctions={filterFunctions} />
+          <ListingStatus onStatusChange={(status) => console.log('Status:', status)} selectedStatuses={[]} />
         </div>
       </div>
 
       <div className="widget-wrapper">
         <h6 className="list-title">Property Type</h6>
         <div className="checkbox-style1">
-          <PropertyType filterFunctions={filterFunctions} />
+          <PropertyType onTypeChange={(types) => console.log('Types:', types)} selectedTypes={[]} />
         </div>
       </div>
 
       <div className="widget-wrapper">
         <h6 className="list-title">Price Range</h6>
         <div className="range-slider-style1">
-          <PriceSlider filterFunctions={filterFunctions} />
+          <PriceSlider onPriceChange={(min, max) => console.log('Price:', min, max)} minPrice={null} maxPrice={null} />
         </div>
       </div>
 
       <div className="widget-wrapper">
         <h6 className="list-title">Bedrooms</h6>
         <div className="d-flex">
-          <Bedroom filterFunctions={filterFunctions} />
+          <Bedroom onBedroomChange={(bedrooms) => console.log('Bedrooms:', bedrooms)} selectedBedrooms={[]} />
         </div>
       </div>
 
       <div className="widget-wrapper">
         <h6 className="list-title">Bathrooms</h6>
         <div className="d-flex">
-          <Bathroom filterFunctions={filterFunctions} />
+          <Bathroom onBathroomChange={(bathrooms) => console.log('Bathrooms:', bathrooms)} selectedBathrooms={[]} />
         </div>
       </div>
 
       <div className="widget-wrapper advance-feature-modal">
         <h6 className="list-title">Location</h6>
         <div className="form-style2 input-group">
-          <Location filterFunctions={filterFunctions} />
+          <Location 
+            onLocationChange={(locations) => console.log('Location changed:', locations)}
+            selectedLocations={[]}
+          />
         </div>
       </div>
 
       <div className="widget-wrapper">
         <h6 className="list-title">Square Feet</h6>
-        <SquareFeet filterFunctions={filterFunctions} />
+        <SquareFeet 
+          onSquareFeetChange={(min, max) => console.log('Square feet changed:', min, max)}
+          minSquareFeet={null}
+          maxSquareFeet={null}
+        />
       </div>
 
       <div className="widget-wrapper">
         <h6 className="list-title">Year Built</h6>
-        <YearBuilt filterFunctions={filterFunctions} />
+        <YearBuilt 
+          onYearBuiltChange={(min, max) => console.log('Year built changed:', min, max)}
+          minYearBuilt={null}
+          maxYearBuilt={null}
+        />
       </div>
 
       <div className="widget-wrapper">

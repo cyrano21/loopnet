@@ -51,9 +51,6 @@ export function BedroomFilter({
               }
             `}
           >
-              }
-            `}
-          >
             {option.label}
           </Button>
         ))}

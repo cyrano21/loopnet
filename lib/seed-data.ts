@@ -43,6 +43,14 @@ export interface PropertySeedData {
   views?: number;
   favorites?: number;
   inquiries?: number;
+  // Added missing properties
+  neighborhood?: string;
+  region?: string;
+  type?: string;
+  status?: string;
+  rooms?: number;
+  createdAt?: string;
+  _id?: string;
 }
 
 export const propertiesSeedData: PropertySeedData[] = [

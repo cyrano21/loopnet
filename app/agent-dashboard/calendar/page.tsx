@@ -289,7 +289,7 @@ export default function CalendarPage() {
                       <div className="mt-2 flex items-center text-sm text-muted-foreground">
                         <MapPin className="h-4 w-4 mr-1" />
                         <span>
-                          {event.location || event.property.address}
+                          {event.location || event.property?.address}
                         </span>
                       </div>
                     )}

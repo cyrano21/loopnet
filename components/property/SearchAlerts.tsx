@@ -331,7 +331,6 @@ export function SearchAlerts({ currentFilters, className }: SearchAlertsProps) {
                       <Switch
                         checked={alert.active}
                         onCheckedChange={() => toggleAlert(alert.id)}
-                        size="sm"
                       />
                       <Button
                         variant="ghost"

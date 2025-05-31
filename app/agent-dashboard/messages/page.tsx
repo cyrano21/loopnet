@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Search, Filter, MoreHorizontal, Phone, Mail, Calendar, Paperclip, Send, Smile } from "lucide-react"
+import { Search, Filter, MoreHorizontal, Phone, Mail, Calendar, Paperclip, Send, Smile, MessageSquare } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 
 export default function MessagesPage() {
@@ -120,7 +120,7 @@ export default function MessagesPage() {
     setMessageText("")
   }
 
-  const getStatusIndicator = (status) => {
+  const getStatusIndicator = (status: string) => {
     return status === "online" ? (
       <span className="absolute right-0 top-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white" />
     ) : (
@@ -128,7 +128,7 @@ export default function MessagesPage() {
     )
   }
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     const today = new Date()
     const yesterday = new Date(today)
