@@ -14,17 +14,17 @@ export default function CalendarPage() {
   const [view, setView] = useState("month")
 
   // Fonction pour obtenir le premier jour du mois
-  const getFirstDayOfMonth = (year, month) => {
+  const getFirstDayOfMonth = (year: number, month: number) => {
     return new Date(year, month, 1).getDay()
   }
 
   // Fonction pour obtenir le nombre de jours dans un mois
-  const getDaysInMonth = (year, month) => {
+  const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate()
   }
 
   // Fonction pour formater la date (mois et année)
-  const formatMonthYear = (date) => {
+  const formatMonthYear = (date: Date) => {
     return date.toLocaleDateString("fr-FR", { month: "long", year: "numeric" })
   }
 
