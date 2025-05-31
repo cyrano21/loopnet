@@ -99,7 +99,7 @@ export function PropertyAddress({ property }: PropertyAddressProps) {
                   {property.city}, {property.postalCode}
                 </p>
                 <p className="text-gray-600">
-                  {property.region}, France
+                  France
                 </p>
               </div>
               

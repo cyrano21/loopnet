@@ -320,12 +320,12 @@ export function PropertyCard({
                   onClick={handleCompare}
                   className={cn(
                     "h-7 w-7 sm:h-9 sm:w-9 rounded-full transition-all duration-300 shadow-lg relative",
-                    isInComparison
+                    isInComparisonList
                       ? "bg-blue-100 dark:bg-blue-900/60 border-blue-300 dark:border-blue-600 text-blue-600 dark:text-blue-400"
                       : "bg-white/90 hover:bg-white dark:bg-slate-800/90 dark:hover:bg-slate-800 border-white/60 dark:border-slate-700/60"
                   )}
                   aria-label={
-                    isInComparison
+                    isInComparisonList
                       ? "Retirer de la comparaison"
                       : "Ajouter à la comparaison"
                   }
@@ -333,7 +333,7 @@ export function PropertyCard({
                   <GitCompare
                     className={cn(
                       "h-4 w-4",
-                      isInComparison ? "text-blue-600" : "text-slate-600"
+                      isInComparisonList ? "text-blue-600" : "text-slate-600"
                     )}
                   />
                 </Button>

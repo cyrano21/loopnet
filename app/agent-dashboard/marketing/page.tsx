@@ -385,7 +385,7 @@ export default function AgentMarketingPage() {
 
   return (
     <RoleGuard allowedRoles={['agent', 'admin']} fallback={<div className="p-8 text-center">Vous devez être un agent pour accéder à cette page.</div>}>
-      <div className="container mx-auto py-8">
+      <div className="w-full px-4 py-8">
         <div className="flex flex-col space-y-8">
           {/* En-tête */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

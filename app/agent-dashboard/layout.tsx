@@ -57,9 +57,9 @@ export default function AgentDashboardLayout({
   return (
     <RoleGuard allowedRoles={["agent", "admin"]}>
       <SidebarProvider>
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen pt-16">
           <Sidebar>
-            <SidebarHeader>
+            <SidebarHeader className="py-4">
               <div className="flex items-center gap-2 px-2">
                 <Link href="/" className="flex items-center gap-2">
                   <Building2 className="h-6 w-6 text-blue-600" />
