@@ -142,25 +142,23 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
   const handleInputChange = (field: string, value: string) => {
     setContactForm((prev) => ({ ...prev, [field]: value }));
   };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         </div>
       </div>
     );
   }
-
   if (error || !agent) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">
-            <p className="text-red-600 mb-4">Agent non trouvé</p>
+            <p className="text-destructive mb-4">Agent non trouvé</p>
             <Button onClick={() => router.back()}>
               <ChevronLeft className="h-4 w-4 mr-2" />
               Retour
@@ -171,10 +169,9 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
+  return (    <div className="min-h-screen bg-background">
       {/* Header Section */}
-      <section className="bg-white border-b">
+      <section className="bg-card border-b border-border">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-4 mb-6">
             <Button variant="outline" onClick={() => router.back()}>
@@ -227,62 +224,58 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                 <div className="flex-1 text-center md:text-left">
                   <h1 className="text-3xl font-bold mb-2 dark:text-white">
                     {agent.name}
-                  </h1>
-                  <p className="text-xl text-blue-600 dark:text-blue-400 font-medium mb-1">
+                  </h1>                  <p className="text-xl text-primary font-medium mb-1">
                     {agent.title}
                   </p>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
+                  <p className="text-lg text-muted-foreground mb-4">
                     {agent.company}
                   </p>
 
                   <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
                     <div className="flex items-center gap-2">
                       <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <span className="font-bold text-lg">{agent.rating}</span>
-                      <span className="text-gray-600 dark:text-gray-400">
+                      <span className="font-bold text-lg">{agent.rating}</span>                      <span className="text-muted-foreground">
                         ({agent.reviews} avis)
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center gap-2 text-muted-foreground">
                       <MapPin className="h-5 w-5" />
                       <span>
                         {agent.location.city}, {agent.location.region}
                       </span>
                     </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  </div>                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div className="text-center">
-                      <div className="font-bold text-2xl text-blue-600 dark:text-blue-400">
+                      <div className="font-bold text-2xl text-primary">
                         {agent.yearsExperience}
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-muted-foreground">
                         Années d'expérience
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="font-bold text-2xl text-green-600 dark:text-green-400">
+                      <div className="font-bold text-2xl text-emerald-500 dark:text-emerald-400">
                         {agent.totalTransactions}
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-muted-foreground">
                         Transactions
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="font-bold text-2xl text-purple-600 dark:text-purple-400">
+                      <div className="font-bold text-2xl text-purple-500 dark:text-purple-400">
                         {agent.totalVolume
                           ? `€${(agent.totalVolume / 1000000).toFixed(1)}M`
                           : "N/A"}
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-muted-foreground">
                         Volume total
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="font-bold text-2xl text-orange-600 dark:text-orange-400">
+                      <div className="font-bold text-2xl text-orange-500 dark:text-orange-400">
                         {agent.responseTime || "< 2h"}
                       </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="text-sm text-muted-foreground">
                         Temps de réponse
                       </div>
                     </div>
@@ -305,10 +298,9 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                 <CardHeader>
                   <CardTitle>Contact Direct</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button className="w-full" size="lg">
+                <CardContent className="space-y-4">                  <Button className="w-full" size="lg">
                     <Phone className="h-4 w-4 mr-2" />
-                    {agent.phone}
+                    {agent?.phone || "Contacter par téléphone"}
                   </Button>
                   <Button variant="outline" className="w-full" size="lg">
                     <Mail className="h-4 w-4 mr-2" />
@@ -351,8 +343,7 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                   <CardHeader>
                     <CardTitle>Présentation</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                  <CardContent>                    <p className="text-foreground leading-relaxed mb-6">
                       {agent.bio ||
                         `${
                           agent.name
@@ -405,22 +396,21 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                   <CardHeader>
                     <CardTitle>Certifications & Récompenses</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                        <Award className="h-8 w-8 text-blue-600" />
+                  <CardContent>                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-center gap-3 p-3 bg-primary/10 dark:bg-primary/20 rounded-lg">
+                        <Award className="h-8 w-8 text-primary" />
                         <div>
                           <p className="font-medium">Agent Certifié</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                          <p className="text-sm text-muted-foreground">
                             Immobilier Commercial
                           </p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                        <TrendingUp className="h-8 w-8 text-green-600" />
+                      <div className="flex items-center gap-3 p-3 bg-emerald-500/10 dark:bg-emerald-400/20 rounded-lg">
+                        <TrendingUp className="h-8 w-8 text-emerald-500 dark:text-emerald-400" />
                         <div>
                           <p className="font-medium">Top Performer</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                          <p className="text-sm text-muted-foreground">
                             2024
                           </p>
                         </div>
@@ -437,11 +427,10 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                       Propriétés récentes ({agentProperties.length})
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    {propertiesLoading ? (
+                  <CardContent>                    {propertiesLoading ? (
                       <div className="text-center py-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                        <p className="text-muted-foreground">
                           Chargement des propriétés...
                         </p>
                       </div>
@@ -451,8 +440,7 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                           <div
                             key={property._id}
                             className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow"
-                          >
-                            <div className="aspect-video relative bg-gray-200 dark:bg-gray-700">
+                          >                            <div className="aspect-video relative bg-muted">
                               {property.images && property.images.length > 0 ? (
                                 <Image
                                   src={property.images[0].url}
@@ -463,7 +451,7 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                                 />
                               ) : (
                                 <div className="flex items-center justify-center h-full">
-                                  <Building2 className="h-12 w-12 text-gray-400 dark:text-gray-500" />
+                                  <Building2 className="h-12 w-12 text-muted-foreground" />
                                 </div>
                               )}
                               <div className="absolute top-2 left-2">
@@ -483,33 +471,31 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                             <div className="p-4">
                               <h3 className="font-semibold text-lg mb-2 line-clamp-2">
                                 {property.title}
-                              </h3>
-                              <p className="text-gray-600 text-sm mb-2 flex items-center">
+                              </h3>                              <p className="text-muted-foreground text-sm mb-2 flex items-center">
                                 <MapPin className="h-4 w-4 mr-1" />
                                 {property.address}
                               </p>
                               <div className="flex justify-between items-center mb-2">
-                                <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                <span className="text-2xl font-bold text-primary">
                                   {property.price?.toLocaleString("fr-FR")}€
                                   {property.transactionType === "rent" &&
                                     "/mois"}
                                 </span>
-                                <span className="text-sm text-gray-500 dark:text-gray-400">
+                                <span className="text-sm text-muted-foreground">
                                   {property.surface}m²
                                 </span>
                               </div>
-                              <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                              <div className="flex justify-between text-sm text-muted-foreground">
                                 <span>{property.rooms} pièces</span>
                                 <span>{property.views || 0} vues</span>
                               </div>
                             </div>
                           </div>
                         ))}
-                      </div>
-                    ) : (
+                      </div>                    ) : (
                       <div className="text-center py-8">
-                        <Building2 className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <Building2 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-muted-foreground">
                           Aucune propriété trouvée pour cet agent
                         </p>
                       </div>
@@ -533,11 +519,10 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                 <Card>
                   <CardHeader>
                     <CardTitle>Avis clients</CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                  </CardHeader>                  <CardContent>
                     <div className="text-center py-8">
-                      <MessageSquare className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                      <p className="text-gray-600 dark:text-gray-400">
+                      <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">
                         Les avis clients seront affichés ici
                       </p>
                     </div>
@@ -549,11 +534,10 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                 <Card>
                   <CardHeader>
                     <CardTitle>Analyse de marché</CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                  </CardHeader>                  <CardContent>
                     <div className="text-center py-8">
-                      <TrendingUp className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-                      <p className="text-gray-600 dark:text-gray-400">
+                      <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">
                         L'analyse de marché sera affichée ici
                       </p>
                     </div>
@@ -710,9 +694,7 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                   <Button type="submit" className="w-full" size="lg">
                     <MessageSquare className="h-4 w-4 mr-2" />
                     Envoyer le message
-                  </Button>
-
-                  <p className="text-xs text-gray-500 text-center">
+                  </Button>                  <p className="text-xs text-muted-foreground text-center">
                     En soumettant ce formulaire, vous acceptez d'être contacté
                     par cet agent.
                   </p>

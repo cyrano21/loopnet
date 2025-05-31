@@ -59,8 +59,8 @@ const PaginationLink = ({
         size,
       }),
       isActive ? 
-        "bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 hover:from-blue-700 hover:to-purple-700 transition-all duration-300 hover:scale-105" : 
-        "hover:text-blue-600 transition-all duration-300 hover:scale-105",
+        "bg-primary text-primary-foreground border-0 hover:bg-primary/90 transition-all duration-300 hover:scale-105" : 
+        "hover:text-primary transition-all duration-300 hover:scale-105",
       className
     )}
     {...props}
@@ -76,7 +76,7 @@ const PaginationPrevious = ({
     aria-label="Go to previous page"
     size="default"
     className={cn(
-      "gap-1 pl-2.5 border border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950/30 transition-all duration-300 hover:scale-105 hover:shadow-sm",
+      "gap-1 pl-2.5 border border-border text-primary hover:bg-muted transition-all duration-300 hover:scale-105 hover:shadow-sm",
       className
     )}
     {...props}

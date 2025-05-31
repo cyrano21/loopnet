@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Search, MapPin, Star, Phone, Mail, Building, Award, TrendingUp, Users, Filter, Sparkles, Eye } from 'lucide-react'
-import { Pagination } from '@/components/ui/pagination'
+import { CustomPagination } from '@/components/custom-pagination'
 
 interface SearchFilters {
   search: string
@@ -677,7 +677,7 @@ const ProfessionalsPage = () => {
                 className="flex justify-center mt-12"
               >
                 <div className="bg-card/80 backdrop-blur-sm rounded-2xl shadow-lg border border-border p-4">
-                  <Pagination
+                  <CustomPagination
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={setCurrentPage}
