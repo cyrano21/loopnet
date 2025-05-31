@@ -250,7 +250,7 @@ export default function CalendarPage() {
              eventDate.getFullYear() === today.getFullYear()
     })
 
-    todayEvents.sort((a, b) => a.date - b.date)
+    todayEvents.sort((a, b) => a.date.getTime() - b.date.getTime())
 
     return (
       <div className="space-y-4">
