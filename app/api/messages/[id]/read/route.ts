@@ -7,7 +7,7 @@ import Conversation from "@/models/Conversation"
 import mongoose from "mongoose"
 
 // PUT /api/messages/[id]/read - Marquer un message comme lu
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
@@ -16,7 +16,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     await connectDB()
 
-    const messageId = params.id
+    const { id: messageId } = await params
     const userId = new mongoose.Types.ObjectId(session.user.id)
 
     // Vérifier si le message existe et si l'utilisateur est le destinataire
