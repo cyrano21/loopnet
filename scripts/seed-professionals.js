@@ -160,7 +160,7 @@ async function seedProfessionals() {
 
     console.log('\nVous pouvez maintenant accéder aux pages:')
     createdProfessionals.forEach(prof => {
-      console.log(`- http://localhost:3000/agents/${prof._id}`)
+      console.log(`- http://localhost:3008/agents/${prof._id}`)
     })
 
   } catch (error) {

@@ -212,9 +212,8 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                     fill
                     className="object-cover rounded-lg"
                     sizes="200px"
-                  />
-                  {agent.isVerified && (
-                    <Badge className="absolute -top-2 -right-2 bg-green-600">
+                  />                  {agent.isVerified && (
+                    <Badge className="absolute -top-2 -right-2 bg-emerald-600 hover:bg-emerald-700">
                       <Award className="h-4 w-4 mr-1" />
                       Vérifié
                     </Badge>
@@ -358,12 +357,11 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                       <div>
                         <h4 className="font-semibold mb-3">Spécialisations</h4>
                         <div className="space-y-2">
-                          {agent.specialties.map((specialty: string) => (
-                            <div
+                          {agent.specialties.map((specialty: string) => (                            <div
                               key={specialty}
                               className="flex items-center gap-2"
                             >
-                              <CheckCircle className="h-4 w-4 text-green-500" />
+                              <CheckCircle className="h-4 w-4 text-emerald-500 dark:text-emerald-400" />
                               <span>{specialty}</span>
                             </div>
                           ))}
@@ -374,15 +372,14 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                         <h4 className="font-semibold mb-3">
                           Zones d'intervention
                         </h4>
-                        <div className="space-y-2">
-                          {agent.serviceAreas?.map((area: string) => (
+                        <div className="space-y-2">                          {agent.serviceAreas?.map((area: string) => (
                             <div key={area} className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 text-blue-500" />
+                              <MapPin className="h-4 w-4 text-primary" />
                               <span>{area}</span>
                             </div>
                           )) || (
                             <div className="flex items-center gap-2">
-                              <MapPin className="h-4 w-4 text-blue-500" />
+                              <MapPin className="h-4 w-4 text-primary" />
                               <span>{agent.location.city} et région</span>
                             </div>
                           )}
@@ -454,12 +451,11 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                                   <Building2 className="h-12 w-12 text-muted-foreground" />
                                 </div>
                               )}
-                              <div className="absolute top-2 left-2">
-                                <Badge
+                              <div className="absolute top-2 left-2">                                <Badge
                                   className={
                                     property.transactionType === "sale"
-                                      ? "bg-green-600"
-                                      : "bg-blue-600"
+                                      ? "bg-emerald-600 hover:bg-emerald-700"
+                                      : "bg-primary hover:bg-primary/90"
                                   }
                                 >
                                   {property.transactionType === "sale"
@@ -555,9 +551,8 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleContactSubmit} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  <div className="grid grid-cols-2 gap-4">                    <div>
+                      <label className="text-sm font-medium text-foreground mb-1 block">
                         Nom
                       </label>
                       <Input
@@ -570,7 +565,7 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                       />
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-1 block">
+                      <label className="text-sm font-medium text-foreground mb-1 block">
                         Email
                       </label>
                       <Input
@@ -583,10 +578,8 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                         placeholder="votre@email.com"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  </div>                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1 block">
                       Téléphone
                     </label>
                     <Input
@@ -600,7 +593,7 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
+                    <label className="text-sm font-medium text-foreground mb-1 block">
                       Sujet
                     </label>
                     <Select
@@ -627,10 +620,8 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                         <SelectItem value="Consultation">Consultation</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  </div>                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1 block">
                       Type de propriété
                     </label>
                     <Select
@@ -654,7 +645,7 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                   </div>
 
                   <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
+                    <label className="text-sm font-medium text-foreground mb-1 block">
                       Budget
                     </label>
                     <Select
@@ -674,10 +665,8 @@ export default function AgentSinglePage({ params }: AgentSinglePageProps) {
                         <SelectItem value="> 10M€">Plus de 10M€</SelectItem>
                       </SelectContent>
                     </Select>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  </div>                  <div>
+                    <label className="text-sm font-medium text-foreground mb-1 block">
                       Message
                     </label>
                     <Textarea
