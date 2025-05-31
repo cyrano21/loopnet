@@ -7,7 +7,7 @@ import Message from "@/models/Message"
 import mongoose from "mongoose"
 
 // GET /api/messages/conversations/[id] - Récupérer les messages d'une conversation
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) {
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     await connectDB()
 
-    const conversationId = params.id
+    const { id: conversationId } = await params
     const userId = new mongoose.Types.ObjectId(session.user.id)
 
     // Vérifier si l'utilisateur est participant à la conversation
