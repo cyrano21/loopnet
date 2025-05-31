@@ -96,7 +96,7 @@ export function PropertyAddress({ property }: PropertyAddressProps) {
               <div className="space-y-2">
                 <p className="text-lg font-medium text-gray-900">{property.address}</p>
                 <p className="text-gray-700">
-                  {property.city}, {property.zipCode}
+                  {property.city}, {property.postalCode}
                 </p>
                 <p className="text-gray-600">
                   {property.region}, France
@@ -145,7 +145,7 @@ export function PropertyAddress({ property }: PropertyAddressProps) {
                 
                 <div className="p-3 border rounded-lg">
                   <p className="text-xs text-gray-600 mb-1">Code postal</p>
-                  <p className="font-medium">{property.zipCode}</p>
+                  <p className="font-medium">{property.postalCode}</p>
                 </div>
                 
                 <div className="p-3 border rounded-lg">

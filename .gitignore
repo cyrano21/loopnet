@@ -28,8 +28,7 @@ next-env.d.ts
 
 /loopnet-extact_zip/
 /loopnet-34708fe0fe8abc593d51d13857eda8049cc0b7c2/
-/homez/
 /components.old/
 /app.old/
 /lib.old/
-/homez/
+#/homez/

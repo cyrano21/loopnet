@@ -24,6 +24,7 @@ interface RoleGuardProps {
   allowedRoles?: string[];
   requiredRole?: "admin" | "agent" | "premium" | "simple" | "user";
   fallback?: ReactNode;
+  message?: string;
   redirectTo?: string;
 }
 
@@ -32,6 +33,7 @@ export function RoleGuard({
   allowedRoles = [],
   requiredRole,
   fallback,
+  message,
   redirectTo,
 }: RoleGuardProps) {
   const { user, isLoading, isAuthenticated } = useAuth();
@@ -95,9 +97,8 @@ export function RoleGuard({
         <Card className="max-w-md mx-auto">
           <CardHeader className="text-center">
             <ShieldCheck className="h-12 w-12 mx-auto text-red-400 mb-4" />
-            <CardTitle>Accès Restreint</CardTitle>
-            <CardDescription>
-              {getRoleMessage(targetRole, userRole)}
+            <CardTitle>Accès Restreint</CardTitle>            <CardDescription>
+              {message || getRoleMessage(targetRole, userRole)}
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center space-y-4">
@@ -132,8 +133,14 @@ function checkRoleAccess(
   allowedRoles: string[],
   requiredRole?: string
 ): boolean {
+  console.log("Checking role access:", { userRole, allowedRoles, requiredRole });
+  
   // Si allowedRoles est spécifié, vérifier si le rôle utilisateur est dans la liste
   if (allowedRoles.length > 0) {
+    // Si l'utilisateur est admin, toujours autoriser l'accès
+    if (userRole === "admin") {
+      return true;
+    }
     return allowedRoles.includes(userRole);
   }
 

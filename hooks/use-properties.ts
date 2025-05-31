@@ -49,28 +49,37 @@ export function useProperties(options: UsePropertiesOptions = {}): UseProperties
       const params = new URLSearchParams()
 
       Object.entries(options).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== "") {
+        if (value !== undefined && value !== null && value !== "" && value !== "all") {
           params.append(key, value.toString())
         }
       })
 
+      console.log("Fetching properties with params:", params.toString())
+      
       const response = await fetch(`/api/properties?${params.toString()}`)
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorText = await response.text().catch(() => "No error details available")
+        console.error(`HTTP error! status: ${response.status}, details:`, errorText)
+        throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`)
       }
 
       const result = await response.json()
 
       if (!result.success) {
+        console.error("API returned error:", result.error)
         throw new Error(result.error || "Failed to fetch properties")
       }
 
       setProperties(result.data.properties)
       setPagination(result.data.pagination)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred")
+      const errorMessage = err instanceof Error ? err.message : "An error occurred"
+      setError(errorMessage)
       console.error("Error fetching properties:", err)
+      // Réinitialiser les propriétés en cas d'erreur pour éviter d'afficher des données obsolètes
+      setProperties([])
+      setPagination(null)
     } finally {
       setLoading(false)
     }
@@ -136,18 +145,22 @@ export function useProperty(id: string) {
         const response = await fetch(`/api/properties/${id}`)
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
+          const errorText = await response.text().catch(() => "No error details available")
+          console.error(`HTTP error! status: ${response.status}, details:`, errorText)
+          throw new Error(`HTTP error! status: ${response.status}, details: ${errorText}`)
         }
 
         const result = await response.json()
 
         if (!result.success) {
+          console.error("API returned error:", result.error)
           throw new Error(result.error || "Failed to fetch property")
         }
 
         setProperty(result.data)
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred")
+        const errorMessage = err instanceof Error ? err.message : "An error occurred"
+        setError(errorMessage)
         console.error("Error fetching property:", err)
       } finally {
         setLoading(false)

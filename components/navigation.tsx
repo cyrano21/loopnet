@@ -26,6 +26,7 @@ import {
   Star
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { MessageNotification } from "@/components/message-notification"
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,11 +39,11 @@ function Navigation() {
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="bg-background/95 backdrop-blur-md shadow-lg border-b border-border/50 sticky top-0 z-50 relative overflow-hidden"
+      className="surface-1 backdrop-blur-md shadow-custom-lg border-b border-border/50 sticky top-0 z-50 relative overflow-hidden"
     >
       {/* Animated background elements */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-blue-500/5 via-purple-500/5 to-blue-500/5"
+        className="absolute inset-0 gradient-secondary opacity-30"
         animate={{
           backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
         }}
@@ -212,6 +213,8 @@ function Navigation() {
                     Publier une annonce
                   </Button>
                 </Link>
+                
+                <MessageNotification />
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -336,6 +339,7 @@ function Navigation() {
           {/* Mobile menu button */}
           <div className="md:hidden flex items-center space-x-2">
             <ThemeToggle />
+            <MessageNotification />
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-blue-50 dark:hover:bg-blue-950/30 transition-all duration-300 hover:scale-110"

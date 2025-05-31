@@ -57,8 +57,8 @@ export function useProfessionals(params: UseProfessionalsParams = {}) {
       setLoading(true)
       const searchParams = new URLSearchParams()
 
-      if (params.specialty) searchParams.set("specialty", params.specialty)
-      if (params.location) searchParams.set("location", params.location)
+      if (params.specialty && params.specialty !== 'all') searchParams.set("specialty", params.specialty)
+      if (params.location && params.location !== 'all') searchParams.set("location", params.location)
       if (params.sortBy) searchParams.set("sortBy", params.sortBy)
       if (params.search) searchParams.set("search", params.search)
       if (params.page) searchParams.set("page", params.page.toString())

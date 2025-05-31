@@ -31,8 +31,8 @@ import { useProfessionals } from '@/hooks/use-professionals'
 export default function AgentsPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [filters, setFilters] = useState({
-    specialty: '',
-    location: '',
+    specialty: 'all',
+    location: 'all',
     sortBy: 'rating',
     search: ''
   })
@@ -175,7 +175,7 @@ export default function AgentsPage() {
                       <SelectValue placeholder="Toutes les spécialités" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Toutes les spécialités</SelectItem>
+                      <SelectItem value="all">Toutes les spécialités</SelectItem>
                       {specialties.map((specialty) => (
                         <SelectItem key={specialty} value={specialty}>
                           {specialty}
@@ -194,7 +194,7 @@ export default function AgentsPage() {
                       <SelectValue placeholder="Toutes les villes" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Toutes les villes</SelectItem>
+                      <SelectItem value="all">Toutes les villes</SelectItem>
                       {locations.map((location) => (
                         <SelectItem key={location} value={location}>
                           {location}
@@ -210,7 +210,7 @@ export default function AgentsPage() {
                   </label>
                   <Select value={filters.sortBy} onValueChange={(value) => handleFilterChange('sortBy', value)}>
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Trier par" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="rating">Note</SelectItem>
@@ -225,7 +225,7 @@ export default function AgentsPage() {
                   <Button
                     variant="outline"
                     className="w-full"
-                    onClick={() => setFilters({ specialty: '', location: '', sortBy: 'rating', search: '' })}
+                    onClick={() => setFilters({ specialty: 'all', location: 'all', sortBy: 'rating', search: '' })}
                   >
                     Réinitialiser
                   </Button>

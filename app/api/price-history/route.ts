@@ -1,42 +1,89 @@
 import { NextResponse } from "next/server"
 
+// Helper function to generate price history
+const generatePriceHistory = (months: number, basePriceParam?: number) => {
+  const history = []
+  const basePrice = basePriceParam || (2500000 + Math.random() * 1000000)
+  let currentPrice = basePrice
+
+  for (let i = months; i >= 0; i--) {
+    const date = new Date()
+    date.setMonth(date.getMonth() - i)
+    
+    // Simuler des variations de prix réalistes
+    const variation = (Math.random() - 0.5) * 0.1 // ±5% de variation
+    currentPrice *= (1 + variation)
+    
+    history.push({
+      date: date.toISOString().split('T')[0],
+      price: Math.round(currentPrice),
+      event: i === 0 ? "Prix actuel" : 
+             Math.random() > 0.8 ? "Réduction de prix" :
+             Math.random() > 0.9 ? "Augmentation" : null
+    })
+  }
+  
+  return history
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const propertyId = searchParams.get("propertyId")
+  const address = searchParams.get("address")
+  const propertyType = searchParams.get("propertyType") || "all"
+  const minPriceParam = searchParams.get("minPrice")
+  const maxPriceParam = searchParams.get("maxPrice")
   const period = searchParams.get("period") || "12months"
 
-  if (!propertyId) {
-    return NextResponse.json(
-      { error: "propertyId est requis" },
-      { status: 400 }
-    )
-  }
-
   try {
-    // Mock data - Dans une vraie application, ceci viendrait de votre base de données
-    const generatePriceHistory = (months: number) => {
-      const history = []
-      const basePrice = 2500000 + Math.random() * 1000000
-      let currentPrice = basePrice
+    // Support pour recherche par adresse (nouvelles fonctionnalités)
+    if (address && !propertyId) {
+      // Recherche de propriétés par adresse
+      const mockProperties = [
+        {
+          id: "prop-1",
+          address: address,
+          currentPrice: 2500000,
+          priceHistory: generatePriceHistory(12, 2500000),
+          propertyType: "office",
+          size: 850,
+          yearBuilt: 2015
+        },
+        {
+          id: "prop-2", 
+          address: address.replace(/\d+/, (n) => String(parseInt(n) + 2)),
+          currentPrice: 2750000,
+          priceHistory: generatePriceHistory(12, 2750000),
+          propertyType: "retail",
+          size: 920,
+          yearBuilt: 2018
+        }
+      ].filter(prop => {
+        if (propertyType !== "all" && prop.propertyType !== propertyType) return false;
+        if (minPriceParam && prop.currentPrice < parseInt(minPriceParam)) return false;
+        if (maxPriceParam && prop.currentPrice > parseInt(maxPriceParam)) return false;
+        return true;
+      });
 
-      for (let i = months; i >= 0; i--) {
-        const date = new Date()
-        date.setMonth(date.getMonth() - i)
-        
-        // Simuler des variations de prix réalistes
-        const variation = (Math.random() - 0.5) * 0.1 // ±5% de variation
-        currentPrice *= (1 + variation)
-        
-        history.push({
-          date: date.toISOString().split('T')[0],
-          price: Math.round(currentPrice),
-          event: i === 0 ? "Prix actuel" : 
-                 Math.random() > 0.8 ? "Réduction de prix" :
-                 Math.random() > 0.9 ? "Augmentation" : null
-        })
-      }
-      
-      return history
+      return NextResponse.json({
+        success: true,
+        properties: mockProperties,
+        searchCriteria: { address, propertyType, minPrice: minPriceParam, maxPrice: maxPriceParam, period },
+        marketComparison: {
+          globalAverage: 4250,
+          regionAverage: 5200,
+          typeAverage: 6800,
+          trend: 8.5
+        }
+      });
+    }
+
+    // Analyse pour propriété spécifique (code existant amélioré)
+    if (!propertyId) {
+      return NextResponse.json(
+        { error: "propertyId ou address est requis" },
+        { status: 400 }
+      )
     }
 
     const monthsMap = {

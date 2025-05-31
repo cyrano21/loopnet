@@ -484,7 +484,7 @@ export default function DataImportPage () {
                           <SelectValue placeholder='Toutes transactions' />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value=''>Toutes</SelectItem>
+                          <SelectItem value='all'>Toutes</SelectItem>
                           <SelectItem value='sale'>Vente</SelectItem>
                           <SelectItem value='rent'>Location</SelectItem>
                         </SelectContent>

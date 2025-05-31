@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import {
   Building2,
@@ -34,61 +34,50 @@ import {
 import { Progress } from '@/components/ui/progress'
 import { RoleGuard } from '@/components/role-guard'
 
+// Import hooks for real data
+import { useDashboardAnalytics } from '@/hooks/use-dashboard-analytics'
+import { useProperties } from '@/hooks/use-properties'
+import { useAuth } from '@/hooks/use-auth'
+
 export default function AgentDashboardPage () {
   const [dateRange, setDateRange] = useState('30d')
   const [selectedProperty, setSelectedProperty] = useState('all')
+  const { user } = useAuth()
+  
+  // Fetch real data using hooks
+  const { analytics, loading: analyticsLoading } = useDashboardAnalytics(dateRange)
+  const { properties, loading: propertiesLoading } = useProperties({
+    limit: 5,
+    sort: 'views:-1',
+    agent: user?.id || '' // Use actual user ID instead of 'current'
+  })
 
-  // Agent Performance Metrics
+  // Prepare data for UI
   const agentStats = {
-    totalListings: 24,
-    activeListings: 18,
-    totalViews: 12847,
-    totalInquiries: 247,
-    conversionRate: 7.2,
-    totalCommission: 125000,
-    avgDaysOnMarket: 45,
-    clientSatisfaction: 4.8,
+    totalListings: analytics?.totalProperties || 0,
+    activeListings: analytics?.activeProperties || 0,
+    totalViews: analytics?.totalViews || 0,
+    totalInquiries: analytics?.totalInquiries || 0,
+    conversionRate: analytics?.recentInquiries && analytics?.totalViews ? 
+      ((analytics.recentInquiries / analytics.totalViews) * 100).toFixed(1) : 0,
+    totalCommission: analytics?.monthlyRevenue || 0,
+    avgDaysOnMarket: 45, // This could be calculated from property data
+    clientSatisfaction: 4.8, // This might come from a different API
     monthlyGoal: 150000,
-    goalProgress: 83.3
+    goalProgress: analytics?.monthlyRevenue ? (analytics.monthlyRevenue / 150000) * 100 : 0
   }
 
-  // Recent Activities
-  const recentActivities = [
-    {
-      id: 1,
-      type: 'inquiry',
-      title: 'New inquiry from Sarah Johnson',
-      property: 'Downtown Office Complex',
-      time: '2 hours ago',
-      priority: 'high'
-    },
-    {
-      id: 2,
-      type: 'viewing',
-      title: 'Property viewing scheduled',
-      property: 'Retail Shopping Center',
-      time: '4 hours ago',
-      priority: 'medium'
-    },
-    {
-      id: 3,
-      type: 'offer',
-      title: 'Offer received - $2.3M',
-      property: 'Industrial Warehouse',
-      time: '1 day ago',
-      priority: 'high'
-    },
-    {
-      id: 4,
-      type: 'listing',
-      title: 'New listing approved',
-      property: 'Medical Office Building',
-      time: '2 days ago',
-      priority: 'low'
-    }
-  ]
+  // Recent Activities from analytics
+  const recentActivities = analytics?.recentActivities?.map(activity => ({
+    id: activity.id,
+    type: activity.type,
+    title: activity.message,
+    time: activity.time,
+    priority: activity.priority,
+    property: activity.user || 'Property'
+  })) || []
 
-  // Lead Pipeline
+  // Lead Pipeline - This could be from a CRM API
   const leadPipeline = [
     { stage: 'New Leads', count: 23, value: 2300000, color: 'bg-blue-500' },
     { stage: 'Qualified', count: 15, value: 1800000, color: 'bg-yellow-500' },
@@ -102,42 +91,23 @@ export default function AgentDashboardPage () {
     { stage: 'Closed Won', count: 3, value: 450000, color: 'bg-green-500' }
   ]
 
-  // Top Properties Performance
-  const topProperties = [
-    {
-      id: 1,
-      title: 'Downtown Office Complex',
-      address: '123 Business St, San Francisco',
-      views: 1247,
-      inquiries: 23,
-      price: '$2,500,000',
-      status: 'Active',
-      daysOnMarket: 15,
-      image: '/placeholder.svg?height=80&width=120'
-    },
-    {
-      id: 2,
-      title: 'Retail Shopping Center',
-      address: '456 Commerce Ave, Los Angeles',
-      views: 892,
-      inquiries: 18,
-      price: '$18/sq ft/year',
-      status: 'Active',
-      daysOnMarket: 8,
-      image: '/placeholder.svg?height=80&width=120'
-    },
-    {
-      id: 3,
-      title: 'Industrial Warehouse',
-      address: '789 Industrial Blvd, Phoenix',
-      views: 634,
-      inquiries: 12,
-      price: '$1,800,000',
-      status: 'Under Contract',
-      daysOnMarket: 32,
-      image: '/placeholder.svg?height=80&width=120'
-    }
-  ]
+  // Top Properties Performance from real properties data
+  const topProperties = properties?.map(property => ({
+    id: property._id,
+    title: property.title,
+    address: `${property.address}, ${property.city}`,
+    views: property.views || 0,
+    inquiries: property.inquiries || 0,
+    price: property.transactionType === 'rent' ? 
+      `$${property.price}/month` : 
+      `$${property.price.toLocaleString()}`,
+    status: property.status,
+    daysOnMarket: property.publishedAt ? 
+      Math.ceil((new Date().getTime() - new Date(property.publishedAt).getTime()) / (1000 * 3600 * 24)) : 0,
+    image: property.images && property.images.length > 0 ? 
+      property.images[0].url : 
+      '/placeholder.svg?height=80&width=120'
+  })) || []
 
   // Upcoming Tasks
   const upcomingTasks = [
@@ -198,48 +168,35 @@ export default function AgentDashboardPage () {
                   >
                     Properties
                   </Link>
-                  <Link
-                    href='/leads'
-                    className='text-gray-700 hover:text-blue-600'
-                  >
-                    Leads
-                  </Link>
-                  <Link
-                    href='/analytics'
-                    className='text-gray-700 hover:text-blue-600'
-                  >
-                    Analytics
-                  </Link>
                 </nav>
               </div>
+
               <div className='flex items-center space-x-4'>
-                <Button variant='ghost'>
-                  <MessageSquare className='h-4 w-4 mr-2' />
-                  Messages
-                </Button>
-                <Button>
+                <Button variant='outline' size='sm'>
                   <Plus className='h-4 w-4 mr-2' />
-                  Add Listing
+                  Add Property
                 </Button>
+                <Button size='sm'>Upgrade Plan</Button>
               </div>
             </div>
           </div>
         </header>
 
-        <div className='container mx-auto px-4 py-6'>
-          {/* Page Header */}
-          <div className='flex items-center justify-between mb-8'>
+        <div className='container mx-auto px-4 py-8'>
+          {/* Dashboard Controls */}
+          <div className='flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4'>
             <div>
               <h1 className='text-3xl font-bold'>Agent Dashboard</h1>
-              <p className='text-gray-600'>
-                Welcome back, John Smith - Track your performance and manage
-                your listings
-              </p>
+              <p className='text-gray-500'>Welcome back! Here's your performance overview</p>
             </div>
-            <div className='flex gap-4'>
-              <Select value={dateRange} onValueChange={setDateRange}>
-                <SelectTrigger className='w-40'>
-                  <SelectValue />
+
+            <div className='flex flex-col sm:flex-row gap-3'>
+              <Select
+                value={dateRange}
+                onValueChange={value => setDateRange(value)}
+              >
+                <SelectTrigger className='w-[180px]'>
+                  <SelectValue placeholder='Select period' />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value='7d'>Last 7 days</SelectItem>
@@ -248,6 +205,7 @@ export default function AgentDashboardPage () {
                   <SelectItem value='1y'>Last year</SelectItem>
                 </SelectContent>
               </Select>
+
               <Button variant='outline'>
                 <Download className='h-4 w-4 mr-2' />
                 Export Report
@@ -255,286 +213,345 @@ export default function AgentDashboardPage () {
             </div>
           </div>
 
-          {/* Key Metrics */}
+          {/* Stats Overview */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
             <Card>
-              <CardContent className='p-6'>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm font-medium text-gray-500'>
+                  Total Listings
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div className='flex items-center justify-between'>
-                  <div>
-                    <p className='text-sm font-medium text-gray-600'>
-                      Active Listings
-                    </p>
-                    <p className='text-2xl font-bold'>
-                      {agentStats.activeListings}
-                    </p>
-                    <p className='text-xs text-gray-500'>
-                      of {agentStats.totalListings} total
-                    </p>
+                  <div className='text-3xl font-bold'>{agentStats.totalListings}</div>
+                  <div className='p-2 bg-blue-100 rounded-full'>
+                    <Building2 className='h-5 w-5 text-blue-600' />
                   </div>
-                  <Building2 className='h-8 w-8 text-blue-600' />
                 </div>
+                <p className='text-xs text-gray-500 mt-2'>
+                  <span className='text-green-600 font-medium'>
+                    {agentStats.activeListings} active
+                  </span>{' '}
+                  listings right now
+                </p>
               </CardContent>
             </Card>
 
             <Card>
-              <CardContent className='p-6'>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm font-medium text-gray-500'>
+                  Total Views
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div className='flex items-center justify-between'>
-                  <div>
-                    <p className='text-sm font-medium text-gray-600'>
-                      Total Inquiries
-                    </p>
-                    <p className='text-2xl font-bold'>
-                      {agentStats.totalInquiries}
-                    </p>
-                    <p className='text-xs text-green-600'>
-                      +15.3% from last month
-                    </p>
+                  <div className='text-3xl font-bold'>{agentStats.totalViews.toLocaleString()}</div>
+                  <div className='p-2 bg-green-100 rounded-full'>
+                    <Users className='h-5 w-5 text-green-600' />
                   </div>
-                  <Users className='h-8 w-8 text-green-600' />
                 </div>
+                <p className='text-xs text-gray-500 mt-2'>
+                  <span className='text-green-600 font-medium'>+12%</span> from
+                  last period
+                </p>
               </CardContent>
             </Card>
 
             <Card>
-              <CardContent className='p-6'>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm font-medium text-gray-500'>
+                  Conversion Rate
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div className='flex items-center justify-between'>
-                  <div>
-                    <p className='text-sm font-medium text-gray-600'>
-                      Commission Earned
-                    </p>
-                    <p className='text-2xl font-bold'>
-                      ${agentStats.totalCommission.toLocaleString()}
-                    </p>
-                    <p className='text-xs text-green-600'>
-                      +23.1% from last month
-                    </p>
+                  <div className='text-3xl font-bold'>{agentStats.conversionRate}%</div>
+                  <div className='p-2 bg-yellow-100 rounded-full'>
+                    <TrendingUp className='h-5 w-5 text-yellow-600' />
                   </div>
-                  <DollarSign className='h-8 w-8 text-green-600' />
                 </div>
+                <p className='text-xs text-gray-500 mt-2'>
+                  <span className='text-green-600 font-medium'>{agentStats.totalInquiries}</span> total
+                  inquiries
+                </p>
               </CardContent>
             </Card>
 
             <Card>
-              <CardContent className='p-6'>
+              <CardHeader className='pb-2'>
+                <CardTitle className='text-sm font-medium text-gray-500'>
+                  Commission Earned
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div className='flex items-center justify-between'>
-                  <div>
-                    <p className='text-sm font-medium text-gray-600'>
-                      Conversion Rate
-                    </p>
-                    <p className='text-2xl font-bold'>
-                      {agentStats.conversionRate}%
-                    </p>
-                    <p className='text-xs text-orange-600'>
-                      -2.1% from last month
-                    </p>
+                  <div className='text-3xl font-bold'>
+                    ${agentStats.totalCommission.toLocaleString()}
                   </div>
-                  <Target className='h-8 w-8 text-orange-600' />
+                  <div className='p-2 bg-purple-100 rounded-full'>
+                    <DollarSign className='h-5 w-5 text-purple-600' />
+                  </div>
+                </div>
+                <div className='mt-2'>
+                  <div className='flex items-center justify-between text-xs mb-1'>
+                    <span>Goal: ${agentStats.monthlyGoal.toLocaleString()}</span>
+                    <span className='font-medium'>
+                      {Math.round(agentStats.goalProgress)}%
+                    </span>
+                  </div>
+                  <Progress value={agentStats.goalProgress} className='h-1' />
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Monthly Goal Progress */}
-          <Card className='mb-8'>
-            <CardHeader>
-              <CardTitle className='flex items-center justify-between'>
-                <span>Monthly Goal Progress</span>
-                <Badge className='bg-green-100 text-green-800'>
-                  ${agentStats.totalCommission.toLocaleString()} / $
-                  {agentStats.monthlyGoal.toLocaleString()}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-2'>
-                <div className='flex justify-between text-sm'>
-                  <span>Progress: {agentStats.goalProgress}%</span>
-                  <span>
-                    $
-                    {(
-                      agentStats.monthlyGoal - agentStats.totalCommission
-                    ).toLocaleString()}{' '}
-                    remaining
-                  </span>
-                </div>
-                <Progress value={agentStats.goalProgress} className='h-3' />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Main Dashboard Content */}
-          <Tabs defaultValue='overview' className='space-y-6'>
-            <TabsList>
-              <TabsTrigger value='overview'>Overview</TabsTrigger>
-              <TabsTrigger value='leads'>Lead Pipeline</TabsTrigger>
-              <TabsTrigger value='properties'>Properties</TabsTrigger>
-              <TabsTrigger value='tasks'>Tasks & Calendar</TabsTrigger>
-              <TabsTrigger value='performance'>Performance</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value='overview' className='space-y-6'>
-              <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
-                {/* Recent Activities */}
-                <Card className='lg:col-span-2'>
-                  <CardHeader>
-                    <CardTitle>Recent Activities</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='space-y-4'>
-                      {recentActivities.map(activity => (
-                        <div
-                          key={activity.id}
-                          className='flex items-center justify-between p-3 border rounded-lg'
-                        >
-                          <div className='flex items-center gap-3'>
-                            <div
-                              className={`w-2 h-2 rounded-full ${
-                                activity.priority === 'high'
-                                  ? 'bg-red-500'
-                                  : activity.priority === 'medium'
-                                  ? 'bg-yellow-500'
-                                  : 'bg-green-500'
-                              }`}
-                            />
-                            <div>
-                              <p className='font-medium'>{activity.title}</p>
-                              <p className='text-sm text-gray-600'>
-                                {activity.property}
-                              </p>
-                            </div>
-                          </div>
-                          <div className='text-right'>
-                            <p className='text-sm text-gray-500'>
-                              {activity.time}
-                            </p>
-                            <Badge variant='outline' className='text-xs'>
-                              {activity.type}
-                            </Badge>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Quick Stats */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Quick Stats</CardTitle>
-                  </CardHeader>
-                  <CardContent className='space-y-4'>
-                    <div className='flex justify-between items-center'>
-                      <span className='text-sm text-gray-600'>
-                        Avg. Days on Market
-                      </span>
-                      <span className='font-semibold'>
-                        {agentStats.avgDaysOnMarket} days
-                      </span>
-                    </div>
-                    <div className='flex justify-between items-center'>
-                      <span className='text-sm text-gray-600'>
-                        Client Satisfaction
-                      </span>
-                      <div className='flex items-center gap-1'>
-                        <Star className='h-4 w-4 fill-yellow-400 text-yellow-400' />
-                        <span className='font-semibold'>
-                          {agentStats.clientSatisfaction}
-                        </span>
-                      </div>
-                    </div>
-                    <div className='flex justify-between items-center'>
-                      <span className='text-sm text-gray-600'>Total Views</span>
-                      <span className='font-semibold'>
-                        {agentStats.totalViews.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className='flex justify-between items-center'>
-                      <span className='text-sm text-gray-600'>
-                        Response Time
-                      </span>
-                      <span className='font-semibold'>2.3 hours</span>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            <TabsContent value='leads' className='space-y-6'>
+          {/* Main Content */}
+          <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+            {/* Left Column */}
+            <div className='lg:col-span-2 space-y-8'>
+              {/* Lead Pipeline */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Lead Pipeline</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-1 md:grid-cols-5 gap-4'>
-                    {leadPipeline.map((stage, index) => (
-                      <Card key={index} className='border-2'>
-                        <CardContent className='p-4'>
-                          <div
-                            className={`w-full h-2 ${stage.color} rounded-full mb-3`}
-                          />
-                          <h3 className='font-semibold text-sm mb-2'>
-                            {stage.stage}
-                          </h3>
-                          <div className='space-y-1'>
-                            <p className='text-2xl font-bold'>{stage.count}</p>
-                            <p className='text-xs text-gray-600'>
-                              ${(stage.value / 1000000).toFixed(1)}M value
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value='properties' className='space-y-6'>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Top Performing Properties</CardTitle>
+                  <CardTitle className='text-xl'>Lead Pipeline</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className='space-y-4'>
-                    {topProperties.map(property => (
-                      <div key={property.id} className='border rounded-lg p-4'>
-                        <div className='flex items-center gap-4'>
-                          <div className='relative w-20 h-16'>
+                    {leadPipeline.map(stage => (
+                      <div key={stage.stage} className='space-y-2'>
+                        <div className='flex items-center justify-between'>
+                          <div className='flex items-center'>
+                            <div
+                              className={`w-3 h-3 rounded-full ${stage.color} mr-2`}
+                            />
+                            <span>{stage.stage}</span>
+                          </div>
+                          <div className='text-sm font-medium'>
+                            {stage.count} leads · ${stage.value.toLocaleString()}
+                          </div>
+                        </div>
+                        <Progress
+                          value={
+                            (stage.value /
+                              leadPipeline.reduce(
+                                (acc, curr) => acc + curr.value,
+                                0
+                              )) *
+                            100
+                          }
+                          className={`h-2 ${stage.color}`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Top Performing Properties */}
+              <Card>
+                <CardHeader className='flex flex-row items-center justify-between'>
+                  <CardTitle className='text-xl'>Top Performing Properties</CardTitle>
+                  <Select
+                    value={selectedProperty}
+                    onValueChange={setSelectedProperty}
+                  >
+                    <SelectTrigger className='w-[150px]'>
+                      <SelectValue placeholder='Filter' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value='all'>All Properties</SelectItem>
+                      <SelectItem value='active'>Active Only</SelectItem>
+                      <SelectItem value='pending'>Pending</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-6'>
+                    {propertiesLoading ? (
+                      <div className="text-center py-4">Loading properties...</div>
+                    ) : topProperties.length > 0 ? (
+                      topProperties.map(property => (
+                        <div
+                          key={property.id}
+                          className='flex items-start space-x-4 pb-4 border-b last:border-0'
+                        >
+                          <div className='flex-shrink-0 w-20 h-20 relative rounded-md overflow-hidden'>
                             <Image
-                              src={property.image || '/placeholder.svg'}
+                              src={property.image}
                               alt={property.title}
                               fill
-                              sizes="(max-width: 768px) 33vw, 20vw"
-                              className='object-cover rounded'
+                              className='object-cover'
                             />
                           </div>
-                          <div className='flex-1'>
-                            <h3 className='font-semibold'>{property.title}</h3>
-                            <p className='text-sm text-gray-600 flex items-center gap-1'>
-                              <MapPin className='h-3 w-3' />
-                              {property.address}
-                            </p>
-                            <div className='flex items-center gap-4 mt-2 text-sm'>
-                              <span>Views: {property.views}</span>
-                              <span>Inquiries: {property.inquiries}</span>
-                              <span>Days: {property.daysOnMarket}</span>
+                          <div className='flex-grow min-w-0'>
+                            <div className='flex items-center justify-between'>
+                              <h3 className='font-medium truncate'>
+                                {property.title}
+                              </h3>
+                              <Badge
+                                variant={
+                                  property.status === 'active'
+                                    ? 'default'
+                                    : property.status === 'pending'
+                                    ? 'secondary'
+                                    : 'outline'
+                                }
+                              >
+                                {property.status}
+                              </Badge>
+                            </div>
+                            <div className='flex items-center text-sm text-gray-500 mt-1'>
+                              <MapPin className='h-3 w-3 mr-1' />
+                              <span className='truncate'>{property.address}</span>
+                            </div>
+                            <div className='flex items-center justify-between mt-2 text-sm'>
+                              <div className='space-x-3'>
+                                <span className='inline-flex items-center'>
+                                  <Users className='h-3 w-3 mr-1 text-blue-500' />
+                                  {property.views} views
+                                </span>
+                                <span className='inline-flex items-center'>
+                                  <MessageSquare className='h-3 w-3 mr-1 text-green-500' />
+                                  {property.inquiries} inquiries
+                                </span>
+                              </div>
+                              <div className='font-medium'>{property.price}</div>
                             </div>
                           </div>
-                          <div className='text-right'>
-                            <p className='font-bold text-lg'>
-                              {property.price}
-                            </p>
-                            <Badge
-                              className={
-                                property.status === 'Active'
-                                  ? 'bg-green-100 text-green-800'
-                                  : property.status === 'Under Contract'
-                                  ? 'bg-yellow-100 text-yellow-800'
-                                  : 'bg-gray-100 text-gray-800'
-                              }
-                            >
-                              {property.status}
-                            </Badge>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4">No properties found</div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column */}
+            <div className='space-y-8'>
+              {/* Recent Activities */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className='text-xl'>Recent Activities</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-4'>
+                    {analyticsLoading ? (
+                      <div className="text-center py-4">Loading activities...</div>
+                    ) : recentActivities.length > 0 ? (
+                      recentActivities.map(activity => (
+                        <div
+                          key={activity.id}
+                          className='flex items-start space-x-3 pb-4 border-b last:border-0'
+                        >
+                          <div
+                            className={`p-2 rounded-full flex-shrink-0 ${
+                              activity.type === 'inquiry'
+                                ? 'bg-blue-100'
+                                : activity.type === 'viewing'
+                                ? 'bg-green-100'
+                                : activity.type === 'offer'
+                                ? 'bg-purple-100'
+                                : 'bg-yellow-100'
+                            }`}
+                          >
+                            {activity.type === 'inquiry' ? (
+                              <MessageSquare
+                                className='h-4 w-4 text-blue-600'
+                                strokeWidth={2}
+                              />
+                            ) : activity.type === 'viewing' ? (
+                              <Calendar
+                                className='h-4 w-4 text-green-600'
+                                strokeWidth={2}
+                              />
+                            ) : activity.type === 'offer' ? (
+                              <DollarSign
+                                className='h-4 w-4 text-purple-600'
+                                strokeWidth={2}
+                              />
+                            ) : (
+                              <Building2
+                                className='h-4 w-4 text-yellow-600'
+                                strokeWidth={2}
+                              />
+                            )}
+                          </div>
+                          <div className='flex-grow'>
+                            <p className='text-sm'>{activity.title}</p>
+                            <div className='flex items-center justify-between mt-1'>
+                              <span className='text-xs text-gray-500'>
+                                {activity.property}
+                              </span>
+                              <span className='text-xs text-gray-500'>
+                                {activity.time}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4">No recent activities</div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Upcoming Tasks */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className='text-xl'>Upcoming Tasks</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-4'>
+                    {upcomingTasks.map(task => (
+                      <div
+                        key={task.id}
+                        className='flex items-start space-x-3 pb-4 border-b last:border-0'
+                      >
+                        <div
+                          className={`p-2 rounded-full flex-shrink-0 ${
+                            task.type === 'viewing'
+                              ? 'bg-blue-100'
+                              : task.type === 'follow-up'
+                              ? 'bg-yellow-100'
+                              : task.type === 'report'
+                              ? 'bg-green-100'
+                              : 'bg-purple-100'
+                          }`}
+                        >
+                          {task.type === 'viewing' ? (
+                            <Users
+                              className='h-4 w-4 text-blue-600'
+                              strokeWidth={2}
+                            />
+                          ) : task.type === 'follow-up' ? (
+                            <MessageSquare
+                              className='h-4 w-4 text-yellow-600'
+                              strokeWidth={2}
+                            />
+                          ) : task.type === 'report' ? (
+                            <BarChart3
+                              className='h-4 w-4 text-green-600'
+                              strokeWidth={2}
+                            />
+                          ) : (
+                            <Calendar
+                              className='h-4 w-4 text-purple-600'
+                              strokeWidth={2}
+                            />
+                          )}
+                        </div>
+                        <div className='flex-grow'>
+                          <p className='text-sm font-medium'>{task.title}</p>
+                          <div className='flex items-center justify-between mt-1'>
+                            <span className='text-xs text-gray-500'>
+                              {task.property}
+                            </span>
+                            <span className='text-xs flex items-center text-gray-500'>
+                              <Clock className='h-3 w-3 mr-1' />
+                              {task.time}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -542,110 +559,61 @@ export default function AgentDashboardPage () {
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
 
-            <TabsContent value='tasks' className='space-y-6'>
-              <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Upcoming Tasks</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='space-y-3'>
-                      {upcomingTasks.map(task => (
-                        <div
-                          key={task.id}
-                          className='flex items-center gap-3 p-3 border rounded-lg'
-                        >
-                          <Clock className='h-4 w-4 text-gray-400' />
-                          <div className='flex-1'>
-                            <p className='font-medium text-sm'>{task.title}</p>
-                            <p className='text-xs text-gray-600'>
-                              {task.property}
-                            </p>
-                          </div>
-                          <div className='text-right'>
-                            <p className='text-xs text-gray-500'>{task.time}</p>
-                            <Badge variant='outline' className='text-xs'>
-                              {task.type}
-                            </Badge>
-                          </div>
+              {/* Performance Metrics */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className='text-xl'>Performance Metrics</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className='space-y-4'>
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center'>
+                        <div className='p-2 bg-blue-100 rounded-full mr-3'>
+                          <Clock className='h-4 w-4 text-blue-600' />
                         </div>
-                      ))}
+                        <span>Avg. Days on Market</span>
+                      </div>
+                      <span className='font-medium'>{agentStats.avgDaysOnMarket} days</span>
                     </div>
-                  </CardContent>
-                </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Calendar Integration</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='h-64 bg-gray-100 rounded-lg flex items-center justify-center'>
-                      <div className='text-center'>
-                        <Calendar className='w-12 h-12 text-gray-400 mx-auto mb-2' />
-                        <p className='text-gray-600'>Calendar view</p>
-                        <p className='text-sm text-gray-500'>
-                          Google Calendar integration
-                        </p>
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center'>
+                        <div className='p-2 bg-green-100 rounded-full mr-3'>
+                          <Target className='h-4 w-4 text-green-600' />
+                        </div>
+                        <span>Closing Ratio</span>
                       </div>
+                      <span className='font-medium'>32%</span>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
 
-            <TabsContent value='performance' className='space-y-6'>
-              <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Performance Trends</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='h-64 bg-gray-100 rounded-lg flex items-center justify-center'>
-                      <div className='text-center'>
-                        <BarChart3 className='w-12 h-12 text-gray-400 mx-auto mb-2' />
-                        <p className='text-gray-600'>Performance chart</p>
-                        <p className='text-sm text-gray-500'>
-                          Monthly trends and analytics
-                        </p>
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center'>
+                        <div className='p-2 bg-yellow-100 rounded-full mr-3'>
+                          <Star className='h-4 w-4 text-yellow-600' />
+                        </div>
+                        <span>Client Satisfaction</span>
+                      </div>
+                      <div className='flex items-center'>
+                        <span className='font-medium mr-1'>{agentStats.clientSatisfaction}</span>
+                        <Star className='h-3 w-3 fill-yellow-500 text-yellow-500' />
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Achievement Badges</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className='grid grid-cols-2 gap-4'>
-                      <div className='text-center p-4 border rounded-lg'>
-                        <Award className='h-8 w-8 text-gold-500 mx-auto mb-2' />
-                        <p className='font-semibold text-sm'>Top Performer</p>
-                        <p className='text-xs text-gray-600'>This Month</p>
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center'>
+                        <div className='p-2 bg-purple-100 rounded-full mr-3'>
+                          <Award className='h-4 w-4 text-purple-600' />
+                        </div>
+                        <span>Agent Ranking</span>
                       </div>
-                      <div className='text-center p-4 border rounded-lg'>
-                        <Star className='h-8 w-8 text-blue-500 mx-auto mb-2' />
-                        <p className='font-semibold text-sm'>5-Star Rating</p>
-                        <p className='text-xs text-gray-600'>Client Reviews</p>
-                      </div>
-                      <div className='text-center p-4 border rounded-lg'>
-                        <TrendingUp className='h-8 w-8 text-green-500 mx-auto mb-2' />
-                        <p className='font-semibold text-sm'>Growth Leader</p>
-                        <p className='text-xs text-gray-600'>Q4 2024</p>
-                      </div>
-                      <div className='text-center p-4 border rounded-lg'>
-                        <Target className='h-8 w-8 text-purple-500 mx-auto mb-2' />
-                        <p className='font-semibold text-sm'>Goal Achiever</p>
-                        <p className='text-xs text-gray-600'>3 Months</p>
-                      </div>
+                      <span className='font-medium'>Top 10%</span>
                     </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     </RoleGuard>

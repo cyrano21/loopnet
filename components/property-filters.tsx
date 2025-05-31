@@ -9,13 +9,15 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Filter, XIcon, ChevronDown, Search, Users } from 'lucide-react'
+import { BedroomFilter } from '@/components/property/BedroomFilter'
+import { BathroomFilter } from '@/components/property/BathroomFilter'
+import { OtherFeaturesFilter } from '@/components/property/OtherFeaturesFilter'
 
 interface PropertyFiltersProps {
   onFilterChange: (key: string, value: any) => void
 }
 
-export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
-  const [filters, setFilters] = useState({
+export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {  const [filters, setFilters] = useState({
     transactionType: 'all',
     propertyType: 'all',
     source: 'all',
@@ -26,16 +28,33 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
     minSurface: '',
     maxSurface: '',
     rooms: '',
+    bedrooms: undefined as number | undefined,
+    bathrooms: undefined as number | undefined,
+    features: [] as string[],
     sort: 'newest'
   })
 
   const [agents, setAgents] = useState<Array<{ _id: string; name: string; company: string }>>([])
-
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: string, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }))
     // Convert 'all' back to empty string for the parent component
     const processedValue = value === 'all' ? '' : value
     onFilterChange(key, processedValue)
+  }
+
+  const handleBedroomsChange = (value: number | undefined) => {
+    setFilters(prev => ({ ...prev, bedrooms: value }))
+    onFilterChange('bedrooms', value)
+  }
+
+  const handleBathroomsChange = (value: number | undefined) => {
+    setFilters(prev => ({ ...prev, bathrooms: value }))
+    onFilterChange('bathrooms', value)
+  }
+
+  const handleFeaturesChange = (value: string[]) => {
+    setFilters(prev => ({ ...prev, features: value }))
+    onFilterChange('features', value)
   }
 
   // Charger la liste des agents
@@ -53,7 +72,6 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
     }
     fetchAgents()
   }, [])
-
   const clearFilters = () => {
     const clearedFilters = {
       transactionType: 'all',
@@ -66,6 +84,9 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
       minSurface: '',
       maxSurface: '',
       rooms: '',
+      bedrooms: undefined as number | undefined,
+      bathrooms: undefined as number | undefined,
+      features: [] as string[],
       sort: 'newest'
     }
     setFilters(clearedFilters)
@@ -391,9 +412,9 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
               onChange={(e) => handleFilterChange('rooms', e.target.value)}
               className="border-2 border-gray-200 hover:border-indigo-300 focus:border-indigo-500 transition-colors duration-200 bg-white/80 backdrop-blur-sm"
             />
-          </motion.div>
-        </motion.div>
+          </motion.div>        </motion.div>
 
+        {/* Nouveaux filtres améliorés */}
         <motion.div
           initial={{ opacity: 0, scaleX: 0 }}
           animate={{ opacity: 1, scaleX: 1 }}
@@ -402,46 +423,55 @@ export function PropertyFilters({ onFilterChange }: PropertyFiltersProps) {
           <Separator className="bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
         </motion.div>
 
-        {/* Tri */}
+        {/* Filtres Chambres */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 1.1 }}
-          className="space-y-2"
         >
-          <Label htmlFor="sort" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-            <motion.div
-              className="w-2 h-2 rounded-full bg-gradient-to-r from-rose-500 to-pink-500"
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 2, repeat: Infinity, delay: 3 }}
-            />
-            Trier par
-          </Label>
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Select
-              value={filters.sort}
-              onValueChange={(value) => handleFilterChange('sort', value)}
-            >
-              <SelectTrigger className="border-2 border-gray-200 hover:border-rose-300 transition-colors duration-200 bg-white/80 backdrop-blur-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Plus récent</SelectItem>
-                <SelectItem value="oldest">Plus ancien</SelectItem>
-                <SelectItem value="price-asc">Prix croissant</SelectItem>
-                <SelectItem value="price-desc">Prix décroissant</SelectItem>
-                <SelectItem value="surface-asc">Surface croissante</SelectItem>
-                <SelectItem value="surface-desc">Surface décroissante</SelectItem>
-              </SelectContent>
-            </Select>
-          </motion.div>
+          <BedroomFilter
+            value={filters.bedrooms}
+            onChange={handleBedroomsChange}
+          />
+        </motion.div>
+
+        {/* Filtres Salles de bain */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.2 }}
+        >
+          <BathroomFilter
+            value={filters.bathrooms}
+            onChange={handleBathroomsChange}
+          />
+        </motion.div>
+
+        {/* Autres caractéristiques */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 1.3 }}
+        >
+          <OtherFeaturesFilter
+            value={filters.features}
+            onChange={handleFeaturesChange}
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, scaleX: 0 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ delay: 1.4, duration: 0.5 }}
+        >
+          <Separator className="bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
         </motion.div>
 
         {/* Bouton pour effacer les filtres */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2 }}
+          transition={{ delay: 1.5 }}
         >
           <motion.div
             whileHover={{ scale: 1.02 }}

@@ -12,56 +12,16 @@ import { AccessRestriction } from '@/components/access-restriction'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { SavedSearches } from '@/components/property/SavedSearches'
+import { SearchAnalytics } from '@/components/property/SearchAnalytics'
+import { SearchAlerts } from '@/components/property/SearchAlerts'
 import { Grid, List, Map, SlidersHorizontal, MapPin, Maximize2, Minimize2 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getBestImageUrl } from '@/lib/image-utils'
 import { formatPrice } from '@/lib/utils'
-
-// Composant de carte simple (à remplacer par une vraie carte comme Mapbox ou Google Maps)
-const MapComponent = ({ properties, onPropertySelect, selectedProperty }: {
-  properties: any[]
-  onPropertySelect: (property: any) => void
-  selectedProperty: any
-}) => {
-  return (
-    <div className='relative w-full h-full bg-gray-100 rounded-lg overflow-hidden'>
-      {/* Placeholder pour la carte */}
-      <div className='absolute inset-0 flex items-center justify-center'>
-        <div className='text-center'>
-          <MapPin className='h-12 w-12 mx-auto text-gray-400 mb-2' />
-          <p className='text-gray-600'>Carte interactive</p>
-          <p className='text-sm text-gray-500'>{properties.length} propriétés</p>
-        </div>
-      </div>
-      
-      {/* Marqueurs simulés */}
-      <div className='absolute inset-0'>
-        {properties.slice(0, 10).map((property, index) => (
-          <div
-            key={property._id}
-            className={`absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 ${
-              selectedProperty?._id === property._id ? 'z-20' : 'z-10'
-            }`}
-            style={{
-              left: `${20 + (index % 5) * 15}%`,
-              top: `${20 + Math.floor(index / 5) * 20}%`
-            }}
-            onClick={() => onPropertySelect(property)}
-          >
-            <div className={`px-2 py-1 rounded-full text-xs font-medium shadow-lg ${
-              selectedProperty?._id === property._id
-                ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-900 border'
-            }`}>
-              {formatPrice(property.price)}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
+import MapComponent from '@/components/property/MapComponent'
 
 export default function MapViewPage() {
   const [filters, setFilters] = useState({
@@ -76,13 +36,27 @@ export default function MapViewPage() {
     rooms: undefined as number | undefined,
     sort: 'newest',
     q: '',
-    page: 1
+    page: 1,
+    // Nouveaux filtres étendus
+    availability: '',
+    buildingClass: '',
+    parking: undefined as number | undefined,
+    yearBuilt: { min: undefined as number | undefined, max: undefined as number | undefined },
+    features: [] as string[],
+    neighborhood: '',
+    pricePerSqft: { min: undefined as number | undefined, max: undefined as number | undefined },
+    distance: undefined as number | undefined,
+    lastUpdated: '',
+    verified: false,
+    featured: false,
+    agent: ''
   })
 
   const [showFilters, setShowFilters] = useState(false)
   const [viewedProperties, setViewedProperties] = useState(0)
   const [selectedProperty, setSelectedProperty] = useState<any>(null)
   const [isMapFullscreen, setIsMapFullscreen] = useState(false)
+  const [savedSearchName, setSavedSearchName] = useState('')
   
   const { properties, loading, error, pagination } = useProperties(filters)
   const { can, limit, userRole } = usePermissions()
@@ -97,10 +71,32 @@ export default function MapViewPage() {
 
   const handleFilterChange = (key: string, value: any) => {
     let processedValue = value
-    if (['minPrice', 'maxPrice', 'minSurface', 'maxSurface', 'rooms'].includes(key)) {
+    if (['minPrice', 'maxPrice', 'minSurface', 'maxSurface', 'rooms', 'parking'].includes(key)) {
       processedValue = value === '' || value === null || value === undefined ? undefined : Number(value)
     }
-    setFilters(prev => ({ ...prev, [key]: processedValue, page: 1 }))
+    
+    // Handle nested objects
+    if (key.includes('.')) {
+      const [parent, child] = key.split('.')
+      setFilters(prev => ({
+        ...prev,
+        [parent]: {
+          ...(prev[parent as keyof typeof prev] as any),
+          [child]: processedValue
+        },
+        page: 1
+      }))
+    } else if (key === 'features') {
+      setFilters(prev => ({
+        ...prev,
+        features: prev.features.includes(value)
+          ? prev.features.filter(f => f !== value)
+          : [...prev.features, value],
+        page: 1
+      }))
+    } else {
+      setFilters(prev => ({ ...prev, [key]: processedValue, page: 1 }))
+    }
   }
 
   const handlePageChange = (page: number) => {
@@ -186,6 +182,25 @@ export default function MapViewPage() {
                 >
                   <PropertyFilters onFilterChange={handleFilterChange} />
                 </AccessRestriction>
+
+                {/* Nouveaux composants avancés */}
+                <div className='mt-6 pt-6 border-t border-gray-200 space-y-6'>
+                  <SavedSearches
+                    currentFilters={filters}
+                    onLoadSearch={(savedFilters) => {
+                      setFilters({ ...savedFilters, page: 1 })
+                    }}
+                  />
+                  
+                  <SearchAnalytics
+                    filters={filters}
+                    resultCount={limitedProperties.length}
+                  />
+                  
+                  <SearchAlerts
+                    currentFilters={filters}
+                  />
+                </div>
               </div>
             </div>
           )}
